@@ -1,6 +1,9 @@
+import 'package:artiko/dependency_injector.dart';
+import 'package:artiko/features/login/domain/entities/response/login_response.dart';
+import 'package:artiko/features/profile/presentation/manager/profile_bloc.dart';
 import 'package:flutter/material.dart';
 
-class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
+class DefaultAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Widget? leading;
   final double? leadingWidth;
 
@@ -11,21 +14,39 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Size preferredSize;
 
   @override
+  _DefaultAppBarState createState() => _DefaultAppBarState();
+}
+
+class _DefaultAppBarState extends State<DefaultAppBar> {
+  LoginResponse? _currentUser;
+
+  @override
+  void initState() {
+    loadCurrentUserData();
+    super.initState();
+  }
+
+  Future<void> loadCurrentUserData() async {
+    final profileBloc = sl<ProfileBloc>();
+
+    if (profileBloc.currentUser == null) {
+      await profileBloc.getCurrentUserFromDb();
+    }
+
+    setState(() => _currentUser = profileBloc.currentUser);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return AppBar(
       elevation: 0,
+      backwardsCompatibility: true,
       backgroundColor: theme.primaryColor,
-      leadingWidth: leadingWidth,
-      leading: leading ??
-          IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: theme.scaffoldBackgroundColor,
-            ),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
+      iconTheme: IconThemeData(color: Colors.white),
+      leadingWidth: widget.leadingWidth,
+      leading: widget.leading,
       actions: [
         Container(
           padding: const EdgeInsets.all(8),
@@ -34,11 +55,11 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
             children: [
               Container(
                   margin: EdgeInsets.only(right: 8),
-                  child: Text('Juan David Lembó')),
+                  child: Text(_currentUser?.nombre ?? '')),
               CircleAvatar(
                 radius: 30,
                 backgroundColor: Colors.transparent,
-                backgroundImage: NetworkImage(
+                backgroundImage: NetworkImage(_currentUser?.foto ??
                     'https://image.shutterstock.com/z/stock-vector-default-avatar-profile-icon-grey-photo-placeholder-518740741.jpg'),
               )
             ],

@@ -4,8 +4,12 @@
 
 import 'dart:convert';
 
-LoginResponse loginResponseFromJson(String str) => LoginResponse.fromJson(json.decode(str));
+import 'package:floor/floor.dart';
 
+LoginResponse loginResponseFromJson(String str) =>
+    LoginResponse.fromJson(json.decode(str));
+
+@Entity(tableName: 'current_user')
 class LoginResponse {
   LoginResponse({
     required this.idUsuario,
@@ -19,10 +23,12 @@ class LoginResponse {
     required this.lectorSec,
   });
 
+  @PrimaryKey()
   int idUsuario;
+
   String nombre;
   String? foto;
-  String cargo;
+  String? cargo;
   String correo;
   String empresa;
   String? supervisor;
@@ -30,14 +36,14 @@ class LoginResponse {
   int lectorSec;
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) => LoginResponse(
-    idUsuario: json["id_usuario"],
-    nombre: json["nombre"],
-    foto: json["foto"],
-    cargo: json["cargo"],
-    correo: json["correo"],
-    empresa: json["empresa"],
-    supervisor: json["supervisor"],
-    contrato: json["contrato"],
-    lectorSec: json["lector_sec"],
-  );
+        idUsuario: json["id_usuario"],
+        nombre: json["nombre"],
+        foto: json["foto"],
+        cargo: json["cargo"],
+        correo: json["correo"],
+        empresa: json["empresa"],
+        supervisor: json["supervisor"],
+        contrato: json["contrato"],
+        lectorSec: json["lector_sec"],
+      );
 }

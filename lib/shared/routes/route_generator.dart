@@ -15,9 +15,9 @@ class RouteGenerator {
       case AppRoutes.MainScreen:
         return MaterialPageRoute(builder: (_) => MainScreen());
       case AppRoutes.ProfileScreen:
-        return MaterialPageRoute(builder: (_) => ProfilePage());
+        return MaterialPageRoute(builder: (_) => ProfilePage.init());
       default:
-        return MaterialPageRoute(builder: (_) => ProfilePage());
+        return MaterialPageRoute(builder: (_) => LoginPage());
     }
   }
 }

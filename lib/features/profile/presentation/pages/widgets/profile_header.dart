@@ -1,5 +1,7 @@
+import 'package:artiko/features/profile/presentation/manager/profile_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProfileHeader extends StatelessWidget {
   @override
@@ -7,6 +9,8 @@ class ProfileHeader extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final theme = Theme.of(context);
+
+    final bloc = Provider.of<ProfileBloc>(context, listen: false);
 
     return Container(
       margin: EdgeInsets.only(
@@ -18,12 +22,12 @@ class ProfileHeader extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              'JUAN DAVID LEMBÓ',
+              bloc.currentUser?.nombre.toUpperCase() ?? '',
               style: theme.textTheme.headline6,
             ),
             SizedBox(height: screenHeight * .01),
             Text(
-              '1.144.265.212',
+              bloc.currentUser?.idUsuario.toString() ?? '',
               style: theme.textTheme.bodyText2
                   ?.copyWith(fontWeight: FontWeight.w500),
             ),
@@ -41,7 +45,7 @@ class ProfileHeader extends StatelessWidget {
               decoration: new BoxDecoration(
                 color: const Color(0xff7c94b6),
                 image: new DecorationImage(
-                  image: new NetworkImage(
+                  image: new NetworkImage(bloc.currentUser?.foto ??
                       'https://image.shutterstock.com/z/stock-vector-default-avatar-profile-icon-grey-photo-placeholder-518740741.jpg'),
                   fit: BoxFit.cover,
                 ),

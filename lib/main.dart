@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'dependency_injector.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   await setupInjector();
 
   runApp(MyApp());

@@ -64,7 +64,7 @@ class InputWithLabel extends StatelessWidget {
                   errorText: errorText,
                   filled: true,
                   isDense: true,
-                  suffix: suffix,
+                  suffixIcon: suffix,
                   hintText: hintText,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
