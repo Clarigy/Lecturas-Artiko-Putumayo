@@ -8,7 +8,6 @@ final lightTheme = ThemeData.light().copyWith(
   primaryColor: AppColors.primary,
   secondaryHeaderColor: AppColors.secondary,
   textTheme: AppTextTheme.textThemeLight,
-  iconTheme: IconThemeData(color: AppColors.primary, size: 28),
   appBarTheme: AppBarTheme(
     elevation: 0,
     iconTheme: IconThemeData(color: Colors.black87, size: 28),

@@ -2,27 +2,34 @@ import 'package:flutter/material.dart';
 
 class InputWithLabel extends StatelessWidget {
   final String label;
+  final String? initialValue;
   final Color? labelColor;
-  final TextEditingController textEditingController;
-  final TextInputType textInputType;
+  final TextEditingController? textEditingController;
+  final TextInputType? textInputType;
   final bool obscureText;
+  final bool readOnly;
   final String? errorText;
   final String? hintText;
   final Function(String value)? onChange;
   final AutovalidateMode? autovalidateMode;
   final String? Function(String?)? validator;
 
+  final Widget? suffix;
+
   const InputWithLabel(
       {required this.label,
-      required this.textEditingController,
-      required this.textInputType,
+      this.textEditingController,
+      this.textInputType,
       this.errorText,
       this.obscureText = false,
       this.onChange,
       this.autovalidateMode,
       this.validator,
       this.labelColor,
-      this.hintText});
+      this.hintText,
+      this.readOnly = false,
+      this.initialValue,
+      this.suffix});
 
   @override
   Widget build(BuildContext context) {
@@ -44,17 +51,20 @@ class InputWithLabel extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                             color: labelColor ?? theme.primaryColor)))),
             TextFormField(
+              initialValue: initialValue,
               autovalidateMode: autovalidateMode,
               autocorrect: false,
               controller: textEditingController,
               keyboardType: textInputType,
               validator: validator,
+              readOnly: readOnly,
               obscureText: obscureText,
               onChanged: onChange,
               decoration: InputDecoration(
                   errorText: errorText,
                   filled: true,
                   isDense: true,
+                  suffix: suffix,
                   hintText: hintText,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),

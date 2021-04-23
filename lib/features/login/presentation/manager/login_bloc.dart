@@ -23,6 +23,8 @@ class LoginBloc extends ChangeNotifier {
 
   var loginState = LoginState.initial;
 
+  late LoginResponse currentUser;
+
   Future<LoginResponse> doLogin(String email, String password) async {
     loginState = LoginState.loading;
     notifyListeners();

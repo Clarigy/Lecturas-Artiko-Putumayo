@@ -22,7 +22,7 @@ class __FormState extends State<LoginForm> {
     return bloc.loginState == LoginState.loading
         ? Center(
             child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
           ))
         : Form(
             key: bloc.formKey,
@@ -39,7 +39,7 @@ class __FormState extends State<LoginForm> {
                 ),
                 SizedBox(height: 10),
                 InputWithLabel(
-                  label:LABEL_PASSWORD,
+                  label: LABEL_PASSWORD,
                   labelColor: Colors.white,
                   hintText: 'al menos  8 caracteres',
                   autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -67,6 +67,7 @@ class __FormState extends State<LoginForm> {
     final password = _bloc.userPasswordTextController.text.trim();
 
     _bloc.doLogin(user, password).then((LoginResponse response) async {
+      _bloc.currentUser = response;
       goToMainScreen();
     }).catchError((onError) async {
       _showAlertBadCredentials();
