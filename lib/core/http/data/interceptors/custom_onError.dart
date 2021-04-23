@@ -1,0 +1,38 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+
+Future<FutureOr<dynamic>> customOnError(DioError dioError) async {
+  if (dioError.type == DioErrorType.connectTimeout) {
+    return _customReportError(dioError,
+        'En estos momentos estamos trabajando en cambios, vuelva en un momento');
+  }
+
+  if (dioError.error is SocketException) {
+    return _customReportError(dioError, 'Sin conexión a internet');
+  }
+
+  if (dioError.response?.data?.containsKey('mensaje') ?? false) {
+    return dioError.error = dioError.response?.data['mensaje'];
+  }
+
+  switch (dioError.response?.statusCode ?? 501) {
+    case 400:
+      return _customReportError(
+          dioError, 'Peticion mal hecha, intentalo de nuevo');
+    case 401:
+      return _customReportError(dioError, 'No tienes permiso');
+    case 404:
+      return _customReportError(dioError, 'No se ha encontrado nada');
+    case 500:
+      return dioError.error = 'Tuvimos un error interno';
+    default:
+      return dioError.error.toString();
+  }
+}
+
+Future<DioError> _customReportError(DioError dioError, String error) async {
+  dioError.error = error;
+  return dioError;
+}
