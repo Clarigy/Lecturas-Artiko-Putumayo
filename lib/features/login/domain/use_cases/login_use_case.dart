@@ -7,7 +7,7 @@ import 'package:artiko/features/login/domain/repositories/login_repository_contr
 import '../../../../core/error/exception.dart';
 import '../../../../core/use_case.dart';
 
-class LoginUseCase extends UseCase<LoginRequest> {
+class LoginUseCase extends UseCase<LoginRequest, Future<LoginResponse>> {
   final LoginRepositoryContract _repository;
   final CacheStorageInterface _storage;
 

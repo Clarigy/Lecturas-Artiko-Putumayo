@@ -12,6 +12,8 @@ class AppColors {
   static const Color scaffoldLight = Color(0xFFF0F1F5);
   static const Color cardLight = Color(0xFFFFFFFF);
   static const Color inputFill = Color(0xFFFFFFFF);
+
+  static const Color redColor = Color(0xFFFF441F);
 }
 
 class AppTextTheme {

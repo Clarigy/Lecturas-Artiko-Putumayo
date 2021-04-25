@@ -1,3 +1,3 @@
-abstract class UseCase<T> {
-  Future<void> call(T params);
+abstract class UseCase<T, R> {
+  R call(T params);
 }

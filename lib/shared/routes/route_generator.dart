@@ -1,4 +1,5 @@
 import 'package:artiko/features/home/presentation/pages/main_screen.dart';
+import 'package:artiko/features/home/presentation/pages/reading_detail_page/reading_detail_page.dart';
 import 'package:artiko/features/login/presentation/pages/login_page.dart';
 import 'package:artiko/features/profile/presentation/pages/profile_page.dart';
 import 'package:flutter/material.dart';
@@ -14,10 +15,12 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => LoginPage());
       case AppRoutes.MainScreen:
         return MaterialPageRoute(builder: (_) => MainScreen());
+      case AppRoutes.ReadingDetailScreen:
+        return MaterialPageRoute(builder: (_) => ReadingDetailPage.init());
       case AppRoutes.ProfileScreen:
         return MaterialPageRoute(builder: (_) => ProfilePage.init());
       default:
-        return MaterialPageRoute(builder: (_) => LoginPage());
+        return MaterialPageRoute(builder: (_) => ReadingDetailPage.init());
     }
   }
 }

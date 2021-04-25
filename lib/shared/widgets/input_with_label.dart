@@ -14,7 +14,9 @@ class InputWithLabel extends StatelessWidget {
   final AutovalidateMode? autovalidateMode;
   final String? Function(String?)? validator;
 
-  final Widget? suffix;
+  final double? width;
+
+  final Widget? suffixIcon;
 
   const InputWithLabel(
       {required this.label,
@@ -29,7 +31,8 @@ class InputWithLabel extends StatelessWidget {
       this.hintText,
       this.readOnly = false,
       this.initialValue,
-      this.suffix});
+      this.suffixIcon,
+      this.width});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +42,7 @@ class InputWithLabel extends StatelessWidget {
     return Center(
       child: Container(
         margin: EdgeInsets.only(top: 10),
-        width: screenWidth * .8,
+        width: width ?? screenWidth * .8,
         child: Column(
           children: [
             Container(
@@ -64,7 +67,7 @@ class InputWithLabel extends StatelessWidget {
                   errorText: errorText,
                   filled: true,
                   isDense: true,
-                  suffixIcon: suffix,
+                  suffixIcon: suffixIcon,
                   hintText: hintText,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),

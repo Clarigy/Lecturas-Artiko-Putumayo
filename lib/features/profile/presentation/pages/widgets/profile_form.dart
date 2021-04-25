@@ -30,7 +30,7 @@ class ProfileForm extends StatelessWidget {
               label: profileInputModel.label.toUpperCase(),
               readOnly: true,
               initialValue: profileInputModel.text,
-              suffix: !profileInputModel.allowCall
+              suffixIcon: !profileInputModel.allowCall
                   ? null
                   : Icon(
                       Icons.call,
