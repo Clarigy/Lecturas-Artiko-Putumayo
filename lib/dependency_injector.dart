@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 
 import 'core/cache/providers/providers.dart';
 import 'core/database/providers/local_database_providers.dart';
+import 'features/create_measurer/presentation/providers/create_measure_provider.dart';
 import 'features/home/presentation/pages/providers/home_provider.dart';
 import 'features/login/presentation/providers/login_provider.dart';
 
@@ -14,4 +15,5 @@ Future<void> setupInjector() async {
   await injectionDependenciesStorage();
   await injectionDatabase();
   await setUpHomeProviders();
+  await setUpCreateMeasureProviders();
 }

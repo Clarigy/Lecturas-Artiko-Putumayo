@@ -1,3 +1,4 @@
+import 'package:artiko/features/create_measurer/presentation/pages/create_measure_page.dart';
 import 'package:artiko/features/home/presentation/pages/main_screen.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/reading_detail_page.dart';
 import 'package:artiko/features/login/presentation/pages/login_page.dart';
@@ -20,7 +21,7 @@ class RouteGenerator {
       case AppRoutes.ProfileScreen:
         return MaterialPageRoute(builder: (_) => ProfilePage.init());
       default:
-        return MaterialPageRoute(builder: (_) => ReadingDetailPage.init());
+        return MaterialPageRoute(builder: (_) => CreateMeasurePage.init());
     }
   }
 }

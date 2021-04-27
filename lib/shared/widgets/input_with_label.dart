@@ -1,22 +1,31 @@
 import 'package:flutter/material.dart';
 
 class InputWithLabel extends StatelessWidget {
-  final String label;
-  final String? initialValue;
-  final Color? labelColor;
-  final TextEditingController? textEditingController;
-  final TextInputType? textInputType;
-  final bool obscureText;
-  final bool readOnly;
   final String? errorText;
   final String? hintText;
-  final Function(String value)? onChange;
+  final String label;
+  final String? initialValue;
+
+  final Color? labelColor;
+
+  final TextEditingController? textEditingController;
+  final TextInputType? textInputType;
+
+  final bool obscureText;
+  final bool readOnly;
+
   final AutovalidateMode? autovalidateMode;
+
+  final Function(String value)? onChange;
+  final void Function(String?)? onSaved;
   final String? Function(String?)? validator;
 
   final double? width;
 
   final Widget? suffixIcon;
+  final Widget? prefixIcon;
+
+  final TextInputAction? textInputAction;
 
   const InputWithLabel(
       {required this.label,
@@ -32,7 +41,10 @@ class InputWithLabel extends StatelessWidget {
       this.readOnly = false,
       this.initialValue,
       this.suffixIcon,
-      this.width});
+      this.width,
+      this.prefixIcon,
+      this.textInputAction,
+      this.onSaved});
 
   @override
   Widget build(BuildContext context) {
@@ -58,8 +70,10 @@ class InputWithLabel extends StatelessWidget {
               autovalidateMode: autovalidateMode,
               autocorrect: false,
               controller: textEditingController,
+              textInputAction: textInputAction,
               keyboardType: textInputType,
               validator: validator,
+              onSaved: onSaved,
               readOnly: readOnly,
               obscureText: obscureText,
               onChanged: onChange,
@@ -69,6 +83,7 @@ class InputWithLabel extends StatelessWidget {
                   isDense: true,
                   suffixIcon: suffixIcon,
                   hintText: hintText,
+                  prefixIcon: prefixIcon,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   )),
