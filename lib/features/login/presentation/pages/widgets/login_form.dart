@@ -68,15 +68,15 @@ class __FormState extends State<LoginForm> {
 
     _bloc.doLogin(user, password).then((LoginResponse response) async {
       _bloc.currentUser = response;
-      goToMainScreen();
+      goToLoadingScreen();
     }).catchError((onError) async {
       _showAlertBadCredentials();
     });
   }
 
-  void goToMainScreen() async {
+  void goToLoadingScreen() async {
     await Navigator.of(context).pushNamedAndRemoveUntil(
-        AppRoutes.MainScreen, (Route<dynamic> route) => false);
+        AppRoutes.LoadingScreen, (Route<dynamic> route) => false);
   }
 
   void _showAlertBadCredentials() async {

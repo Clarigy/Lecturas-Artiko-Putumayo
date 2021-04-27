@@ -4,6 +4,7 @@ import 'package:artiko/shared/widgets/default_app_bar.dart';
 import 'package:flutter/material.dart';
 
 import 'exports/main_screen_labels.dart';
+import 'map/map_page.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -13,16 +14,10 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 1;
 
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-
   static List<Widget> _widgetOptions = <Widget>[
     Offstage(),
     ActivitiesPage(),
-    Text(
-      'Mapa',
-      style: optionStyle,
-    ),
+    MapPage(),
   ];
 
   void _onItemTapped(int index) {

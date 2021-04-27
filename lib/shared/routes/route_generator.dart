@@ -1,4 +1,5 @@
-import 'package:artiko/features/create_measurer/presentation/pages/create_measure_page.dart';
+import 'package:artiko/features/home/presentation/pages/init/access_gps_page.dart';
+import 'package:artiko/features/home/presentation/pages/init/loading_page.dart';
 import 'package:artiko/features/home/presentation/pages/main_screen.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/reading_detail_page.dart';
 import 'package:artiko/features/login/presentation/pages/login_page.dart';
@@ -18,10 +19,14 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => MainScreen());
       case AppRoutes.ReadingDetailScreen:
         return MaterialPageRoute(builder: (_) => ReadingDetailPage.init());
+      case AppRoutes.LoadingScreen:
+        return MaterialPageRoute(builder: (_) => LoadingPage());
+      case AppRoutes.AccessGPSScreen:
+        return MaterialPageRoute(builder: (_) => AccessGpsPage());
       case AppRoutes.ProfileScreen:
         return MaterialPageRoute(builder: (_) => ProfilePage.init());
       default:
-        return MaterialPageRoute(builder: (_) => CreateMeasurePage.init());
+        return MaterialPageRoute(builder: (_) => LoadingPage());
     }
   }
 }

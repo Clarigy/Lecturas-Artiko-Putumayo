@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 
 import '../domain/repositories/http_proxy_repository.dart';
-import 'interceptors/interceptor.dart';
 
 class HttpProxyImpl extends HttpProxyInterface {
   var _http;
