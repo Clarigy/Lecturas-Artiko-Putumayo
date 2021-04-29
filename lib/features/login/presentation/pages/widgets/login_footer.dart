@@ -1,5 +1,6 @@
 import 'package:artiko/features/login/presentation/pages/exports/images_path.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginFooter extends StatelessWidget {
   @override
@@ -13,22 +14,25 @@ class LoginFooter extends StatelessWidget {
       child: Stack(
         children: [
           Container(
-            margin: EdgeInsets.only(top: size.width * .15),
+              margin: EdgeInsets.only(top: size.width * .15),
               child: Center(child: Image.asset(IMAGE_ARTIKO))),
           Positioned(
             right: -45,
             top: 60,
-            child: Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(100),
-                  color: theme.scaffoldBackgroundColor),
+            child: InkWell(
+              onTap: () async => await _launchURL(),
               child: Container(
-                margin: EdgeInsets.only(right: 26, bottom: 26),
-                child: Icon(
-                  Icons.call,
-                  color: theme.secondaryHeaderColor,
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    color: theme.scaffoldBackgroundColor),
+                child: Container(
+                  margin: EdgeInsets.only(right: 26, bottom: 26),
+                  child: Icon(
+                    Icons.call,
+                    color: theme.secondaryHeaderColor,
+                  ),
                 ),
               ),
             ),
@@ -37,4 +41,8 @@ class LoginFooter extends StatelessWidget {
       ),
     );
   }
+
+  Future<void> _launchURL() async => await canLaunch('tel: 3146432187')
+      ? await launch('tel: 3146432187')
+      : throw 'Could not launch phone';
 }

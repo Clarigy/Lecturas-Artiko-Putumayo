@@ -14,7 +14,13 @@ class ActivitiesPage extends StatelessWidget {
       child: Column(
         children: [
           SearchInput(),
+          SizedBox(
+            height: 10,
+          ),
           FilterButtons(),
+          SizedBox(
+            height: 10,
+          ),
           InkWell(
             child: ReadingsCard(),
             onTap: () =>

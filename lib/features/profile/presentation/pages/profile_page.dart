@@ -68,7 +68,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void dispose() {
-    Provider.of<ProfileBloc>(context).dispose();
+    Provider.of<ProfileBloc>(context, listen: false).dispose();
     super.dispose();
   }
 }

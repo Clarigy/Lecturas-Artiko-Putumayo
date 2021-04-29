@@ -4,6 +4,7 @@ import 'package:artiko/features/home/presentation/pages/reading_detail_page/read
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/widgets/drop_down_input.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/widgets/meter_reading.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/widgets/take_pictures.dart';
+import 'package:artiko/shared/routes/app_routes.dart';
 import 'package:artiko/shared/widgets/default_app_bar.dart';
 import 'package:artiko/shared/widgets/main_button.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,12 @@ class ReadingDetailPage extends StatefulWidget {
 }
 
 class _ReadingDetailPageState extends State<ReadingDetailPage> {
+  @override
+  void dispose() {
+    Provider.of<ReadingDetailBloc>(context, listen: false).dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -83,7 +90,11 @@ class _NavigationButtons extends StatelessWidget {
           InkWell(
             child: Icon(Icons.arrow_back_ios),
           ),
-          MainButton(text: 'Agregar nuevo medidor', onTap: () {}),
+          MainButton(
+              text: 'Agregar nuevo medidor',
+              onTap: () {
+                Navigator.pushNamed(context, AppRoutes.CreateMeasure);
+              }),
           InkWell(
             child: Icon(Icons.arrow_forward_ios),
           )

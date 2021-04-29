@@ -5,12 +5,10 @@ import 'package:flutter/material.dart';
 class SearchInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return Center(
       child: InputWithLabel(
         label: '',
-        width: screenWidth * .85,
+        width: double.infinity,
         hintText: LABEL_SEARCH_MEASURE,
         suffixIcon: IconButton(
           icon: Icon(Icons.clear),

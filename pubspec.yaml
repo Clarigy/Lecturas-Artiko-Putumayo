@@ -37,6 +37,8 @@ dependencies:
   google_maps_flutter: ^2.0.3
   geolocator: ^7.0.3
 
+  url_launcher: ^6.0.3
+
   cupertino_icons: ^1.0.2
 
 dev_dependencies:

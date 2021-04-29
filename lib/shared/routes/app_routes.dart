@@ -4,5 +4,6 @@ abstract class AppRoutes {
   static const ReadingDetailScreen = '/reading-detail';
   static const LoadingScreen = '/loading';
   static const AccessGPSScreen = '/access-gps';
+  static const CreateMeasure = '/create-measure';
   static const ProfileScreen = '/profile';
 }

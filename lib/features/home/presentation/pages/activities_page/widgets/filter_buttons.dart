@@ -4,27 +4,30 @@ import 'package:flutter/material.dart';
 class FilterButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        ElevatedButton(child: Text(BTN_TO_DO), onPressed: () {}),
-        ElevatedButton(
-          child: Text(
-            BTN_EXECUTED,
-            style: TextStyle(color: Colors.black),
+    return Container(
+      width: double.infinity,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          ElevatedButton(child: Text(BTN_TO_DO), onPressed: () {}),
+          ElevatedButton(
+            child: Text(
+              BTN_EXECUTED,
+              style: TextStyle(color: Colors.black),
+            ),
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(primary: Colors.white),
           ),
-          onPressed: () {},
-          style: ElevatedButton.styleFrom(primary: Colors.white),
-        ),
-        ElevatedButton(
-          child: Text(
-            BTN_FAILED,
-            style: TextStyle(color: Colors.black),
+          ElevatedButton(
+            child: Text(
+              BTN_FAILED,
+              style: TextStyle(color: Colors.black),
+            ),
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(primary: Colors.white),
           ),
-          onPressed: () {},
-          style: ElevatedButton.styleFrom(primary: Colors.white),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

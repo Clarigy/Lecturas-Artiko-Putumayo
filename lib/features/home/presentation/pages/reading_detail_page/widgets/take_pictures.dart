@@ -128,7 +128,8 @@ class _TakePicturesState extends State<TakePictures> {
   }
 
   Future<Uint8List?> _captureImageAndReadAsBytes() async {
-    final image = await ImagePicker().getImage(source: ImageSource.camera);
+    final image = await ImagePicker()
+        .getImage(source: ImageSource.camera, imageQuality: 10);
 
     if (image == null) return null;
 
@@ -163,8 +164,8 @@ class _TakePicturesState extends State<TakePictures> {
           top: -10,
           child: IconButton(
               icon: Icon(
-                Icons.remove,
-                color: theme.primaryColor,
+                Icons.remove_circle,
+                color: theme.errorColor,
               ),
               onPressed: () async {
                 await bloc.deleteReadingImage(readingImagesModel);

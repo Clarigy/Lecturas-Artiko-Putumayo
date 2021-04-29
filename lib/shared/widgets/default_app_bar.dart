@@ -1,7 +1,10 @@
 import 'package:artiko/dependency_injector.dart';
 import 'package:artiko/features/login/domain/entities/response/login_response.dart';
 import 'package:artiko/features/profile/presentation/manager/profile_bloc.dart';
+import 'package:artiko/shared/routes/app_routes.dart';
 import 'package:flutter/material.dart';
+
+enum PopUpMenuItemOption { PROFILE, CLOSE_TERMINAL, LOGOUT }
 
 class DefaultAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Widget? leading;
@@ -40,6 +43,21 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    final List<PopupMenuItem<PopUpMenuItemOption>> popUpButtonItems = [
+      PopupMenuItem(
+        child: Text('Perfil'),
+        value: PopUpMenuItemOption.PROFILE,
+      ),
+      PopupMenuItem(
+        child: Text('Cerrar terminal'),
+        value: PopUpMenuItemOption.CLOSE_TERMINAL,
+      ),
+      PopupMenuItem(
+        child: Text('Cerrar sesión'),
+        value: PopUpMenuItemOption.LOGOUT,
+      ),
+    ];
+
     return AppBar(
       elevation: 0,
       backwardsCompatibility: true,
@@ -51,21 +69,32 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
         Container(
           padding: const EdgeInsets.all(8),
           margin: EdgeInsets.only(right: 20),
-          child: Row(
-            children: [
-              Container(
-                  margin: EdgeInsets.only(right: 8),
-                  child: Text(_currentUser?.nombre ?? '')),
-              CircleAvatar(
-                radius: 30,
-                backgroundColor: Colors.transparent,
-                backgroundImage: NetworkImage(_currentUser?.foto ??
-                    'https://image.shutterstock.com/z/stock-vector-default-avatar-profile-icon-grey-photo-placeholder-518740741.jpg'),
-              )
-            ],
+          child: PopupMenuButton(
+            onSelected: (itemSelected) {
+              if (itemSelected == PopUpMenuItemOption.PROFILE)
+                _goToProfilePage();
+            },
+            itemBuilder: (BuildContext context) => popUpButtonItems,
+            child: Row(
+              children: [
+                Container(
+                    margin: EdgeInsets.only(right: 8),
+                    child: Text(_currentUser?.nombre ?? '')),
+                CircleAvatar(
+                  radius: 30,
+                  backgroundColor: Colors.transparent,
+                  backgroundImage: NetworkImage(_currentUser?.foto ??
+                      'https://image.shutterstock.com/z/stock-vector-default-avatar-profile-icon-grey-photo-placeholder-518740741.jpg'),
+                )
+              ],
+            ),
           ),
         ),
       ],
     );
+  }
+
+  void _goToProfilePage() {
+    Navigator.pushNamed(context, AppRoutes.ProfileScreen);
   }
 }
