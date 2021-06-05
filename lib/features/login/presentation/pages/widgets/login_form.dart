@@ -70,6 +70,7 @@ class __FormState extends State<LoginForm> {
       _bloc.currentUser = response;
       goToLoadingScreen();
     }).catchError((onError) async {
+      print(onError);
       _showAlertBadCredentials();
     });
   }

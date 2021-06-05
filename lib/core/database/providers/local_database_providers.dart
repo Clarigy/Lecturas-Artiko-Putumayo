@@ -1,3 +1,4 @@
+import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
 import 'package:artiko/dependency_injector.dart';
 import 'package:artiko/features/home/data/data_sources/local/reading_images_dao.dart';
 import 'package:artiko/features/login/data/data_sources/local/current_user_dao.dart';
@@ -14,4 +15,6 @@ Future<void> injectionDatabase() async {
   sl.registerLazySingleton<CurrentUserDao>(() => db.currentUserDao);
 
   sl.registerLazySingleton<ReadingImagesDao>(() => db.readingImagesDao);
+
+  sl.registerLazySingleton<ReadingsDao>(() => db.readingDao);
 }

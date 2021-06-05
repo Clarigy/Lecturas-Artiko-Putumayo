@@ -33,14 +33,17 @@ class ProfileBloc extends ChangeNotifier {
     if (_currentUser == null) return [];
 
     final List<ProfileInputModel> profileInputModels = [
-      ProfileInputModel(text: _currentUser!.cargo ?? '', label: 'cargo'),
+      ProfileInputModel(text: _currentUser!.cargo, label: 'cargo'),
       ProfileInputModel(text: _currentUser!.contrato, label: 'contrato'),
-      ProfileInputModel(text: _currentUser!.correo, label: 'correo'),
-      ProfileInputModel(text: 'numero no está', label: 'numero'),
+      ProfileInputModel(text: _currentUser!.correoLector, label: 'correo'),
       ProfileInputModel(
-          text: _currentUser!.supervisor ?? '', label: 'supervisor'),
+          text: _currentUser!.telefonoLector ?? 'numero no está',
+          label: 'numero'),
+      ProfileInputModel(text: _currentUser!.supervisor, label: 'supervisor'),
       ProfileInputModel(
-          text: 'numero no está', label: 'numero', allowCall: true),
+          text: _currentUser!.telefonoSupervisor,
+          label: 'numero',
+          allowCall: true),
       ProfileInputModel(text: _currentUser!.empresa, label: 'empresa'),
     ];
 

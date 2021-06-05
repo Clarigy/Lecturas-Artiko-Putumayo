@@ -3,7 +3,7 @@ import 'package:artiko/features/home/data/data_sources/local/reading_images_dao.
 import 'package:artiko/features/home/data/models/reading_images_model.dart';
 import 'package:artiko/features/home/domain/repositories/readings_repository_contract.dart';
 
-class ReadingRepository implements ReadingRepositoryContract {
+class ReadingRepository implements ReadingImageRepositoryContract {
   final ReadingImagesDao _readingImagesDao;
 
   ReadingRepository(this._readingImagesDao);

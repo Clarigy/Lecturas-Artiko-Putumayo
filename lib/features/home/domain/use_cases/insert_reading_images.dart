@@ -4,7 +4,7 @@ import 'package:artiko/features/home/data/models/reading_images_model.dart';
 import 'package:artiko/features/home/domain/repositories/readings_repository_contract.dart';
 
 class InsertReadingImages extends UseCase<ReadingImagesModel, Future<int>> {
-  final ReadingRepositoryContract _repository;
+  final ReadingImageRepositoryContract _repository;
 
   InsertReadingImages(this._repository);
 

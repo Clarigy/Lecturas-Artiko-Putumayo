@@ -1,4 +1,7 @@
+import 'package:artiko/core/error/exception.dart';
 import 'package:artiko/core/permissions_handler/gps_permission.dart';
+import 'package:artiko/dependency_injector.dart';
+import 'package:artiko/features/home/presentation/pages/init/loading_bloc.dart';
 import 'package:artiko/shared/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -35,11 +38,17 @@ class _LoadingPageState extends State<LoadingPage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: FutureBuilder(
-            future: checkGpsAndLocation(context),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              return snapshot.hasData
-                  ? Center(child: Center(child: Text(snapshot.data)))
+        body: FutureBuilder<bool>(
+            future: _loadAndSaveAllData(),
+            builder: (context, snapshot) {
+              return snapshot.hasData && snapshot.data == true
+                  ? FutureBuilder(
+                      future: checkGpsAndLocation(context),
+                      builder: (BuildContext context, AsyncSnapshot snp) {
+                        return snp.hasData
+                            ? Center(child: Center(child: Text(snp.data)))
+                            : Center(child: CircularProgressIndicator());
+                      })
                   : Center(child: CircularProgressIndicator());
             }));
   }
@@ -67,5 +76,25 @@ class _LoadingPageState extends State<LoadingPage> with WidgetsBindingObserver {
 
   Future<void> _askForLocationPermission() async {
     if (!await GpsPermission.haveLocationPermissions()) _goToAccessGPSPage();
+  }
+
+  Future<bool> _loadAndSaveAllData() async {
+    final bloc = sl<LoadingBloc>();
+
+    final currentUser = await bloc.getCurrentUserFromDb();
+
+    if (currentUser == null) {
+      Navigator.pushReplacementNamed(context, AppRoutes.LoginScreen);
+      return false;
+    }
+
+    try {
+      await bloc.loadAndSaveAllData(currentUser.lectorSec);
+      return true;
+    } on ServerException catch (error) {
+      final snackBar = SnackBar(content: Text(error.message!));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return false;
+    }
   }
 }

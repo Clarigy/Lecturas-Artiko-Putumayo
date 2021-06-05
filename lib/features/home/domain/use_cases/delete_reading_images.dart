@@ -4,7 +4,7 @@ import 'package:artiko/features/home/data/models/reading_images_model.dart';
 import 'package:artiko/features/home/domain/repositories/readings_repository_contract.dart';
 
 class DeleteReadingImages extends UseCase<ReadingImagesModel, Future<void>> {
-  final ReadingRepositoryContract _repository;
+  final ReadingImageRepositoryContract _repository;
 
   DeleteReadingImages(this._repository);
 

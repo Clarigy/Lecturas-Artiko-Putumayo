@@ -5,7 +5,7 @@ import 'package:artiko/features/home/domain/repositories/readings_repository_con
 
 class GetReadingImagesByReadingIdUseCase
     extends UseCase<int, Stream<List<ReadingImagesModel>?>> {
-  final ReadingRepositoryContract _repository;
+  final ReadingImageRepositoryContract _repository;
 
   GetReadingImagesByReadingIdUseCase(this._repository);
 
