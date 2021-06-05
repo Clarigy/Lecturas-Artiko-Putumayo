@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 
-Future<FutureOr<dynamic>> customOnError(DioError dioError) async {
+Future<DioError> customOnError(DioError dioError) async {
   if (dioError.type == DioErrorType.connectTimeout) {
     return _customReportError(dioError,
         'En estos momentos estamos trabajando en cambios, vuelva en un momento');
@@ -26,9 +26,10 @@ Future<FutureOr<dynamic>> customOnError(DioError dioError) async {
     case 404:
       return _customReportError(dioError, 'No se ha encontrado nada');
     case 500:
-      return dioError.error = 'Tuvimos un error interno';
+      dioError.error = 'Tuvimos un error interno';
+      return dioError;
     default:
-      return dioError.error.toString();
+      return dioError;
   }
 }
 
