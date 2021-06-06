@@ -40,21 +40,20 @@ class ReadingDetailItem {
     required this.marcaMedidor,
     required this.nroEnteros,
     required this.nroDecimales,
-    this.constante,
-    this.lecturaMinima,
-    this.lecturaMaxima,
+    required this.constante,
+    required this.lecturaMinima,
+    required this.lecturaMaxima,
     required this.falsaMinima,
     required this.falsaMaxima,
     required this.factor,
     required this.lecturaAnterior,
-    this.claseServicio,
-    this.fechaUltimaLectura,
+    required this.claseServicio,
+    required this.fechaUltimaLectura,
     this.indRangoCritica,
     this.indicadorSuspension,
     required this.nombre,
-    this.direccion,
+    required this.direccion,
     required this.suscriptorSec,
-    this.vigencia,
     required this.tipoConsumo,
     required this.nombreTipoConsumo,
     this.latPuntoMedicion,
@@ -62,35 +61,33 @@ class ReadingDetailItem {
     required this.detalleLecturaRutaSec,
   });
 
-  int orden;
-  int secuencia;
-
   @PrimaryKey()
   String numeroMedidor;
 
+  int orden;
+  int secuencia;
   String tipoMedidor;
   String marcaMedidor;
   int nroEnteros;
   int nroDecimales;
-  String? constante;
-  int? lecturaMinima;
-  int? lecturaMaxima;
+  int constante;
+  int lecturaMinima;
+  int lecturaMaxima;
   int falsaMinima;
   int falsaMaxima;
   int factor;
-  int lecturaAnterior;
-  String? claseServicio;
-  String? fechaUltimaLectura;
+  String lecturaAnterior;
+  String claseServicio;
+  String fechaUltimaLectura;
   String? indRangoCritica;
   String? indicadorSuspension;
   String nombre;
-  String? direccion;
+  String direccion;
   int suscriptorSec;
-  String? vigencia;
   String tipoConsumo;
   String nombreTipoConsumo;
-  double? latPuntoMedicion;
-  double? longPuntoMedicion;
+  String? latPuntoMedicion;
+  String? longPuntoMedicion;
   int detalleLecturaRutaSec;
 
   factory ReadingDetailItem.fromJson(Map<String, dynamic> json) =>
@@ -100,7 +97,7 @@ class ReadingDetailItem {
         numeroMedidor: json["numero_medidor"],
         tipoMedidor: json["tipo_medidor"],
         marcaMedidor: json["marca_medidor"],
-        nroEnteros: json["nro_enteros"] ?? 0,
+        nroEnteros: json["nro_enteros"],
         nroDecimales: json["nro_decimales"],
         constante: json["constante"],
         lecturaMinima: json["lectura_minima"],
@@ -116,7 +113,6 @@ class ReadingDetailItem {
         nombre: json["nombre"],
         direccion: json["direccion"],
         suscriptorSec: json["suscriptor_sec"],
-        vigencia: json["vigencia"],
         tipoConsumo: json["tipo_consumo"],
         nombreTipoConsumo: json["nombre_tipo_consumo"],
         latPuntoMedicion: json["lat_punto_medicion"],
@@ -146,7 +142,6 @@ class ReadingDetailItem {
         "nombre": nombre,
         "direccion": direccion,
         "suscriptor_sec": suscriptorSec,
-        "vigencia": vigencia,
         "tipo_consumo": tipoConsumo,
         "nombre_tipo_consumo": nombreTipoConsumo,
         "lat_punto_medicion": latPuntoMedicion,

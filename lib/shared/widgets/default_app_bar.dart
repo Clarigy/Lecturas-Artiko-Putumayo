@@ -73,6 +73,8 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
             onSelected: (itemSelected) {
               if (itemSelected == PopUpMenuItemOption.PROFILE)
                 _goToProfilePage();
+              else if (itemSelected == PopUpMenuItemOption.LOGOUT)
+                _goToLoginPage();
             },
             itemBuilder: (BuildContext context) => popUpButtonItems,
             child: Row(
@@ -80,12 +82,12 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
                 Container(
                     margin: EdgeInsets.only(right: 8),
                     child: Text(_currentUser?.nombre ?? '')),
-                // CircleAvatar(
-                //   radius: 30,
-                //   backgroundColor: Colors.transparent,
-                //   backgroundImage: NetworkImage(_currentUser?.foto ??
-                //       'https://image.shutterstock.com/z/stock-vector-default-avatar-profile-icon-grey-photo-placeholder-518740741.jpg'),
-                // )
+                CircleAvatar(
+                  radius: 30,
+                  backgroundColor: Colors.transparent,
+                  backgroundImage: NetworkImage(
+                      'https://image.shutterstock.com/z/stock-vector-default-avatar-profile-icon-grey-photo-placeholder-518740741.jpg'),
+                )
               ],
             ),
           ),
@@ -96,5 +98,9 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
 
   void _goToProfilePage() {
     Navigator.pushNamed(context, AppRoutes.ProfileScreen);
+  }
+
+  void _goToLoginPage() {
+    Navigator.pushNamed(context, AppRoutes.LoginScreen);
   }
 }

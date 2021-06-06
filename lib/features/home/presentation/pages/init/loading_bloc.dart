@@ -10,7 +10,7 @@ class LoadingBloc {
 
   Future<void> loadAndSaveAllData(int lectorSec) async {
     try {
-      _loadAndSaveAllDataUseCase.call(lectorSec);
+      return await _loadAndSaveAllDataUseCase.call(lectorSec);
     } catch (e) {
       rethrow;
     }

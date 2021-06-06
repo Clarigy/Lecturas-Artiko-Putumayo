@@ -41,6 +41,12 @@ class _LoadingPageState extends State<LoadingPage> with WidgetsBindingObserver {
         body: FutureBuilder<bool>(
             future: _loadAndSaveAllData(),
             builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text(snapshot.error.toString()),
+                );
+              }
+
               return snapshot.hasData && snapshot.data == true
                   ? FutureBuilder(
                       future: checkGpsAndLocation(context),
@@ -92,7 +98,8 @@ class _LoadingPageState extends State<LoadingPage> with WidgetsBindingObserver {
       await bloc.loadAndSaveAllData(currentUser.lectorSec);
       return true;
     } on ServerException catch (error) {
-      final snackBar = SnackBar(content: Text(error.message!));
+      final snackBar =
+          SnackBar(content: Text(error.message ?? 'Error inesperado'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return false;
     }

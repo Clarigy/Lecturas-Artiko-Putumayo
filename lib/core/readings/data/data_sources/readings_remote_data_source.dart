@@ -14,12 +14,10 @@ class ReadingsRemoteDataSource {
     final _http = _httpImpl.instance();
 
     final _response = await _http.get(
-      '$routesService/$lectorSec',
+      '$routesService?lector_sec=$lectorSec',
     );
 
-    final response = RoutesResponse.fromJson(_response.data);
-
-    return response;
+    return RoutesResponse.fromJson(_response.data);
   }
 
   Future<ReadingDetailResponse> getReadingDetails(int lecturaRutaSec) async {
@@ -27,12 +25,10 @@ class ReadingsRemoteDataSource {
       final _http = _httpImpl.instance();
 
       final _response = await _http.get(
-        '$readingDetailService/$lecturaRutaSec',
+        '$readingDetailService?lectura_ruta_sec=$lecturaRutaSec',
       );
 
-      final response = ReadingDetailResponse.fromJson(_response.data);
-
-      return response;
+      return ReadingDetailResponse.fromJson(_response.data);
     } catch (e) {
       print(e);
       return ReadingDetailResponse(items: []);

@@ -9,4 +9,8 @@ abstract class ReadingRepositoryContract {
   Future<void> saveReadings(List<ReadingDetailItem> readings);
 
   Stream<List<ReadingDetailItem>?> getAllReadings();
+
+  Future<List<RoutesItem>?> getAllRoutes();
+
+  Future<void> saveRoutes(List<RoutesItem> routes);
 }
