@@ -6,6 +6,6 @@ abstract class RoutesDao {
   @Query('SELECT * FROM routes')
   Future<List<RoutesItem>?> getRoutes();
 
-  @insert
+  @Insert(onConflict: OnConflictStrategy.replace)
   Future<List<int>> insertAll(List<RoutesItem> routes);
 }

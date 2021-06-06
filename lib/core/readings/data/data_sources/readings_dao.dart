@@ -9,7 +9,7 @@ abstract class ReadingsDao {
   @Insert(onConflict: OnConflictStrategy.replace)
   Future<int> insertOne(ReadingDetailItem readings);
 
-  @insert
+  @Insert(onConflict: OnConflictStrategy.replace)
   Future<List<int>> insertAll(List<ReadingDetailItem> readings);
 
   @Update(onConflict: OnConflictStrategy.replace)

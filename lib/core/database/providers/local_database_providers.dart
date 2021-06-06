@@ -1,3 +1,4 @@
+import 'package:artiko/core/readings/data/data_sources/anomalies_dao.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
 import 'package:artiko/core/readings/data/data_sources/routes_dao.dart';
 import 'package:artiko/dependency_injector.dart';
@@ -9,7 +10,7 @@ import '../local_database.dart';
 
 Future<void> injectionDatabase() async {
   final db =
-      await $FloorAppDatabase.databaseBuilder('artiko_lectuas.db').build();
+  await $FloorAppDatabase.databaseBuilder('artiko_lectuas.db').build();
 
   sl.registerLazySingleton<FloorDatabase>(() => db);
 
@@ -20,4 +21,6 @@ Future<void> injectionDatabase() async {
   sl.registerLazySingleton<ReadingsDao>(() => db.readingDao);
 
   sl.registerLazySingleton<RoutesDao>(() => db.routesDao);
+
+  sl.registerLazySingleton<AnomaliesDao>(() => db.anomaliesDao);
 }

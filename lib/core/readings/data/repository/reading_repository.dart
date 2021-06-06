@@ -17,7 +17,7 @@ class ReadingRepository implements ReadingRepositoryContract {
   Future<RoutesResponse> getRoutes(int lectorSec) async {
     try {
       final routes = await _remoteDataSource.getRoutes(lectorSec);
-      saveRoutes(routes.items);
+      await saveRoutes(routes.items);
       return routes;
     } catch (_) {
       throw ServerException();
