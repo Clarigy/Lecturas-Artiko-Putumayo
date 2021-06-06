@@ -1,5 +1,5 @@
 class ProfileInputModel {
-  final String text;
+  final String? text;
   final String label;
   final bool allowCall;
 

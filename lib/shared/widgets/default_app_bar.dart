@@ -80,12 +80,12 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
                 Container(
                     margin: EdgeInsets.only(right: 8),
                     child: Text(_currentUser?.nombre ?? '')),
-                CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.transparent,
-                  backgroundImage: NetworkImage(_currentUser?.foto ??
-                      'https://image.shutterstock.com/z/stock-vector-default-avatar-profile-icon-grey-photo-placeholder-518740741.jpg'),
-                )
+                // CircleAvatar(
+                //   radius: 30,
+                //   backgroundColor: Colors.transparent,
+                //   backgroundImage: NetworkImage(_currentUser?.foto ??
+                //       'https://image.shutterstock.com/z/stock-vector-default-avatar-profile-icon-grey-photo-placeholder-518740741.jpg'),
+                // )
               ],
             ),
           ),

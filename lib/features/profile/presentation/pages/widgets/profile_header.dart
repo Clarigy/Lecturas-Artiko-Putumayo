@@ -44,11 +44,11 @@ class ProfileHeader extends StatelessWidget {
               margin: EdgeInsets.symmetric(vertical: screenHeight * .02),
               decoration: new BoxDecoration(
                 color: const Color(0xff7c94b6),
-                image: new DecorationImage(
-                  image: new NetworkImage(bloc.currentUser?.foto ??
-                      'https://image.shutterstock.com/z/stock-vector-default-avatar-profile-icon-grey-photo-placeholder-518740741.jpg'),
-                  fit: BoxFit.cover,
-                ),
+                // image: new DecorationImage(
+                //   image: new NetworkImage(bloc.currentUser?.foto ??
+                //       'https://image.shutterstock.com/z/stock-vector-default-avatar-profile-icon-grey-photo-placeholder-518740741.jpg'),
+                //   fit: BoxFit.cover,
+                // ),
                 borderRadius: new BorderRadius.all(new Radius.circular(50.0)),
                 border: new Border.all(
                   color: theme.primaryColor,

@@ -20,9 +20,10 @@ class LoginRepository implements LoginRepositoryContract {
 
     try {
       final _response = await _http.get(
-        '$_service/${loginRequest.email}/${loginRequest.password}',
+        '$_service/?usuario=${loginRequest.email}&password=${loginRequest.password}',
       );
-      final response = LoginResponse.fromJson(_response.data);
+
+      final response = LoginResponse.fromJson(_response.data["items"][0]);
       _saveCurrentUser(response);
       return response;
     } on DioError catch (e) {
