@@ -4,13 +4,13 @@ import 'package:artiko/features/home/data/models/reading_images_model.dart';
 import 'package:artiko/features/home/domain/repositories/readings_repository_contract.dart';
 
 class GetReadingImagesByReadingIdUseCase
-    extends UseCase<int, Stream<List<ReadingImagesModel>?>> {
+    extends UseCase<String, Stream<List<ReadingImagesModel>?>> {
   final ReadingImageRepositoryContract _repository;
 
   GetReadingImagesByReadingIdUseCase(this._repository);
 
   @override
-  Stream<List<ReadingImagesModel>?> call(int readingId) {
+  Stream<List<ReadingImagesModel>?> call(String readingId) {
     try {
       return _repository.getReadingImagesByReadingId(readingId);
     } on ServerException catch (e) {

@@ -1,3 +1,4 @@
+import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
 import 'package:artiko/dependency_injector.dart';
 import 'package:artiko/features/home/presentation/pages/activities_page/widgets/readings_card.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/reading_detail_bloc.dart';
@@ -11,12 +12,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ReadingDetailPage extends StatefulWidget {
-  ReadingDetailPage._();
+  final ReadingDetailItem readingDetailItem;
 
-  static Widget init() {
+  ReadingDetailPage._(this.readingDetailItem);
+
+  static Widget init(ReadingDetailItem readingDetailItem) {
     return ChangeNotifierProvider(
       create: (context) => sl<ReadingDetailBloc>(),
-      builder: (_, __) => ReadingDetailPage._(),
+      builder: (_, __) => ReadingDetailPage._(readingDetailItem),
     );
   }
 
@@ -47,7 +50,9 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
                 padding: EdgeInsets.all(screenWidth * .03),
                 child: Column(
                   children: [
-                    ReadingsCard(),
+                    ReadingsCard(
+                      item: widget.readingDetailItem,
+                    ),
                     MeterReading(),
                     DropDownInput(
                       label: 'Anomalía',
@@ -57,6 +62,7 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
                     ),
                     TakePictures(
                       margin: EdgeInsets.only(top: 24),
+                      readingId: widget.readingDetailItem.numeroMedidor,
                     ),
                     DropDownInput(
                       label: 'Observaciones',

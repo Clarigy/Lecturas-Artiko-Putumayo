@@ -3,13 +3,14 @@ import 'package:artiko/features/home/data/data_sources/local/reading_images_dao.
 import 'package:artiko/features/home/data/models/reading_images_model.dart';
 import 'package:artiko/features/home/domain/repositories/readings_repository_contract.dart';
 
-class ReadingRepository implements ReadingImageRepositoryContract {
+class ReadingsImageRepository implements ReadingImageRepositoryContract {
   final ReadingImagesDao _readingImagesDao;
 
-  ReadingRepository(this._readingImagesDao);
+  ReadingsImageRepository(this._readingImagesDao);
 
   @override
-  Stream<List<ReadingImagesModel>?> getReadingImagesByReadingId(int readingId) {
+  Stream<List<ReadingImagesModel>?> getReadingImagesByReadingId(
+      String readingId) {
     try {
       return _readingImagesDao.getReadingImagesByReadingId(readingId);
     } catch (_) {

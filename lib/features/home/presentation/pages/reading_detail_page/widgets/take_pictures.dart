@@ -11,8 +11,9 @@ import '../reading_detail_bloc.dart';
 
 class TakePictures extends StatefulWidget {
   final EdgeInsets? margin;
+  final String readingId;
 
-  const TakePictures({this.margin});
+  const TakePictures({this.margin, required this.readingId});
 
   @override
   _TakePicturesState createState() => _TakePicturesState();
@@ -37,8 +38,12 @@ class _TakePicturesState extends State<TakePictures> {
                     fontWeight: FontWeight.bold, color: theme.primaryColor)),
           ),
           StreamBuilder<List<ReadingImagesModel>?>(
-              stream: bloc.getReadingImagesByReadingId(1),
+              stream: bloc.getReadingImagesByReadingId(widget.readingId),
               builder: (context, snapshot) {
+                if (!snapshot.hasData || snapshot.data == null) {
+                  return Offstage();
+                }
+
                 return Align(
                   alignment: AlignmentDirectional.centerStart,
                   child: SingleChildScrollView(
@@ -50,9 +55,9 @@ class _TakePicturesState extends State<TakePictures> {
                         _buildCaptureImage(snapshot),
                         if (snapshot.hasData)
                           ...snapshot.data
-                                  ?.map((readingImagesModel) =>
-                                      _buildImageView(readingImagesModel))
-                                  .toList() ??
+                              ?.map((readingImagesModel) =>
+                              _buildImageView(readingImagesModel))
+                              .toList() ??
                               [Offstage()]
                       ],
                     ),
@@ -122,7 +127,8 @@ class _TakePicturesState extends State<TakePictures> {
     final image = await _captureImageAndReadAsBytes();
     if (image == null) return;
 
-    final readingImageModel = ReadingImagesModel(image: image, readingId: 1);
+    final readingImageModel =
+        ReadingImagesModel(image: image, readingId: widget.readingId);
 
     await bloc.insertReadingImage(readingImageModel);
   }

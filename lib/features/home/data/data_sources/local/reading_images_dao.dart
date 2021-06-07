@@ -4,7 +4,8 @@ import 'package:floor/floor.dart';
 @dao
 abstract class ReadingImagesDao {
   @Query('SELECT * FROM reading_images where readingId = :readingId')
-  Stream<List<ReadingImagesModel>?> getReadingImagesByReadingId(int readingId);
+  Stream<List<ReadingImagesModel>?> getReadingImagesByReadingId(
+      String readingId);
 
   @Insert(onConflict: OnConflictStrategy.replace)
   Future<int> insert(ReadingImagesModel readingImagesModel);

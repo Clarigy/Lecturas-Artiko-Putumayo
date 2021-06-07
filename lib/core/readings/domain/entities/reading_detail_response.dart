@@ -50,7 +50,7 @@ class ReadingDetailItem {
     required this.claseServicio,
     required this.fechaUltimaLectura,
     this.indRangoCritica,
-    this.indicadorSuspension,
+    required this.indicadorSuspension,
     required this.nombre,
     required this.direccion,
     required this.suscriptorSec,
@@ -80,7 +80,7 @@ class ReadingDetailItem {
   String claseServicio;
   String fechaUltimaLectura;
   String? indRangoCritica;
-  String? indicadorSuspension;
+  bool indicadorSuspension;
   String nombre;
   String direccion;
   int suscriptorSec;
@@ -109,7 +109,8 @@ class ReadingDetailItem {
         claseServicio: json["clase_servicio"],
         fechaUltimaLectura: json["fecha_ultima_lectura"],
         indRangoCritica: json["ind_rango_critica"],
-        indicadorSuspension: json["indicador_suspension"],
+        indicadorSuspension: json["indicador_suspension"] != null &&
+            json["indicador_suspension"] == "S",
         nombre: json["nombre"],
         direccion: json["direccion"],
         suscriptorSec: json["suscriptor_sec"],

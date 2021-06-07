@@ -7,10 +7,9 @@ class ReadingImagesModel {
   @PrimaryKey(autoGenerate: true)
   final int? id;
 
-  final int readingId;
+  final String readingId;
 
   Uint8List image;
 
-  ReadingImagesModel(
-      {required this.readingId, required this.image, this.id});
+  ReadingImagesModel({required this.readingId, required this.image, this.id});
 }
