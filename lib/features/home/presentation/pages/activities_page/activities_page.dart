@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 class ActivitiesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<ActivitiesBloc>();
+    final bloc = context.watch<ActivitiesBloc>();
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
@@ -34,6 +34,8 @@ class ActivitiesPage extends StatelessWidget {
                 }
 
                 if (snapshot.hasData) {
+                  if (bloc.readings == null) bloc.readings = snapshot.data;
+
                   return Expanded(
                     child: ListView.builder(
                         itemCount: snapshot.data?.length ?? 0,

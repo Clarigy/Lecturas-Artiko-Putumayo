@@ -7,11 +7,37 @@ class ActivitiesBloc extends ChangeNotifier {
 
   final GetReadingsUseCase _getReadingsUseCase;
 
+  List<ReadingDetailItem>? readings;
+
+  final TextEditingController filterTextController = TextEditingController();
+
   Stream<List<ReadingDetailItem>?> getReadings() {
     try {
-      return _getReadingsUseCase(null);
+      if (readings == null || readings!.isEmpty)
+        return _getReadingsUseCase(null);
+
+      return readings != null && filterTextController.text.isNotEmpty
+          ? getFilterReadings(filterTextController.text)
+          : getAllMemoryReadings();
     } catch (error) {
       rethrow;
     }
+  }
+
+  Stream<List<ReadingDetailItem>?> getFilterReadings(String filter) async* {
+    yield readings!
+        .where((value) =>
+            value.numeroMedidor.toLowerCase().contains(filter.toLowerCase()) ||
+            value.nombre.toLowerCase().contains(filter.toLowerCase()) ||
+            value.direccion.toLowerCase().contains(filter.toLowerCase()))
+        .toList();
+  }
+
+  Stream<List<ReadingDetailItem>?> getAllMemoryReadings() async* {
+    yield readings;
+  }
+
+  void doFilter() {
+    notifyListeners();
   }
 }
