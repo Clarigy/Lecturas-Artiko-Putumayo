@@ -24,6 +24,7 @@ class LoginRepository implements LoginRepositoryContract {
       );
 
       final response = LoginResponse.fromJson(_response.data["items"][0]);
+
       _saveCurrentUser(response);
       return response;
     } on DioError catch (e) {
