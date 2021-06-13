@@ -85,7 +85,7 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
                 CircleAvatar(
                   radius: 30,
                   backgroundColor: Colors.transparent,
-                  backgroundImage: NetworkImage('${_currentUser?.href}/foto'),
+                  // backgroundImage: NetworkImage('${_currentUser?.href}/foto'),
                 )
               ],
             ),

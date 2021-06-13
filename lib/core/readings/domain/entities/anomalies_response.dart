@@ -27,6 +27,8 @@ class AnomaliesResponse {
 class AnomalyItem {
   AnomalyItem({
     required this.anomaliaSec,
+    required this.clase,
+    required this.nombreClase,
     required this.anomalia,
     required this.nombre,
     required this.fotografia,
@@ -39,32 +41,31 @@ class AnomalyItem {
     required this.imprimeFactura,
     required this.revisionCritica,
     required this.fallida,
-    required this.cierre,
     required this.solucionCritica,
-    required this.claseAnomalia,
   });
 
   @PrimaryKey()
-  int anomaliaSec;
-
-  String anomalia;
-  String nombre;
-  String observacion;
-  bool fotografia;
-  bool lectura;
-  bool terminal;
-  bool telemedida;
-  bool detectable;
-  bool promediable;
-  bool imprimeFactura;
-  bool revisionCritica;
-  bool fallida;
-  bool cierre;
-  String solucionCritica;
-  String claseAnomalia;
+  final int anomaliaSec;
+  final String clase;
+  final String nombreClase;
+  final String anomalia;
+  final String nombre;
+  final String? observacion;
+  final bool fotografia;
+  final bool lectura;
+  final bool terminal;
+  final bool telemedida;
+  final bool detectable;
+  final bool promediable;
+  final bool imprimeFactura;
+  final bool revisionCritica;
+  final bool fallida;
+  final String? solucionCritica;
 
   factory AnomalyItem.fromJson(Map<String, dynamic> json) => AnomalyItem(
         anomaliaSec: json["anomalia_sec"],
+        clase: json["clase"],
+        nombreClase: json["nombre_clase"],
         anomalia: json["anomalia"],
         nombre: json["nombre"],
         observacion: json["observacion"],
@@ -77,13 +78,13 @@ class AnomalyItem {
         imprimeFactura: json["imprime_factura"] == 'S',
         revisionCritica: json["revision_critica"] == 'S',
         fallida: json["fallida"] == 'S',
-        cierre: json["cierre"] == 'S',
         solucionCritica: json["solucion_critica"],
-        claseAnomalia: json["clase_anomalia"],
       );
 
   Map<String, dynamic> toJson() => {
         "anomalia_sec": anomaliaSec,
+        "clase": clase,
+        "nombre_clase": nombreClase,
         "anomalia": anomalia,
         "nombre": nombre,
         "fotografia": fotografia,
@@ -96,8 +97,6 @@ class AnomalyItem {
         "imprime_factura": imprimeFactura,
         "revision_critica": revisionCritica,
         "fallida": fallida,
-        "cierre": cierre,
         "solucion_critica": solucionCritica,
-        "clase_anomalia": claseAnomalia,
       };
 }

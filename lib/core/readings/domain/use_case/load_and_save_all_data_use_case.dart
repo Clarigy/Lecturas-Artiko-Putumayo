@@ -36,6 +36,6 @@ class LoadAndSaveAllDataUseCase implements UseCase<int, Future<void>> {
   }
 
   Future<void> _loadAndSaveAnomalies() async {
-    await _anomaliesRepositoryContract.getAnomalies();
+    await _anomaliesRepositoryContract.loadAndSaveAnomalies();
   }
 }
