@@ -34,12 +34,22 @@ class ReadingDetailBloc extends ChangeNotifier {
 
   int get anomaliaSec => _anomaliaSec;
 
-  set anomaliaSec(int value) {
-    _anomaliaSec = value;
+  setAnomaliaSec(int anomaliaSecValue, ClaseAnomalia claseAnomalia) {
+    _anomaliaSec = anomaliaSecValue;
+    _claseAnomalia = claseAnomalia;
     notifyListeners();
   }
 
-  late ClaseAnomalia claseAnomalia;
+  late ClaseAnomalia _claseAnomalia;
+
+  ClaseAnomalia get claseAnomalia => _claseAnomalia;
+
+  set claseAnomalia(ClaseAnomalia value) {
+    _claseAnomalia = value;
+    notifyListeners();
+  }
+
+  setClaseAnomaliaSinRefresh(ClaseAnomalia value) => _claseAnomalia = value;
 
   Future<bool> loadInitInfo() async {
     try {
@@ -56,7 +66,7 @@ class ReadingDetailBloc extends ChangeNotifier {
   Future<void> _loadAnomalias() async {
     anomalias = await _getAnomaliesUseCase(null);
     _anomaliaSec = anomalias[0].anomaliaSec;
-    claseAnomalia = anomalias[0].claseAnomalia[0];
+    _claseAnomalia = anomalias[0].claseAnomalia[0];
   }
 
   Stream<List<ReadingImagesModel>?> getReadingImagesByReadingId(

@@ -32,6 +32,12 @@ class ClaseAnomalia {
     required this.fotografia,
   }) : this.observaciones = [];
 
+  ClaseAnomalia.otro()
+      : this.nombre = 'Otro',
+        this.observaciones = [],
+        this.lectura = true,
+        this.fotografia = true;
+
   final String nombre;
   final bool lectura;
   final bool fotografia;

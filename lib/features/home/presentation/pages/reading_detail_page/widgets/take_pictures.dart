@@ -4,10 +4,11 @@ import 'package:artiko/features/home/data/models/reading_images_model.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
 
 import '../reading_detail_bloc.dart';
+import '../reading_detail_page.dart';
 
 class TakePictures extends StatefulWidget {
   final EdgeInsets? margin;
@@ -22,7 +23,7 @@ class TakePictures extends StatefulWidget {
 class _TakePicturesState extends State<TakePictures> {
   @override
   Widget build(BuildContext context) {
-    final bloc = Provider.of<ReadingDetailBloc>(context, listen: false);
+    final bloc = context.read(readingDetailBlocProvider);
 
     final theme = Theme.of(context);
 
@@ -55,9 +56,9 @@ class _TakePicturesState extends State<TakePictures> {
                         _buildCaptureImage(snapshot),
                         if (snapshot.hasData)
                           ...snapshot.data
-                              ?.map((readingImagesModel) =>
-                              _buildImageView(readingImagesModel))
-                              .toList() ??
+                                  ?.map((readingImagesModel) =>
+                                      _buildImageView(readingImagesModel))
+                                  .toList() ??
                               [Offstage()]
                       ],
                     ),
@@ -122,7 +123,7 @@ class _TakePicturesState extends State<TakePictures> {
   }
 
   void _onTapCaptureImage() async {
-    final bloc = Provider.of<ReadingDetailBloc>(context, listen: false);
+    final bloc = context.read(readingDetailBlocProvider);
 
     final image = await _captureImageAndReadAsBytes();
     if (image == null) return;
@@ -146,7 +147,8 @@ class _TakePicturesState extends State<TakePictures> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    final bloc = Provider.of<ReadingDetailBloc>(context, listen: false);
+    final bloc = context.read(readingDetailBlocProvider);
+
     final theme = _getTheme();
 
     return Stack(
