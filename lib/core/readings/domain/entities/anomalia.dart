@@ -36,4 +36,14 @@ class ClaseAnomalia {
   final bool lectura;
   final bool fotografia;
   final List<String> observaciones;
+
+  bool operator ==(dynamic other) =>
+      other != null &&
+      other is ClaseAnomalia &&
+      this.nombre == other.nombre &&
+      this.lectura == other.lectura &&
+      this.fotografia == other.fotografia;
+
+  @override
+  int get hashCode => super.hashCode;
 }

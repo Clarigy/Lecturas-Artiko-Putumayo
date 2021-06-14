@@ -4,6 +4,7 @@ import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_remote_data_source.dart';
 import 'package:artiko/core/readings/data/repository/anomalies_repository.dart';
 import 'package:artiko/core/readings/data/repository/reading_repository.dart';
+import 'package:artiko/core/readings/domain/use_case/get_anomalies_use_case.dart';
 import 'package:artiko/core/readings/domain/use_case/load_and_save_all_data_use_case.dart';
 import 'package:artiko/dependency_injector.dart';
 
@@ -30,4 +31,7 @@ Future<void> setUpReadingsProviders() async {
   sl.registerLazySingleton<LoadAndSaveAllDataUseCase>(() =>
       LoadAndSaveAllDataUseCase(
           sl<ReadingRepository>(), sl<AnomaliesRepository>()));
+
+  sl.registerLazySingleton<GetAnomaliesUseCase>(
+      () => GetAnomaliesUseCase(sl<AnomaliesRepository>()));
 }
