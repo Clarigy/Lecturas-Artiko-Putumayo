@@ -12,31 +12,34 @@ import 'package:artiko/features/home/presentation/pages/reading_detail_page/widg
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/widgets/meter_reading.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/widgets/take_pictures.dart';
 import 'package:artiko/shared/routes/app_routes.dart';
+import 'package:artiko/shared/routes/route_args_keys.dart';
 import 'package:artiko/shared/widgets/default_app_bar.dart';
 import 'package:artiko/shared/widgets/main_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final readingDetailBlocProvider =
-    ChangeNotifierProvider.autoDispose((ref) => ReadingDetailBloc(
-          sl<GetReadingImagesByReadingIdUseCase>(),
-          sl<InsertReadingImages>(),
-          sl<UpdateReadingImages>(),
-          sl<DeleteReadingImages>(),
-          sl<GetAnomaliesUseCase>(),
-        ));
+final readingDetailBlocProvider = ChangeNotifierProvider.autoDispose((ref) {
+  ref.onDispose(() {
+    print('Dispose');
+  });
+  return ReadingDetailBloc(
+    sl<GetReadingImagesByReadingIdUseCase>(),
+    sl<InsertReadingImages>(),
+    sl<UpdateReadingImages>(),
+    sl<DeleteReadingImages>(),
+    sl<GetAnomaliesUseCase>(),
+  );
+});
 
 class ReadingDetailPage extends StatefulWidget {
   final ReadingDetailItem readingDetailItem;
+  final List<ReadingDetailItem> readings;
 
-  ReadingDetailPage._(this.readingDetailItem);
+  ReadingDetailPage._(this.readingDetailItem, this.readings);
 
-  static Widget init(ReadingDetailItem readingDetailItem) {
-    // return ChangeNotifierProvider(
-    //   create: (context) => sl<ReadingDetailBloc>(),
-    //   builder: (_, __) => ReadingDetailPage._(readingDetailItem),
-    // );
-    return ReadingDetailPage._(readingDetailItem);
+  static Widget init(
+      ReadingDetailItem readingDetailItem, List<ReadingDetailItem> readings) {
+    return ReadingDetailPage._(readingDetailItem, readings);
   }
 
   @override
@@ -47,6 +50,11 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
   @override
   void initState() {
     WidgetsBinding.instance!.addPostFrameCallback((_) => afterLayout());
+
+    context.read<ReadingDetailBloc>(readingDetailBlocProvider)
+      ..readingDetailItem = widget.readingDetailItem
+      ..readings = widget.readings;
+
     super.initState();
   }
 
@@ -136,9 +144,10 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
   }
 }
 
-class _NavigationButtons extends StatelessWidget {
+class _NavigationButtons extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ScopedReader watch) {
+    final bloc = watch(readingDetailBlocProvider);
     return Padding(
       padding: EdgeInsets.only(
         left: 8.0,
@@ -149,18 +158,51 @@ class _NavigationButtons extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           InkWell(
-            child: Icon(Icons.arrow_back_ios),
-          ),
-          MainButton(
-              text: 'Agregar nuevo medidor',
+              child: Icon(Icons.arrow_back_ios),
               onTap: () {
-                Navigator.pushNamed(context, AppRoutes.CreateMeasure);
+                final index = bloc.readings.indexOf(bloc.readingDetailItem);
+                if (index == -1 || index == 0) return;
+                Navigator.pushReplacementNamed(
+                    context, AppRoutes.ReadingDetailScreen, arguments: {
+                  READING_DETAIL: bloc.readings[index - 1],
+                  READINGS: bloc.readings
+                });
               }),
+          SizedBox(width: 8),
+          Flexible(
+            flex: 1,
+            child: MainButton(
+                text: 'Nuevo medidor',
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.CreateMeasure);
+                }),
+          ),
+          SizedBox(
+            width: 20,
+          ),
+          Flexible(
+            flex: 1,
+            child: MainButton(text: 'Guardar', onTap: () {}),
+          ),
+          SizedBox(width: 12),
           InkWell(
             child: Icon(Icons.arrow_forward_ios),
+            onTap: () {
+              _navigateToNext(bloc, context);
+            },
           )
         ],
       ),
     );
+  }
+
+  void _navigateToNext(ReadingDetailBloc bloc, BuildContext context) {
+    final index = bloc.readings.indexOf(bloc.readingDetailItem);
+    if (index == -1 || index == bloc.readings.length + 1) return;
+    Navigator.pushReplacementNamed(context, AppRoutes.ReadingDetailScreen,
+        arguments: {
+          READING_DETAIL: bloc.readings[index + 1],
+          READINGS: bloc.readings
+        });
   }
 }

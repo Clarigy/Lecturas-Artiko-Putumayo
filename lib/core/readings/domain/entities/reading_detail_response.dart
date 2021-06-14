@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+import 'package:artiko/core/readings/domain/entities/reading_request.dart';
 import 'package:floor/floor.dart';
 
 ReadingDetailResponse readingDetailResponseFromJson(String str) =>
@@ -90,6 +91,9 @@ class ReadingDetailItem {
   String? longPuntoMedicion;
   int detalleLecturaRutaSec;
 
+  @ignore
+  late ReadingRequest readingRequest;
+
   factory ReadingDetailItem.fromJson(Map<String, dynamic> json) =>
       ReadingDetailItem(
         orden: json["orden"],
@@ -149,4 +153,32 @@ class ReadingDetailItem {
         "long_punto_medicion": longPuntoMedicion,
         "detalle_lectura_ruta_sec": detalleLecturaRutaSec,
       };
+
+  ReadingDetailItem copyWith(ReadingRequest readingRequest) {
+    return ReadingDetailItem(
+        orden: orden,
+        secuencia: secuencia,
+        numeroMedidor: numeroMedidor,
+        tipoMedidor: tipoMedidor,
+        marcaMedidor: marcaMedidor,
+        nroEnteros: nroEnteros,
+        nroDecimales: nroDecimales,
+        constante: constante,
+        lecturaMinima: lecturaMinima,
+        lecturaMaxima: lecturaMaxima,
+        falsaMinima: falsaMinima,
+        falsaMaxima: falsaMaxima,
+        factor: factor,
+        lecturaAnterior: lecturaAnterior,
+        claseServicio: claseServicio,
+        fechaUltimaLectura: fechaUltimaLectura,
+        indicadorSuspension: indicadorSuspension,
+        nombre: nombre,
+        direccion: direccion,
+        suscriptorSec: suscriptorSec,
+        tipoConsumo: tipoConsumo,
+        nombreTipoConsumo: nombreTipoConsumo,
+        detalleLecturaRutaSec: detalleLecturaRutaSec)
+      ..readingRequest = readingRequest;
+  }
 }

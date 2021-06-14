@@ -21,7 +21,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => MainScreen());
       case AppRoutes.ReadingDetailScreen:
         return MaterialPageRoute(
-            builder: (_) => ReadingDetailPage.init(args![READING_DETAIL]));
+            builder: (_) =>
+                ReadingDetailPage.init(args![READING_DETAIL], args[READINGS]));
       case AppRoutes.LoadingScreen:
         return MaterialPageRoute(builder: (_) => LoadingPage());
       case AppRoutes.AccessGPSScreen:

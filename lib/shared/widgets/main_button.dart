@@ -15,13 +15,13 @@ class MainButton extends StatelessWidget {
       width: screenSize.width * .8,
       child: ElevatedButton(
           onPressed: onTap,
-          child: Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Text(
-              text,
-              style: theme.textTheme.headline6
-                  ?.copyWith(color: theme.scaffoldBackgroundColor),
-            ),
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.headline6?.copyWith(
+                color: theme.scaffoldBackgroundColor,
+                fontSize: 16,
+                fontWeight: FontWeight.bold),
           )),
     );
   }

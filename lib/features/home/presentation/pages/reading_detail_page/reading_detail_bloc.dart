@@ -1,4 +1,5 @@
 import 'package:artiko/core/readings/domain/entities/anomalia.dart';
+import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
 import 'package:artiko/core/readings/domain/use_case/get_anomalies_use_case.dart';
 import 'package:artiko/features/home/data/models/reading_images_model.dart';
 import 'package:artiko/features/home/domain/use_cases/delete_reading_images.dart';
@@ -50,6 +51,9 @@ class ReadingDetailBloc extends ChangeNotifier {
   }
 
   setClaseAnomaliaSinRefresh(ClaseAnomalia value) => _claseAnomalia = value;
+
+  late ReadingDetailItem readingDetailItem;
+  late List<ReadingDetailItem> readings;
 
   Future<bool> loadInitInfo() async {
     try {

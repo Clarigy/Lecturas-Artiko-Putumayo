@@ -44,7 +44,8 @@ class ActivitiesPage extends StatelessWidget {
                               onTap: () => Navigator.pushNamed(
                                   context, AppRoutes.ReadingDetailScreen,
                                   arguments: {
-                                    READING_DETAIL: snapshot.data![i]
+                                    READING_DETAIL: snapshot.data![i],
+                                    READINGS: snapshot.data
                                   }),
                             )),
                   );
