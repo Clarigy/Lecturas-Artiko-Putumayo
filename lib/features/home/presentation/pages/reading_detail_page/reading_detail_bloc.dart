@@ -21,6 +21,7 @@ class ReadingDetailBloc extends ChangeNotifier {
       this._deleteReadingImages,
       this._getAnomaliesUseCase);
 
+  //Casos de uso
   final GetReadingImagesByReadingIdUseCase _getReadingImagesByReadingIdUseCase;
   final InsertReadingImages _insertReadingImages;
   final UpdateReadingImages _updateReadingImages;
@@ -28,8 +29,25 @@ class ReadingDetailBloc extends ChangeNotifier {
 
   final GetAnomaliesUseCase _getAnomaliesUseCase;
 
+  //State
   ReadingDetailState readingDetailState = ReadingDetailState.loading;
 
+  final readingIntegers = TextEditingController();
+  final readingDecimals = TextEditingController();
+
+  bool _verifiedReading = false;
+
+  bool get verifiedReading => _verifiedReading;
+
+  set verifiedReading(bool value) {
+    _verifiedReading = value;
+    notifyListeners();
+  }
+
+  bool? requiredAnomaliaByMeterReading;
+  bool? requiredPhotoByMeterReading;
+
+  //Drops
   List<Anomalia> anomalias = [];
   late int _anomaliaSec;
 

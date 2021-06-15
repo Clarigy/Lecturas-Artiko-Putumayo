@@ -92,7 +92,7 @@ class ReadingDetailItem {
   int detalleLecturaRutaSec;
 
   @ignore
-  late ReadingRequest readingRequest;
+  ReadingRequest readingRequest = ReadingRequest();
 
   factory ReadingDetailItem.fromJson(Map<String, dynamic> json) =>
       ReadingDetailItem(
@@ -154,7 +154,7 @@ class ReadingDetailItem {
         "detalle_lectura_ruta_sec": detalleLecturaRutaSec,
       };
 
-  ReadingDetailItem copyWith(ReadingRequest readingRequest) {
+  ReadingDetailItem copyWith({ReadingRequest? readingRequest}) {
     return ReadingDetailItem(
         orden: orden,
         secuencia: secuencia,
@@ -179,6 +179,6 @@ class ReadingDetailItem {
         tipoConsumo: tipoConsumo,
         nombreTipoConsumo: nombreTipoConsumo,
         detalleLecturaRutaSec: detalleLecturaRutaSec)
-      ..readingRequest = readingRequest;
+      ..readingRequest = readingRequest ?? this.readingRequest;
   }
 }

@@ -75,8 +75,6 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    final theme = Theme.of(context);
-
     return Consumer(
       builder: (BuildContext context, watch, Widget? child) {
         final bloc = watch(readingDetailBlocProvider);
@@ -97,34 +95,7 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
                                 item: widget.readingDetailItem,
                               ),
                               MeterReading(),
-                              Align(
-                                  alignment: AlignmentDirectional.bottomStart,
-                                  child: Text('Anomalia',
-                                      style: theme.textTheme.bodyText2!
-                                          .copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: theme.primaryColor))),
-                              Row(
-                                children: [
-                                  Flexible(
-                                    flex: 1,
-                                    child: DropDownAnomalias(),
-                                  ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  Flexible(
-                                    flex: 2,
-                                    child: DropDownClaseAnomalia(),
-                                  ),
-                                ],
-                              ),
-                              if (bloc.claseAnomalia.fotografia)
-                                TakePictures(
-                                  margin: EdgeInsets.only(top: 24),
-                                  readingId:
-                                      widget.readingDetailItem.numeroMedidor,
-                                ),
+                              ...buildDependsWidgetMeter(context, bloc),
                               // DropDownInput(
                               //   label: 'Observaciones',
                               // ),
@@ -141,6 +112,43 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
               );
       },
     );
+  }
+
+  List<Widget> buildDependsWidgetMeter(
+      BuildContext context, ReadingDetailBloc bloc) {
+    final theme = Theme.of(context);
+
+    return !bloc.verifiedReading
+        ? []
+        : [
+            Align(
+                alignment: AlignmentDirectional.bottomStart,
+                child: Text('Anomalia',
+                    style: theme.textTheme.bodyText2!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.primaryColor))),
+            Row(
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: DropDownAnomalias(),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                Flexible(
+                  flex: 2,
+                  child: DropDownClaseAnomalia(),
+                ),
+              ],
+            ),
+            if (bloc.requiredPhotoByMeterReading ??
+                false || bloc.claseAnomalia.fotografia)
+              TakePictures(
+                margin: EdgeInsets.only(top: 24),
+                readingId: widget.readingDetailItem.numeroMedidor,
+              ),
+          ];
   }
 }
 

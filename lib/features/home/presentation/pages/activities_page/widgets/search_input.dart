@@ -19,7 +19,10 @@ class SearchInput extends StatelessWidget {
         hintText: LABEL_SEARCH_MEASURE,
         suffixIcon: IconButton(
           icon: Icon(Icons.clear),
-          onPressed: () {},
+          onPressed: () {
+            bloc.filterTextController.clear();
+            bloc.doFilter();
+          },
         ),
       ),
     );

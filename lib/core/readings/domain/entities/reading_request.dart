@@ -1,31 +1,44 @@
 class ReadingRequest {
-  ReadingRequest({
-    required this.detalleLecturaRutaSec,
-    required this.lectura,
-    required this.lecturaIntento1,
-    required this.lecturaIntento2,
-    required this.anomaliaSec,
-    required this.observacionSec,
-    required this.observacionAnomalia,
-    required this.observacionLectura,
-    required this.origenLectura,
-    required this.latLecturaTomada,
-    required this.longLecturaTomada,
-    required this.tipo,
-    required this.fotos,
-  });
+  late int detalleLecturaRutaSec;
+  double? lectura;
+  double? lecturaIntento1;
+  double? lecturaIntento2;
+  late int anomaliaSec;
+  late int observacionSec;
+  late String observacionAnomalia;
+  late String observacionLectura;
+  late String origenLectura;
+  late String latLecturaTomada;
+  late String longLecturaTomada;
+  late String tipo;
+  late List<String> fotos;
 
-  final int detalleLecturaRutaSec;
-  final int lectura;
-  final int lecturaIntento1;
-  final int lecturaIntento2;
-  final int anomaliaSec;
-  final int observacionSec;
-  final String observacionAnomalia;
-  final String observacionLectura;
-  final String origenLectura;
-  final String latLecturaTomada;
-  final String longLecturaTomada;
-  final String tipo;
-  final List<String> fotos;
+  ReadingRequest();
+
+  ReadingRequest copyWith({
+    int? detalleLecturaRutaSec,
+    double? lectura,
+    double? lecturaIntento1,
+    double? lecturaIntento2,
+    int? anomaliaSec,
+    int? observacionSec,
+    String? observacionAnomalia,
+    String? observacionLectura,
+    String? origenLectura,
+    String? latLecturaTomada,
+    String? longLecturaTomada,
+    String? tipo,
+    List<String>? fotos,
+  }) =>
+      ReadingRequest.all(
+        lectura: lectura ?? this.lectura,
+        lecturaIntento1: lecturaIntento1 ?? this.lecturaIntento1,
+        lecturaIntento2: lecturaIntento2 ?? this.lecturaIntento2,
+      );
+
+  ReadingRequest.all({
+    this.lectura,
+    this.lecturaIntento1,
+    this.lecturaIntento2,
+  });
 }
