@@ -93,37 +93,150 @@ class _MeterReadingState extends State<MeterReading> {
 
     request.lectura = getReadingValue(bloc);
 
-    if (request.lectura != null &&
-        request.lectura! <= double.parse(detailItem.lecturaAnterior) &&
-        request.lecturaIntento2 == null) {
-      if (request.lecturaIntento1 != null) {
-        clearInputs(bloc);
-        request
-          ..lecturaIntento2 = request.lectura
-          ..lectura = null;
-        showSnackbar(context,
-            'Por favor, confirme lectura. Lectura ingresada es menor o igual que la lectura anterior');
-      } else {
-        clearInputs(bloc);
-        request
-          ..lecturaIntento1 = request.lectura
-          ..lectura = null;
-        showSnackbar(context, 'Por favor, confirme lectura');
-      }
+    if (_esAnomalidaErrada(request)) {
+      _lecturaPosibleAnomaliaErrada(request, bloc, context);
     } else if (request.lecturaIntento1 != null &&
         request.lecturaIntento1! <= double.parse(detailItem.lecturaAnterior) &&
         request.lecturaIntento2 != null &&
         request.lecturaIntento2! <= double.parse(detailItem.lecturaAnterior) &&
         request.lectura != null) {
       if (request.lectura! > double.parse(detailItem.lecturaAnterior)) {
-        //TODO PREGUNTAR 1.E
         bloc.verifiedReading = true;
       } else if (request.lectura! <= double.parse(detailItem.lecturaAnterior)) {
         bloc.requiredAnomaliaByMeterReading = true;
         bloc.requiredPhotoByMeterReading = true;
         bloc.verifiedReading = true;
       }
+    } else if (_esLecturaNormal(request)) {
+      _lecturaNormal(bloc);
+    } else if (_esBandaConAnomaliaObligatoria(request)) {
+      _lecturaBandaAnomaliaObligatoria(request, context, bloc);
+    } else if (request.lectura! > detailItem.falsaMaxima) {
+      _lecturaBandaConsumoExcedida(request, bloc, context);
+    } else {
+      bloc.verifiedReading = true;
     }
+  }
+
+  void _lecturaBandaConsumoExcedida(
+      ReadingRequest request, ReadingDetailBloc bloc, BuildContext context) {
+    if (request.lecturaIntento1 != null) {
+      _lecturaBandaConsumoExcedidadSegundoIntento(bloc, request, context);
+    } else if (request.lecturaIntento2 != null) {
+      _lecturaBandaConsumoExcedidadTercerIntento(bloc);
+    } else {
+      _lecturaPosibleAnomaliaErradaPrimerIntento(bloc, request, context);
+    }
+  }
+
+  void _lecturaBandaConsumoExcedidadTercerIntento(ReadingDetailBloc bloc) {
+    bloc.requiredAnomaliaByMeterReading = true;
+    bloc.requiredPhotoByMeterReading = true;
+
+    final anomaliaSec = bloc.anomalias
+        .firstWhere((element) => element.anomalia == 'AL5_2')
+        .anomaliaSec;
+    bloc.setAnomaliaSec(
+        anomaliaSec,
+        bloc.anomalias
+            .firstWhere((element) => element.anomaliaSec == anomaliaSec)
+            .claseAnomalia
+            .first);
+
+    bloc.verifiedReading = true;
+  }
+
+  void _lecturaBandaConsumoExcedidadSegundoIntento(
+      ReadingDetailBloc bloc, ReadingRequest request, BuildContext context) {
+    clearInputs(bloc);
+    request
+      ..lecturaIntento2 = request.lectura
+      ..lectura = null;
+    showSnackbar(
+        context, 'Por favor, confirme Lectura. Lectura ingresada es excedida');
+  }
+
+  void _lecturaPosibleAnomaliaErrada(
+      ReadingRequest request, ReadingDetailBloc bloc, BuildContext context) {
+    if (request.lecturaIntento1 != null) {
+      _lecturaPosibleAnomaliaErradaSegundoIntento(bloc, request, context);
+    } else {
+      _lecturaPosibleAnomaliaErradaPrimerIntento(bloc, request, context);
+    }
+  }
+
+  void _lecturaBandaAnomaliaObligatoria(
+      ReadingRequest request, BuildContext context, ReadingDetailBloc bloc) {
+    if (request.lecturaIntento1 != null) {
+      _lecturaBandaAnomaliaObligatoriaIntento2(request, context);
+    } else {
+      _lecturaPosibleAnomaliaErradaPrimerIntento(bloc, request, context);
+    }
+  }
+
+  void _lecturaNormal(ReadingDetailBloc bloc) {
+    bloc.requiredAnomaliaByMeterReading = false;
+    bloc.verifiedReading = true;
+  }
+
+  bool _esLecturaNormal(ReadingRequest request) {
+    return request.lectura! >= detailItem.lecturaMinima &&
+        request.lectura! <= detailItem.lecturaMaxima;
+  }
+
+  void _lecturaBandaAnomaliaObligatoriaIntento2(
+      ReadingRequest request, BuildContext context) {
+    final bloc = context.read(readingDetailBlocProvider);
+    final anomaliaSec = bloc.anomalias
+        .firstWhere((element) => element.anomalia == 'AL5_1')
+        .anomaliaSec;
+
+    request..lecturaIntento2 = request.lectura;
+    showSnackbar(
+      context,
+      'Por favor ingrese anomalía, consumo fuera de rango',
+    );
+    bloc.setAnomaliaSec(
+        anomaliaSec,
+        bloc.anomalias
+            .firstWhere((element) => element.anomaliaSec == anomaliaSec)
+            .claseAnomalia
+            .first);
+
+    bloc.verifiedReading = true;
+  }
+
+  bool _esBandaConAnomaliaObligatoria(ReadingRequest request) {
+    return request.lectura! > detailItem.lecturaMaxima &&
+            request.lectura! <= detailItem.falsaMaxima ||
+        request.lectura! < detailItem.lecturaMaxima ||
+        request.lectura! > detailItem.falsaMinima;
+  }
+
+  bool _esAnomalidaErrada(ReadingRequest request) {
+    return request.lectura != null &&
+        request.lectura! <= double.parse(detailItem.lecturaAnterior) &&
+        request.lecturaIntento2 == null;
+  }
+
+  void _lecturaPosibleAnomaliaErradaPrimerIntento(
+      ReadingDetailBloc bloc, ReadingRequest request, BuildContext context) {
+    clearInputs(bloc);
+    request
+      ..lecturaIntento1 = request.lectura
+      ..lecturaIntento2 = null
+      ..lectura = null;
+    showSnackbar(context, 'Por favor, confirme lectura');
+  }
+
+  void _lecturaPosibleAnomaliaErradaSegundoIntento(
+      ReadingDetailBloc bloc, ReadingRequest request, BuildContext context) {
+    clearInputs(bloc);
+    request
+      ..lecturaIntento2 = request.lectura
+      ..lectura = null;
+    showSnackbar(context,
+        'Por favor, confirme lectura. Lectura ingresada es menor o igual que la lectura anterior');
   }
 
   void clearInputs(ReadingDetailBloc bloc) {

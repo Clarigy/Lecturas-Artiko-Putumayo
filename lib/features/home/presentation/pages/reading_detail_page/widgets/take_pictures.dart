@@ -34,7 +34,8 @@ class _TakePicturesState extends State<TakePictures> {
         children: [
           Container(
             margin: EdgeInsets.only(bottom: 10),
-            child: Text('Fotografía del medidor',
+            child: Text(
+                'Fotografía del medidor${bloc.claseAnomalia.fotografia || (bloc.requiredPhotoByMeterReading ?? false) ? '*' : ''}',
                 style: theme.textTheme.bodyText2!.copyWith(
                     fontWeight: FontWeight.bold, color: theme.primaryColor)),
           ),

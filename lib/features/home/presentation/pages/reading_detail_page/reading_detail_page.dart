@@ -51,6 +51,11 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
   void initState() {
     WidgetsBinding.instance!.addPostFrameCallback((_) => afterLayout());
 
+    print('falsaMaxima  ${widget.readingDetailItem.falsaMaxima}');
+    print('falsaMinima  ${widget.readingDetailItem.falsaMinima}');
+    print('lecturaMaxima  ${widget.readingDetailItem.lecturaMaxima}');
+    print('lecturaMinima  ${widget.readingDetailItem.lecturaMinima}');
+    print('lecturaAnterior  ${widget.readingDetailItem.lecturaAnterior}');
     context.read<ReadingDetailBloc>(readingDetailBlocProvider)
       ..readingDetailItem = widget.readingDetailItem
       ..readings = widget.readings;
@@ -75,6 +80,8 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
+    final theme = Theme.of(context);
+
     return Consumer(
       builder: (BuildContext context, watch, Widget? child) {
         final bloc = watch(readingDetailBlocProvider);
@@ -95,6 +102,29 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
                                 item: widget.readingDetailItem,
                               ),
                               MeterReading(),
+                              Align(
+                                  alignment: AlignmentDirectional.bottomStart,
+                                  child: Text(
+                                      'Anomalia${bloc.requiredAnomaliaByMeterReading ?? false ? '*' : ''}',
+                                      style: theme.textTheme.bodyText2!
+                                          .copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: theme.primaryColor))),
+                              Row(
+                                children: [
+                                  Flexible(
+                                    flex: 1,
+                                    child: DropDownAnomalias(),
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Flexible(
+                                    flex: 2,
+                                    child: DropDownClaseAnomalia(),
+                                  ),
+                                ],
+                              ),
                               ...buildDependsWidgetMeter(context, bloc),
                               // DropDownInput(
                               //   label: 'Observaciones',
@@ -116,38 +146,13 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
 
   List<Widget> buildDependsWidgetMeter(
       BuildContext context, ReadingDetailBloc bloc) {
-    final theme = Theme.of(context);
-
     return !bloc.verifiedReading
         ? []
         : [
-            Align(
-                alignment: AlignmentDirectional.bottomStart,
-                child: Text('Anomalia',
-                    style: theme.textTheme.bodyText2!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.primaryColor))),
-            Row(
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: DropDownAnomalias(),
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-                Flexible(
-                  flex: 2,
-                  child: DropDownClaseAnomalia(),
-                ),
-              ],
+            TakePictures(
+              margin: EdgeInsets.only(top: 24),
+              readingId: widget.readingDetailItem.numeroMedidor,
             ),
-            if (bloc.requiredPhotoByMeterReading ??
-                false || bloc.claseAnomalia.fotografia)
-              TakePictures(
-                margin: EdgeInsets.only(top: 24),
-                readingId: widget.readingDetailItem.numeroMedidor,
-              ),
           ];
   }
 }
