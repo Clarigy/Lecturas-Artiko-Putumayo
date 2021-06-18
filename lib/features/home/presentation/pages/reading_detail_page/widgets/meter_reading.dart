@@ -7,6 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MeterReading extends StatefulWidget {
+  final ReadingDetailItem readingDetailItem;
+
+  MeterReading({required this.readingDetailItem});
+
   @override
   _MeterReadingState createState() => _MeterReadingState();
 }
@@ -16,10 +20,7 @@ class _MeterReadingState extends State<MeterReading> {
 
   @override
   void initState() {
-    detailItem = context
-        .read(readingDetailBlocProvider)
-        .readingDetailItem
-        .copyWith(readingRequest: ReadingRequest());
+    detailItem = widget.readingDetailItem;
     super.initState();
   }
 

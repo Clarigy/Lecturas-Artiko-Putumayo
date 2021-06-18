@@ -11,7 +11,7 @@ class ReadingRequest {
   late String latLecturaTomada;
   late String longLecturaTomada;
   late String tipo;
-  late List<String> fotos;
+  List<String> fotos = [];
 
   ReadingRequest();
 

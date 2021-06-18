@@ -31,6 +31,7 @@ class LoginResponse {
   int idUsuario;
   String nombre;
   String cargo;
+  @ColumnInfo(name: 'correoLector')
   String correoLector;
   String? telefonoLector;
   String? empresa;

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:artiko/core/readings/data/data_sources/anomalies_dao.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';

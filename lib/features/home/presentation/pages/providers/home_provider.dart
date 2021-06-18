@@ -1,3 +1,4 @@
+import 'package:artiko/core/cache/domain/repositories/cache_storage_repository.dart';
 import 'package:artiko/core/readings/data/repository/reading_repository.dart';
 import 'package:artiko/core/readings/domain/use_case/get_anomalies_use_case.dart';
 import 'package:artiko/dependency_injector.dart';
@@ -16,8 +17,8 @@ Future<void> setUpHomeProviders() async {
 
   sl.registerLazySingleton(() => ActivitiesBloc(sl<GetReadingsUseCase>()));
 
-  sl.registerLazySingleton(
-      () => ReadingsImageRepository(sl<ReadingImagesDao>()));
+  sl.registerLazySingleton(() => ReadingsImageRepository(
+      sl<ReadingImagesDao>(), sl<CacheStorageInterface>()));
 
   sl.registerLazySingleton(
       () => GetReadingImagesByReadingIdUseCase(sl<ReadingsImageRepository>()));

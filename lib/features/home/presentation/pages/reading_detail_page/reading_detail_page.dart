@@ -1,4 +1,5 @@
 import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
+import 'package:artiko/core/readings/domain/entities/reading_request.dart';
 import 'package:artiko/core/readings/domain/use_case/get_anomalies_use_case.dart';
 import 'package:artiko/dependency_injector.dart';
 import 'package:artiko/features/home/domain/use_cases/delete_reading_images.dart';
@@ -47,6 +48,8 @@ class ReadingDetailPage extends StatefulWidget {
 }
 
 class _ReadingDetailPageState extends State<ReadingDetailPage> {
+  late ReadingDetailItem detailItem;
+
   @override
   void initState() {
     WidgetsBinding.instance!.addPostFrameCallback((_) => afterLayout());
@@ -59,6 +62,11 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
     context.read<ReadingDetailBloc>(readingDetailBlocProvider)
       ..readingDetailItem = widget.readingDetailItem
       ..readings = widget.readings;
+
+    detailItem = context
+        .read(readingDetailBlocProvider)
+        .readingDetailItem
+        .copyWith(readingRequest: ReadingRequest());
 
     super.initState();
   }
@@ -89,7 +97,7 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
             ? Center(child: CircularProgressIndicator())
             : Scaffold(
                 appBar: DefaultAppBar(),
-                bottomNavigationBar: _NavigationButtons(),
+                bottomNavigationBar: _NavigationButtons(detailItem),
                 body: Column(
                   children: [
                     Expanded(
@@ -101,7 +109,9 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
                               ReadingsCard(
                                 item: widget.readingDetailItem,
                               ),
-                              MeterReading(),
+                              MeterReading(
+                                readingDetailItem: detailItem,
+                              ),
                               Align(
                                   alignment: AlignmentDirectional.bottomStart,
                                   child: Text(
@@ -150,6 +160,7 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
         ? []
         : [
             TakePictures(
+              detailItem: detailItem,
               margin: EdgeInsets.only(top: 24),
               readingId: widget.readingDetailItem.numeroMedidor,
             ),
@@ -158,6 +169,10 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
 }
 
 class _NavigationButtons extends ConsumerWidget {
+  final ReadingDetailItem detailItem;
+
+  _NavigationButtons(this.detailItem);
+
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final bloc = watch(readingDetailBlocProvider);
@@ -195,7 +210,15 @@ class _NavigationButtons extends ConsumerWidget {
           ),
           Flexible(
             flex: 1,
-            child: MainButton(text: 'Guardar', onTap: () {}),
+            child: MainButton(
+                text: 'Guardar',
+                onTap: () {
+                  detailItem.readingRequest.anomaliaSec = bloc.anomaliaSec;
+
+                  print('fotos ${detailItem.readingRequest.fotos}');
+                  print('lectura ${detailItem.readingRequest.lectura}');
+                  print('anomaliaSec ${detailItem.readingRequest.anomaliaSec}');
+                }),
           ),
           SizedBox(width: 12),
           InkWell(

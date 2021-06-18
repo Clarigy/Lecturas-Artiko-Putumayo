@@ -1,5 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
 import 'package:artiko/features/home/data/models/reading_images_model.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
@@ -13,14 +16,25 @@ import '../reading_detail_page.dart';
 class TakePictures extends StatefulWidget {
   final EdgeInsets? margin;
   final String readingId;
+  final ReadingDetailItem detailItem;
 
-  const TakePictures({this.margin, required this.readingId});
+  const TakePictures(
+      {this.margin, required this.readingId, required this.detailItem});
 
   @override
   _TakePicturesState createState() => _TakePicturesState();
 }
 
 class _TakePicturesState extends State<TakePictures> {
+  int countImages = 0;
+  late ReadingDetailItem detailItem;
+
+  @override
+  void initState() {
+    detailItem = widget.detailItem;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final bloc = context.read(readingDetailBlocProvider);
@@ -45,6 +59,7 @@ class _TakePicturesState extends State<TakePictures> {
                 if (!snapshot.hasData || snapshot.data == null) {
                   return Offstage();
                 }
+                detailItem.readingRequest.fotos.clear();
 
                 return Align(
                   alignment: AlignmentDirectional.centerStart,
@@ -75,33 +90,34 @@ class _TakePicturesState extends State<TakePictures> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final theme = _getTheme();
+    countImages = 0;
 
-    return Container(
-      width: screenWidth * .2,
-      height: screenHeight * .1,
-      margin: EdgeInsets.only(right: 12, left: 4),
-      child: DottedBorder(
-        color: theme.primaryColor,
-        strokeWidth: 1,
-        dashPattern: [7],
-        borderType: BorderType.RRect,
-        padding: EdgeInsets.all(12),
-        radius: Radius.circular(12),
-        child: Container(
-          child: _buildCaptureImageContainer(snapshot),
-        ),
-      ),
-    );
+    if (snapshot.hasData) {
+      countImages = snapshot.data?.length ?? 0;
+    }
+    return countImages == 3
+        ? Offstage()
+        : Container(
+            width: screenWidth * .2,
+            height: screenHeight * .1,
+            margin: EdgeInsets.only(right: 12, left: 4),
+            child: DottedBorder(
+              color: theme.primaryColor,
+              strokeWidth: 1,
+              dashPattern: [7],
+              borderType: BorderType.RRect,
+              padding: EdgeInsets.all(12),
+              radius: Radius.circular(12),
+              child: Container(
+                child: _buildCaptureImageContainer(snapshot),
+              ),
+            ),
+          );
   }
 
   Widget _buildCaptureImageContainer(
       AsyncSnapshot<List<ReadingImagesModel>?> snapshot) {
     final theme = _getTheme();
-    int countImages = 0;
-
-    if (snapshot.hasData) {
-      countImages = snapshot.data?.length ?? 0;
-    }
 
     return ClipRRect(
       child: InkWell(
@@ -130,18 +146,21 @@ class _TakePicturesState extends State<TakePictures> {
     if (image == null) return;
 
     final readingImageModel =
-        ReadingImagesModel(image: image, readingId: widget.readingId);
+        ReadingImagesModel(imageCount: countImages, readingId: widget.readingId)
+          ..imageBase64 = Base64Encoder().convert(image);
+
+    detailItem.readingRequest.fotos.add(readingImageModel.getSpecialId());
 
     await bloc.insertReadingImage(readingImageModel);
   }
 
   Future<Uint8List?> _captureImageAndReadAsBytes() async {
     final image = await ImagePicker()
-        .getImage(source: ImageSource.camera, imageQuality: 10);
+        .getImage(source: ImageSource.camera, imageQuality: 100);
 
     if (image == null) return null;
 
-    return await image.readAsBytes();
+    return new File(image.path).readAsBytesSync();
   }
 
   Widget _buildImageView(ReadingImagesModel readingImagesModel) {
@@ -151,6 +170,8 @@ class _TakePicturesState extends State<TakePictures> {
     final bloc = context.read(readingDetailBlocProvider);
 
     final theme = _getTheme();
+
+    detailItem.readingRequest.fotos.add(readingImagesModel.getSpecialId());
 
     return Stack(
       children: [
@@ -163,7 +184,7 @@ class _TakePicturesState extends State<TakePictures> {
             child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.memory(
-                  readingImagesModel.image,
+                  Base64Decoder().convert(readingImagesModel.imageBase64),
                   fit: BoxFit.cover,
                 )),
           ),
@@ -178,6 +199,8 @@ class _TakePicturesState extends State<TakePictures> {
               ),
               onPressed: () async {
                 await bloc.deleteReadingImage(readingImagesModel);
+                detailItem.readingRequest.fotos
+                    .remove(readingImagesModel.getSpecialId());
               }),
         ),
       ],
@@ -189,9 +212,15 @@ class _TakePicturesState extends State<TakePictures> {
   Future<void> _onTapImageView(
       ReadingImagesModel readingImagesModel, ReadingDetailBloc bloc) async {
     final image = await _captureImageAndReadAsBytes();
+
     if (image == null) return;
 
-    readingImagesModel.image = image;
+    readingImagesModel
+      ..imageCount = countImages
+      ..imageBase64 = Base64Encoder().convert(image);
+
+    detailItem.readingRequest.fotos.add(readingImagesModel.getSpecialId());
+
     await bloc.updateReadingImage(readingImagesModel);
   }
 }

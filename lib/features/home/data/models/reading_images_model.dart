@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:floor/floor.dart';
 
 @Entity(tableName: 'reading_images')
@@ -9,7 +7,13 @@ class ReadingImagesModel {
 
   final String readingId;
 
-  Uint8List image;
+  int imageCount;
 
-  ReadingImagesModel({required this.readingId, required this.image, this.id});
+  @ignore
+  late String imageBase64;
+
+  String getSpecialId() => '$readingId-$imageCount';
+
+  ReadingImagesModel(
+      {required this.readingId, required this.imageCount, this.id});
 }
