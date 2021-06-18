@@ -9,6 +9,7 @@ import 'features/create_measurer/presentation/providers/create_measure_provider.
 import 'features/home/presentation/pages/init/loading_providers.dart';
 import 'features/home/presentation/pages/providers/home_provider.dart';
 import 'features/login/presentation/providers/login_provider.dart';
+import 'features/splash_screen/providers/splash_provider.dart';
 
 GetIt sl = GetIt.instance;
 
@@ -22,4 +23,5 @@ Future<void> setupInjector() async {
   await injectionDatabase();
   await setUpHomeProviders();
   await setUpCreateMeasureProviders();
+  await setUpSplashProviders();
 }

@@ -5,6 +5,7 @@ import 'package:artiko/features/home/presentation/pages/main_screen.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/reading_detail_page.dart';
 import 'package:artiko/features/login/presentation/pages/login_page.dart';
 import 'package:artiko/features/profile/presentation/pages/profile_page.dart';
+import 'package:artiko/features/splash_screen/splash_screen.dart';
 import 'package:artiko/shared/routes/route_args_keys.dart';
 import 'package:flutter/material.dart';
 
@@ -32,7 +33,7 @@ class RouteGenerator {
       case AppRoutes.ProfileScreen:
         return MaterialPageRoute(builder: (_) => ProfilePage.init());
       default:
-        return MaterialPageRoute(builder: (_) => LoginPage());
+        return MaterialPageRoute(builder: (_) => SplashScreen.init());
     }
   }
 }
