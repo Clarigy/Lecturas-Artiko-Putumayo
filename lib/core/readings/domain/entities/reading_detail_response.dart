@@ -79,7 +79,7 @@ class ReadingDetailItem {
   int factor;
   String lecturaAnterior;
   String claseServicio;
-  String fechaUltimaLectura;
+  String? fechaUltimaLectura;
   String? indRangoCritica;
   bool indicadorSuspension;
   String nombre;
