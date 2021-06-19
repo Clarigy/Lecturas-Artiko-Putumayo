@@ -35,4 +35,13 @@ class CacheStorageImpl extends CacheStorageInterface {
           'Hubo un error al tratar de escribir $key en el almacenamiento');
     }
   }
+
+  @override
+  Future clear() async {
+    try {
+      await cacheStorage.deleteAll();
+    } catch (_) {
+      CacheException('Hubo un error al tratar de borrar el almacenamiento');
+    }
+  }
 }

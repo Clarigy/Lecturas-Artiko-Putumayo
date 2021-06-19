@@ -1,7 +1,9 @@
+import 'package:artiko/core/cache/domain/repositories/cache_storage_repository.dart';
 import 'package:artiko/dependency_injector.dart';
 import 'package:artiko/features/login/domain/entities/response/login_response.dart';
 import 'package:artiko/features/profile/presentation/manager/profile_bloc.dart';
 import 'package:artiko/shared/routes/app_routes.dart';
+import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 
 enum PopUpMenuItemOption { PROFILE, CLOSE_TERMINAL, LOGOUT }
@@ -99,7 +101,15 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
     Navigator.pushNamed(context, AppRoutes.ProfileScreen);
   }
 
-  void _goToLoginPage() {
+  void _goToLoginPage() async {
+    sl<FloorDatabase>().database.delete('current_user');
+    sl<FloorDatabase>().database.delete('anomalies');
+    sl<FloorDatabase>().database.delete('routes');
+    sl<FloorDatabase>().database.delete('readings');
+    sl<FloorDatabase>().database.delete('reading_images');
+
+    sl<CacheStorageInterface>().clear();
+
     Navigator.pushNamed(context, AppRoutes.LoginScreen);
   }
 }
