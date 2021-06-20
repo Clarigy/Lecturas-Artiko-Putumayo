@@ -1,5 +1,7 @@
+import 'package:artiko/core/error/exception.dart';
 import 'package:artiko/core/http/domain/repositories/http_proxy_repository.dart';
 import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
+import 'package:artiko/core/readings/domain/entities/reading_request.dart';
 import 'package:artiko/core/readings/domain/entities/routes_response.dart';
 
 class ReadingsRemoteDataSource {
@@ -33,5 +35,21 @@ class ReadingsRemoteDataSource {
       print(e);
       return ReadingDetailResponse(items: []);
     }
+  }
+
+  Future<void> sincronizarReadings(List<ReadingRequest> readings,
+      {String tipo: 'S'}) async {
+    try {
+      final _http = _httpImpl.instance();
+
+      await _http.post('/actualizar_ruta',
+          data: readingRequestToJson(readings, tipo));
+    } catch (e) {
+      throw ServerException();
+    }
+  }
+
+  Future<void> closeTerminal(List<ReadingRequest> readings) async {
+    await sincronizarReadings(readings, tipo: 'C');
   }
 }

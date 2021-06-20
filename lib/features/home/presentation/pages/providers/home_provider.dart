@@ -6,6 +6,7 @@ import 'package:artiko/features/home/data/data_sources/local/reading_images_dao.
 import 'package:artiko/features/home/data/repositories/readings_image_repository.dart';
 import 'package:artiko/features/home/domain/use_cases/delete_reading_images.dart';
 import 'package:artiko/features/home/domain/use_cases/get_reading_images_by_reading_id.dart';
+import 'package:artiko/features/home/domain/use_cases/get_reading_images_by_reading_id_future.dart';
 import 'package:artiko/features/home/domain/use_cases/get_readings_use_case.dart';
 import 'package:artiko/features/home/domain/use_cases/insert_reading_images.dart';
 import 'package:artiko/features/home/domain/use_cases/update_reading_images.dart';
@@ -22,6 +23,9 @@ Future<void> setUpHomeProviders() async {
 
   sl.registerLazySingleton(
       () => GetReadingImagesByReadingIdUseCase(sl<ReadingsImageRepository>()));
+
+  sl.registerLazySingleton(() =>
+      GetReadingImagesByReadingIdUseCaseFuture(sl<ReadingsImageRepository>()));
 
   sl.registerLazySingleton(
       () => InsertReadingImages(sl<ReadingsImageRepository>()));

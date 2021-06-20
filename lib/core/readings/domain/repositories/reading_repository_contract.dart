@@ -1,4 +1,5 @@
 import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
+import 'package:artiko/core/readings/domain/entities/reading_request.dart';
 import 'package:artiko/core/readings/domain/entities/routes_response.dart';
 
 abstract class ReadingRepositoryContract {
@@ -13,4 +14,8 @@ abstract class ReadingRepositoryContract {
   Future<List<RoutesItem>?> getAllRoutes();
 
   Future<void> saveRoutes(List<RoutesItem> routes);
+
+  Future<void> sincronizarReadings(List<ReadingRequest> readings);
+
+  Future<void> closeTerminal(List<ReadingRequest> readings);
 }

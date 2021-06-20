@@ -63,10 +63,11 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
       ..readingDetailItem = widget.readingDetailItem
       ..readings = widget.readings;
 
-    detailItem = context
-        .read(readingDetailBlocProvider)
-        .readingDetailItem
-        .copyWith(readingRequest: ReadingRequest());
+    final _item = context.read(readingDetailBlocProvider).readingDetailItem;
+
+    detailItem = _item.copyWith(
+        readingRequest:
+            ReadingRequest(detalleLecturaRutaSec: _item.detalleLecturaRutaSec));
 
     super.initState();
   }
@@ -162,7 +163,7 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
             TakePictures(
               detailItem: detailItem,
               margin: EdgeInsets.only(top: 24),
-              readingId: widget.readingDetailItem.numeroMedidor,
+              readingId: widget.readingDetailItem.id.toString(),
             ),
           ];
   }
@@ -236,7 +237,12 @@ class _NavigationButtons extends ConsumerWidget {
   void _navigateToNext(ReadingDetailBloc bloc, BuildContext context) {
     final index = bloc.readings
         .indexWhere((element) => bloc.readingDetailItem.id == element.id);
-    if (index == -1 || index == bloc.readings.length - 1) return;
+    if (index == -1 || index == bloc.readings.length - 1) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Es la última'),
+      ));
+      return;
+    }
     Navigator.pushReplacementNamed(context, AppRoutes.ReadingDetailScreen,
         arguments: {
           READING_DETAIL: bloc.readings[index + 1],

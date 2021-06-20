@@ -61,7 +61,8 @@ class ReadingDetailItem {
     this.latPuntoMedicion,
     this.longPuntoMedicion,
     required this.detalleLecturaRutaSec,
-  });
+  }) : readingRequest =
+            ReadingRequest(detalleLecturaRutaSec: detalleLecturaRutaSec);
 
   @PrimaryKey(autoGenerate: true)
   final int? id;
@@ -95,7 +96,7 @@ class ReadingDetailItem {
   int detalleLecturaRutaSec;
 
   @ignore
-  ReadingRequest readingRequest = ReadingRequest();
+  late ReadingRequest readingRequest;
 
   factory ReadingDetailItem.fromJson(Map<String, dynamic> json) =>
       ReadingDetailItem(

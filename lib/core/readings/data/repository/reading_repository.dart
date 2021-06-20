@@ -3,6 +3,7 @@ import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_remote_data_source.dart';
 import 'package:artiko/core/readings/data/data_sources/routes_dao.dart';
 import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
+import 'package:artiko/core/readings/domain/entities/reading_request.dart';
 import 'package:artiko/core/readings/domain/entities/routes_response.dart';
 import 'package:artiko/core/readings/domain/repositories/reading_repository_contract.dart';
 
@@ -66,6 +67,24 @@ class ReadingRepository implements ReadingRepositoryContract {
   Future<void> saveRoutes(List<RoutesItem> routes) async {
     try {
       await _routesDao.insertAll(routes);
+    } catch (_) {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<void> sincronizarReadings(List<ReadingRequest> readings) async {
+    try {
+      return await _remoteDataSource.sincronizarReadings(readings);
+    } catch (_) {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<void> closeTerminal(List<ReadingRequest> readings) async {
+    try {
+      return await _remoteDataSource.closeTerminal(readings);
     } catch (_) {
       throw ServerException();
     }

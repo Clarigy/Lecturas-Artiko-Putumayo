@@ -4,9 +4,12 @@ import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_remote_data_source.dart';
 import 'package:artiko/core/readings/data/repository/anomalies_repository.dart';
 import 'package:artiko/core/readings/data/repository/reading_repository.dart';
+import 'package:artiko/core/readings/domain/use_case/close_terminal_use_case.dart';
 import 'package:artiko/core/readings/domain/use_case/get_anomalies_use_case.dart';
 import 'package:artiko/core/readings/domain/use_case/load_and_save_all_data_use_case.dart';
+import 'package:artiko/core/readings/domain/use_case/sincronizar_readings_use_case.dart';
 import 'package:artiko/dependency_injector.dart';
+import 'package:artiko/features/home/domain/use_cases/get_reading_images_by_reading_id_future.dart';
 
 import 'data/data_sources/anomalies_dao.dart';
 import 'data/data_sources/routes_dao.dart';
@@ -35,6 +38,12 @@ Future<void> setUpReadingsProviders() async {
 
   sl.registerLazySingleton<SaveReadingsUseCase>(
       () => SaveReadingsUseCase(sl<ReadingRepository>()));
+
+  sl.registerLazySingleton<SincronizarReadingsUseCase>(
+      () => SincronizarReadingsUseCase(sl<ReadingRepository>()));
+
+  sl.registerLazySingleton<CloseTerminalUseCase>(() => CloseTerminalUseCase(
+      sl<ReadingRepository>(), sl<GetReadingImagesByReadingIdUseCaseFuture>()));
 
   sl.registerLazySingleton<GetAnomaliesUseCase>(
       () => GetAnomaliesUseCase(sl<AnomaliesRepository>()));

@@ -7,6 +7,10 @@ abstract class ReadingImagesDao {
   Stream<List<ReadingImagesModel>?> getReadingImagesByReadingId(
       String readingId);
 
+  @Query('SELECT * FROM reading_images where readingId = :readingId')
+  Future<List<ReadingImagesModel>?> getReadingImagesByReadingIdFuture(
+      String readingId);
+
   @Insert(onConflict: OnConflictStrategy.replace)
   Future<int> insert(ReadingImagesModel readingImagesModel);
 

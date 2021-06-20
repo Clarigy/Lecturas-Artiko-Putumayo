@@ -9,4 +9,7 @@ abstract class ReadingImageRepositoryContract {
   Future<void> update(ReadingImagesModel readingImagesModel);
 
   Future<void> deleteReadingImagesModel(ReadingImagesModel readingImagesModel);
+
+  Future<List<ReadingImagesModel>?> getReadingImagesByReadingIdFuture(
+      String readingId);
 }

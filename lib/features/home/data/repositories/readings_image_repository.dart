@@ -35,6 +35,28 @@ class ReadingsImageRepository implements ReadingImageRepositoryContract {
   }
 
   @override
+  Future<List<ReadingImagesModel>?> getReadingImagesByReadingIdFuture(
+      String readingId) async {
+    try {
+      final images =
+          await _readingImagesDao.getReadingImagesByReadingIdFuture(readingId);
+      if (images == null) return [];
+
+      final List<ReadingImagesModel> tempList = [];
+
+      for (final image in images) {
+        image.imageBase64 =
+            await _cacheStorageInterface.fetch(image.getSpecialId()) ?? '';
+        tempList.add(image);
+      }
+
+      return tempList;
+    } catch (_) {
+      throw ServerException();
+    }
+  }
+
+  @override
   Future<int> insert(ReadingImagesModel readingImagesModel) async {
     try {
       _cacheStorageInterface.save(
