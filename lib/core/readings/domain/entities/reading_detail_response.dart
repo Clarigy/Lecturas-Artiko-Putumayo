@@ -34,6 +34,7 @@ class ReadingDetailResponse {
 @Entity(tableName: 'readings')
 class ReadingDetailItem {
   ReadingDetailItem({
+    this.id,
     required this.orden,
     required this.secuencia,
     required this.numeroMedidor,
@@ -62,7 +63,9 @@ class ReadingDetailItem {
     required this.detalleLecturaRutaSec,
   });
 
-  @PrimaryKey()
+  @PrimaryKey(autoGenerate: true)
+  final int? id;
+
   String numeroMedidor;
 
   int orden;
@@ -154,8 +157,9 @@ class ReadingDetailItem {
         "detalle_lectura_ruta_sec": detalleLecturaRutaSec,
       };
 
-  ReadingDetailItem copyWith({ReadingRequest? readingRequest}) {
+  ReadingDetailItem copyWith({ReadingRequest? readingRequest, int? id}) {
     return ReadingDetailItem(
+        id: id,
         orden: orden,
         secuencia: secuencia,
         numeroMedidor: numeroMedidor,

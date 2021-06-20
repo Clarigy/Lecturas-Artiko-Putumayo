@@ -3,6 +3,8 @@ import 'package:artiko/features/create_measurer/presentation/manager/create_meas
 import 'package:artiko/features/create_measurer/presentation/pages/validators/create_measure_validators.dart';
 import 'package:artiko/features/home/presentation/pages/activities_page/activities_bloc.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/widgets/drop_down_input.dart';
+import 'package:artiko/shared/routes/app_routes.dart';
+import 'package:artiko/shared/routes/route_args_keys.dart';
 import 'package:artiko/shared/widgets/input_with_label.dart';
 import 'package:artiko/shared/widgets/main_button.dart';
 import 'package:flutter/cupertino.dart';
@@ -147,7 +149,7 @@ class _CreateMeasureFormState extends State<CreateMeasureForm> {
           );
   }
 
-  void _submitForm(CreateMeasureBloc bloc) {
+  void _submitForm(CreateMeasureBloc bloc) async {
     if (!bloc.formKey.currentState!.validate()) return;
     if (bloc.tiposConsumoSeleccionados.isEmpty) {
       showSnackbar(context, 'Por favor seleccione al menos un tipo de medidor');
@@ -156,9 +158,21 @@ class _CreateMeasureFormState extends State<CreateMeasureForm> {
 
     bloc.formKey.currentState!.save();
 
-    final data = bloc.buildReadingDetailItem(sl<ActivitiesBloc>().readings!);
+    try {
+      final data = bloc.buildReadingDetailItem(sl<ActivitiesBloc>().readings!);
+      final ids = await bloc.createMeasures(data);
+      final readings = await bloc.getReadings();
 
-    print(data);
+      sl<ActivitiesBloc>()..needRefreshList = true;
+
+      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.ReadingDetailScreen,
+          (route) => route.settings.name == AppRoutes.MainScreen, arguments: {
+        READING_DETAIL: data[0].copyWith(id: ids[0]),
+        READINGS: readings
+      });
+    } on Exception catch (_) {
+      showSnackbar(context, 'No pudimos guardar la lectura, intenta de nuevo');
+    }
   }
 
   void showSnackbar(BuildContext context, String message) {

@@ -1,9 +1,18 @@
+import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
 import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
+import 'package:artiko/core/readings/domain/use_case/save_readings_use_case.dart';
+import 'package:artiko/dependency_injector.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class CreateMeasureBloc extends ChangeNotifier {
+  CreateMeasureBloc(
+    this._saveReadingsUseCase,
+  );
+
+  final SaveReadingsUseCase _saveReadingsUseCase;
+
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   TextEditingController locationTextEditingController = TextEditingController();
   TextEditingController numeroMedidorTextEditingController =
@@ -59,6 +68,27 @@ class CreateMeasureBloc extends ChangeNotifier {
     isLoading = false;
   }
 
+  Future<List<int>> createMeasures(List<ReadingDetailItem> newMeasures) async {
+    try {
+      isLoading = true;
+      return await _saveReadingsUseCase(newMeasures);
+    } catch (_) {
+      isLoading = false;
+
+      rethrow;
+    }
+  }
+
+  Future<List<ReadingDetailItem>?> getReadings() async {
+    try {
+      return await sl<ReadingsDao>().getFutureReadings();
+    } catch (_) {
+      rethrow;
+    } finally {
+      isLoading = false;
+    }
+  }
+
   List<ReadingDetailItem> buildReadingDetailItem(
       List<ReadingDetailItem> readings) {
     double promedio = 0;
@@ -70,10 +100,10 @@ class CreateMeasureBloc extends ChangeNotifier {
 
     return tiposConsumoSeleccionados
         .map((e) => ReadingDetailItem(
-            orden: 0,
+        orden: 0,
             secuencia: 0,
             numeroMedidor: numeroMedidor,
-            tipoMedidor: '',
+            tipoMedidor: 'EM-ELECTROMECANICO',
             marcaMedidor: marcaMedidor,
             nroEnteros: int.parse(enteros),
             nroDecimales: int.parse(decimales),
@@ -85,14 +115,14 @@ class CreateMeasureBloc extends ChangeNotifier {
             factor: 1,
             lecturaAnterior: "0",
             claseServicio: _claseServicio,
-            fechaUltimaLectura: null,
-            indicadorSuspension: false,
-            nombre: '',
-            direccion: '',
-            suscriptorSec: 0,
-            tipoConsumo: tiposConsumo[e]!['tipoConsumo']!,
-            nombreTipoConsumo: tiposConsumo[e]!['nombreTipoConsumo']!,
-            detalleLecturaRutaSec: promedio.toInt()))
+        fechaUltimaLectura: null,
+        indicadorSuspension: false,
+        nombre: '',
+        direccion: '',
+        suscriptorSec: 0,
+        tipoConsumo: tiposConsumo[e]!['tipoConsumo']!,
+        nombreTipoConsumo: tiposConsumo[e]!['nombreTipoConsumo']!,
+        detalleLecturaRutaSec: promedio.toInt()))
         .toList();
   }
 }

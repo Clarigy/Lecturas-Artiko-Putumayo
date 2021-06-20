@@ -45,9 +45,9 @@ class ReadingRepository implements ReadingRepositoryContract {
   }
 
   @override
-  Future<void> saveReadings(List<ReadingDetailItem> readings) async {
+  Future<List<int>> saveReadings(List<ReadingDetailItem> readings) async {
     try {
-      await _readingsDao.insertAll(readings);
+      return await _readingsDao.insertAll(readings);
     } catch (_) {
       throw ServerException();
     }

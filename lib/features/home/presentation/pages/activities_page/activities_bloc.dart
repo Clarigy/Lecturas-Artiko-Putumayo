@@ -6,6 +6,7 @@ class ActivitiesBloc extends ChangeNotifier {
   ActivitiesBloc(this._getReadingsUseCase);
 
   final GetReadingsUseCase _getReadingsUseCase;
+  bool needRefreshList = false;
 
   List<ReadingDetailItem>? readings;
 
@@ -13,8 +14,10 @@ class ActivitiesBloc extends ChangeNotifier {
 
   Stream<List<ReadingDetailItem>?> getReadings() {
     try {
-      if (readings == null || readings!.isEmpty)
+      if (readings == null || readings!.isEmpty || needRefreshList) {
+        needRefreshList = false;
         return _getReadingsUseCase(null);
+      }
 
       return readings != null && filterTextController.text.isNotEmpty
           ? getFilterReadings(filterTextController.text)

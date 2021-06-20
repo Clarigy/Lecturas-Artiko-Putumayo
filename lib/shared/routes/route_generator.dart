@@ -15,25 +15,34 @@ class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     final Map? args = settings.arguments as Map?;
 
+    late Widget page;
     switch (settings.name) {
       case AppRoutes.LoginScreen:
-        return MaterialPageRoute(builder: (_) => LoginPage());
+        page = LoginPage();
+        break;
       case AppRoutes.MainScreen:
-        return MaterialPageRoute(builder: (_) => MainScreen());
+        page = MainScreen();
+        break;
       case AppRoutes.ReadingDetailScreen:
-        return MaterialPageRoute(
-            builder: (_) =>
-                ReadingDetailPage.init(args![READING_DETAIL], args[READINGS]));
+        page = ReadingDetailPage.init(args![READING_DETAIL], args[READINGS]);
+        break;
       case AppRoutes.LoadingScreen:
-        return MaterialPageRoute(builder: (_) => LoadingPage());
+        page = LoadingPage();
+        break;
       case AppRoutes.AccessGPSScreen:
-        return MaterialPageRoute(builder: (_) => AccessGpsPage());
+        page = AccessGpsPage();
+        break;
       case AppRoutes.CreateMeasure:
-        return MaterialPageRoute(builder: (_) => CreateMeasurePage.init());
+        page = CreateMeasurePage.init();
+        break;
       case AppRoutes.ProfileScreen:
-        return MaterialPageRoute(builder: (_) => ProfilePage.init());
+        page = ProfilePage.init();
+        break;
       default:
-        return MaterialPageRoute(builder: (_) => SplashScreen.init());
+        page = SplashScreen.init();
+        break;
     }
+
+    return MaterialPageRoute(builder: (_) => page, settings: settings);
   }
 }

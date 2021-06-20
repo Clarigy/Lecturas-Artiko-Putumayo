@@ -6,6 +6,9 @@ abstract class ReadingsDao {
   @Query('SELECT * FROM readings')
   Stream<List<ReadingDetailItem>?> getReadings();
 
+  @Query('SELECT * FROM readings')
+  Future<List<ReadingDetailItem>?> getFutureReadings();
+
   @Insert(onConflict: OnConflictStrategy.replace)
   Future<int> insertOne(ReadingDetailItem readings);
 

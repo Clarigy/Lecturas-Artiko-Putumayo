@@ -10,6 +10,7 @@ import 'package:artiko/dependency_injector.dart';
 
 import 'data/data_sources/anomalies_dao.dart';
 import 'data/data_sources/routes_dao.dart';
+import 'domain/use_case/save_readings_use_case.dart';
 
 Future<void> setUpReadingsProviders() async {
   // Anomalies
@@ -31,6 +32,9 @@ Future<void> setUpReadingsProviders() async {
   sl.registerLazySingleton<LoadAndSaveAllDataUseCase>(() =>
       LoadAndSaveAllDataUseCase(
           sl<ReadingRepository>(), sl<AnomaliesRepository>()));
+
+  sl.registerLazySingleton<SaveReadingsUseCase>(
+      () => SaveReadingsUseCase(sl<ReadingRepository>()));
 
   sl.registerLazySingleton<GetAnomaliesUseCase>(
       () => GetAnomaliesUseCase(sl<AnomaliesRepository>()));

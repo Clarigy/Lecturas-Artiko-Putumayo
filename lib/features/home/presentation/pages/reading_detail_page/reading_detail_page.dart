@@ -188,7 +188,8 @@ class _NavigationButtons extends ConsumerWidget {
           InkWell(
               child: Icon(Icons.arrow_back_ios),
               onTap: () {
-                final index = bloc.readings.indexOf(bloc.readingDetailItem);
+                final index = bloc.readings.indexWhere(
+                    (element) => bloc.readingDetailItem.id == element.id);
                 if (index == -1 || index == 0) return;
                 Navigator.pushReplacementNamed(
                     context, AppRoutes.ReadingDetailScreen, arguments: {
@@ -233,8 +234,9 @@ class _NavigationButtons extends ConsumerWidget {
   }
 
   void _navigateToNext(ReadingDetailBloc bloc, BuildContext context) {
-    final index = bloc.readings.indexOf(bloc.readingDetailItem);
-    if (index == -1 || index == bloc.readings.length + 1) return;
+    final index = bloc.readings
+        .indexWhere((element) => bloc.readingDetailItem.id == element.id);
+    if (index == -1 || index == bloc.readings.length - 1) return;
     Navigator.pushReplacementNamed(context, AppRoutes.ReadingDetailScreen,
         arguments: {
           READING_DETAIL: bloc.readings[index + 1],

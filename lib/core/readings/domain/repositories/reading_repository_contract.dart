@@ -6,7 +6,7 @@ abstract class ReadingRepositoryContract {
 
   Future<void> loadAndSaveReadingDetails(int lecturaRutaSec);
 
-  Future<void> saveReadings(List<ReadingDetailItem> readings);
+  Future<List<int>> saveReadings(List<ReadingDetailItem> readings);
 
   Stream<List<ReadingDetailItem>?> getAllReadings();
 
