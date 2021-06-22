@@ -10,11 +10,11 @@ abstract class ReadingsDao {
   Future<List<ReadingDetailItem>?> getFutureReadings();
 
   @Insert(onConflict: OnConflictStrategy.replace)
-  Future<int> insertOne(ReadingDetailItem readings);
+  Future<void> insertOne(ReadingDetailItem readings);
 
   @Insert(onConflict: OnConflictStrategy.replace)
   Future<List<int>> insertAll(List<ReadingDetailItem> readings);
 
   @Update(onConflict: OnConflictStrategy.replace)
-  Future<void> update(ReadingDetailItem readings);
+  Future<int> update(ReadingDetailItem readings);
 }

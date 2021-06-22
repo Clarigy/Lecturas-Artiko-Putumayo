@@ -1,6 +1,7 @@
 import 'package:artiko/core/error/exception.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_remote_data_source.dart';
+import 'package:artiko/core/readings/data/data_sources/readings_request_dao.dart';
 import 'package:artiko/core/readings/data/data_sources/routes_dao.dart';
 import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
 import 'package:artiko/core/readings/domain/entities/reading_request.dart';
@@ -11,8 +12,10 @@ class ReadingRepository implements ReadingRepositoryContract {
   final ReadingsRemoteDataSource _remoteDataSource;
   final ReadingsDao _readingsDao;
   final RoutesDao _routesDao;
+  final ReadingsRequestDao _readingsRequestDao;
 
-  ReadingRepository(this._remoteDataSource, this._readingsDao, this._routesDao);
+  ReadingRepository(this._remoteDataSource, this._readingsDao, this._routesDao,
+      this._readingsRequestDao);
 
   @override
   Future<RoutesResponse> getRoutes(int lectorSec) async {
@@ -37,9 +40,25 @@ class ReadingRepository implements ReadingRepositoryContract {
   }
 
   @override
-  Stream<List<ReadingDetailItem>?> getAllReadings() {
+  Stream<List<ReadingDetailItem>?> getAllReadings() async* {
     try {
-      return _readingsDao.getReadings();
+      yield* _readingsDao.getReadings().asyncMap((event) async {
+        if (event == null) return event;
+        final List<ReadingDetailItem> tempList = [];
+
+        for (var value in event) {
+          if (value.idRequest != null && value.idRequest != -1) {
+            final request = (await _readingsRequestDao
+                .getReadingsRequestById(value.idRequest.toString()));
+
+            if (request != null) {
+              value.readingRequest = request;
+            }
+          }
+          tempList.add(value);
+        }
+        return tempList;
+      });
     } catch (_) {
       throw ServerException();
     }
@@ -85,6 +104,18 @@ class ReadingRepository implements ReadingRepositoryContract {
   Future<void> closeTerminal(List<ReadingRequest> readings) async {
     try {
       return await _remoteDataSource.closeTerminal(readings);
+    } catch (_) {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<void> updateReadings(ReadingDetailItem reading) async {
+    try {
+      reading.readingRequest.detailId = reading.id;
+      final id = await _readingsRequestDao.insert(reading.readingRequest);
+      reading.idRequest = id;
+      await _readingsDao.update(reading);
     } catch (_) {
       throw ServerException();
     }

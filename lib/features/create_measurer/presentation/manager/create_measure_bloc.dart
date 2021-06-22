@@ -99,8 +99,8 @@ class CreateMeasureBloc extends ChangeNotifier {
     promedio /= readings.length;
 
     return tiposConsumoSeleccionados
-        .map((e) => ReadingDetailItem(
-        orden: 0,
+        .map((e) => ReadingDetailItem.other(
+            orden: 0,
             secuencia: 0,
             numeroMedidor: numeroMedidor,
             tipoMedidor: 'EM-ELECTROMECANICO',
@@ -115,14 +115,14 @@ class CreateMeasureBloc extends ChangeNotifier {
             factor: 1,
             lecturaAnterior: "0",
             claseServicio: _claseServicio,
-        fechaUltimaLectura: null,
-        indicadorSuspension: false,
-        nombre: '',
-        direccion: '',
-        suscriptorSec: 0,
-        tipoConsumo: tiposConsumo[e]!['tipoConsumo']!,
-        nombreTipoConsumo: tiposConsumo[e]!['nombreTipoConsumo']!,
-        detalleLecturaRutaSec: promedio.toInt()))
+            fechaUltimaLectura: null,
+            indicadorSuspension: false,
+            nombre: '',
+            direccion: '',
+            suscriptorSec: 0,
+            tipoConsumo: tiposConsumo[e]!['tipoConsumo']!,
+            nombreTipoConsumo: tiposConsumo[e]!['nombreTipoConsumo']!,
+            detalleLecturaRutaSec: promedio.toInt()))
         .toList();
   }
 }

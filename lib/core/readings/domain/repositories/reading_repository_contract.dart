@@ -18,4 +18,6 @@ abstract class ReadingRepositoryContract {
   Future<void> sincronizarReadings(List<ReadingRequest> readings);
 
   Future<void> closeTerminal(List<ReadingRequest> readings);
+
+  Future<void> updateReadings(ReadingDetailItem reading);
 }

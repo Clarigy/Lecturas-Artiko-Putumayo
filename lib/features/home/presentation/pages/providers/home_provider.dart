@@ -1,6 +1,7 @@
 import 'package:artiko/core/cache/domain/repositories/cache_storage_repository.dart';
 import 'package:artiko/core/readings/data/repository/reading_repository.dart';
 import 'package:artiko/core/readings/domain/use_case/get_anomalies_use_case.dart';
+import 'package:artiko/core/readings/domain/use_case/update_reading_use_case.dart';
 import 'package:artiko/dependency_injector.dart';
 import 'package:artiko/features/home/data/data_sources/local/reading_images_dao.dart';
 import 'package:artiko/features/home/data/repositories/readings_image_repository.dart';
@@ -37,10 +38,11 @@ Future<void> setUpHomeProviders() async {
       () => DeleteReadingImages(sl<ReadingsImageRepository>()));
 
   sl.registerLazySingleton(() => ReadingDetailBloc(
-        sl<GetReadingImagesByReadingIdUseCase>(),
+    sl<GetReadingImagesByReadingIdUseCase>(),
         sl<InsertReadingImages>(),
         sl<UpdateReadingImages>(),
         sl<DeleteReadingImages>(),
         sl<GetAnomaliesUseCase>(),
+        sl<UpdateReadingUseCase>(),
       ));
 }

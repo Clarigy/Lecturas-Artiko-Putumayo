@@ -34,6 +34,38 @@ class ReadingDetailResponse {
 @Entity(tableName: 'readings')
 class ReadingDetailItem {
   ReadingDetailItem({
+    required this.id,
+    required this.orden,
+    required this.secuencia,
+    required this.numeroMedidor,
+    required this.tipoMedidor,
+    required this.marcaMedidor,
+    required this.nroEnteros,
+    required this.nroDecimales,
+    required this.constante,
+    required this.lecturaMinima,
+    required this.lecturaMaxima,
+    required this.falsaMinima,
+    required this.falsaMaxima,
+    required this.factor,
+    required this.lecturaAnterior,
+    required this.claseServicio,
+    required this.fechaUltimaLectura,
+    required this.indRangoCritica,
+    required this.indicadorSuspension,
+    required this.nombre,
+    required this.direccion,
+    required this.suscriptorSec,
+    required this.idRequest,
+    required this.tipoConsumo,
+    required this.nombreTipoConsumo,
+    required this.latPuntoMedicion,
+    required this.longPuntoMedicion,
+    required this.detalleLecturaRutaSec,
+  }) : readingRequest = ReadingRequest.empty(
+            detalleLecturaRutaSec: detalleLecturaRutaSec, id: id);
+
+  ReadingDetailItem.other({
     this.id,
     required this.orden,
     required this.secuencia,
@@ -61,8 +93,8 @@ class ReadingDetailItem {
     this.latPuntoMedicion,
     this.longPuntoMedicion,
     required this.detalleLecturaRutaSec,
-  }) : readingRequest =
-            ReadingRequest(detalleLecturaRutaSec: detalleLecturaRutaSec);
+  }) : readingRequest = ReadingRequest.empty(
+            detalleLecturaRutaSec: detalleLecturaRutaSec, id: id);
 
   @PrimaryKey(autoGenerate: true)
   final int? id;
@@ -95,8 +127,10 @@ class ReadingDetailItem {
   String? longPuntoMedicion;
   int detalleLecturaRutaSec;
 
+  int? idRequest;
+
   @ignore
-  late ReadingRequest readingRequest;
+  ReadingRequest readingRequest;
 
   factory ReadingDetailItem.fromJson(Map<String, dynamic> json) =>
       ReadingDetailItem(
@@ -127,6 +161,8 @@ class ReadingDetailItem {
         latPuntoMedicion: json["lat_punto_medicion"],
         longPuntoMedicion: json["long_punto_medicion"],
         detalleLecturaRutaSec: json["detalle_lectura_ruta_sec"],
+        idRequest: null,
+        id: null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -158,32 +194,37 @@ class ReadingDetailItem {
         "detalle_lectura_ruta_sec": detalleLecturaRutaSec,
       };
 
-  ReadingDetailItem copyWith({ReadingRequest? readingRequest, int? id}) {
+  ReadingDetailItem copyWith(
+      {ReadingRequest? readingRequest, int? id, int? idRequest}) {
     return ReadingDetailItem(
-        id: id,
-        orden: orden,
-        secuencia: secuencia,
-        numeroMedidor: numeroMedidor,
-        tipoMedidor: tipoMedidor,
-        marcaMedidor: marcaMedidor,
-        nroEnteros: nroEnteros,
-        nroDecimales: nroDecimales,
-        constante: constante,
-        lecturaMinima: lecturaMinima,
-        lecturaMaxima: lecturaMaxima,
-        falsaMinima: falsaMinima,
-        falsaMaxima: falsaMaxima,
-        factor: factor,
-        lecturaAnterior: lecturaAnterior,
-        claseServicio: claseServicio,
-        fechaUltimaLectura: fechaUltimaLectura,
-        indicadorSuspension: indicadorSuspension,
-        nombre: nombre,
-        direccion: direccion,
-        suscriptorSec: suscriptorSec,
-        tipoConsumo: tipoConsumo,
-        nombreTipoConsumo: nombreTipoConsumo,
-        detalleLecturaRutaSec: detalleLecturaRutaSec)
-      ..readingRequest = readingRequest ?? this.readingRequest;
+      id: id ?? this.id,
+      orden: orden,
+      secuencia: secuencia,
+      numeroMedidor: numeroMedidor,
+      tipoMedidor: tipoMedidor,
+      idRequest: idRequest ?? this.idRequest,
+      marcaMedidor: marcaMedidor,
+      nroEnteros: nroEnteros,
+      nroDecimales: nroDecimales,
+      constante: constante,
+      lecturaMinima: lecturaMinima,
+      lecturaMaxima: lecturaMaxima,
+      falsaMinima: falsaMinima,
+      falsaMaxima: falsaMaxima,
+      factor: factor,
+      lecturaAnterior: lecturaAnterior,
+      claseServicio: claseServicio,
+      fechaUltimaLectura: fechaUltimaLectura,
+      indicadorSuspension: indicadorSuspension,
+      nombre: nombre,
+      direccion: direccion,
+      suscriptorSec: suscriptorSec,
+      tipoConsumo: tipoConsumo,
+      nombreTipoConsumo: nombreTipoConsumo,
+      detalleLecturaRutaSec: detalleLecturaRutaSec,
+      latPuntoMedicion: this.latPuntoMedicion,
+      longPuntoMedicion: longPuntoMedicion,
+      indRangoCritica: indRangoCritica,
+    )..readingRequest = readingRequest ?? this.readingRequest;
   }
 }

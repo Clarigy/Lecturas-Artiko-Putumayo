@@ -1,6 +1,7 @@
 import 'package:artiko/core/readings/domain/entities/anomalia.dart';
 import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
 import 'package:artiko/core/readings/domain/use_case/get_anomalies_use_case.dart';
+import 'package:artiko/core/readings/domain/use_case/update_reading_use_case.dart';
 import 'package:artiko/features/home/data/models/reading_images_model.dart';
 import 'package:artiko/features/home/domain/use_cases/delete_reading_images.dart';
 import 'package:artiko/features/home/domain/use_cases/get_reading_images_by_reading_id.dart';
@@ -15,17 +16,20 @@ enum ReadingDetailState {
 
 class ReadingDetailBloc extends ChangeNotifier {
   ReadingDetailBloc(
-      this._getReadingImagesByReadingIdUseCase,
-      this._insertReadingImages,
-      this._updateReadingImages,
-      this._deleteReadingImages,
-      this._getAnomaliesUseCase);
+    this._getReadingImagesByReadingIdUseCase,
+    this._insertReadingImages,
+    this._updateReadingImages,
+    this._deleteReadingImages,
+    this._getAnomaliesUseCase,
+    this._updateReadingUseCase,
+  );
 
   //Casos de uso
   final GetReadingImagesByReadingIdUseCase _getReadingImagesByReadingIdUseCase;
   final InsertReadingImages _insertReadingImages;
   final UpdateReadingImages _updateReadingImages;
   final DeleteReadingImages _deleteReadingImages;
+  final UpdateReadingUseCase _updateReadingUseCase;
 
   final GetAnomaliesUseCase _getAnomaliesUseCase;
 
@@ -73,9 +77,9 @@ class ReadingDetailBloc extends ChangeNotifier {
   late ReadingDetailItem readingDetailItem;
   late List<ReadingDetailItem> readings;
 
-  Future<bool> loadInitInfo() async {
+  Future<bool> loadInitInfo(ReadingDetailItem detailItem) async {
     try {
-      await Future.wait([_loadAnomalias()], eagerError: true);
+      await Future.wait([_loadAnomalias(detailItem)], eagerError: true);
       return true;
     } on Exception {
       rethrow;
@@ -85,10 +89,20 @@ class ReadingDetailBloc extends ChangeNotifier {
     }
   }
 
-  Future<void> _loadAnomalias() async {
+  Future<void> _loadAnomalias(ReadingDetailItem detailItem) async {
     anomalias = await _getAnomaliesUseCase(null);
-    _anomaliaSec = anomalias[0].anomaliaSec;
-    _claseAnomalia = anomalias[0].claseAnomalia[0];
+
+    if (readingDetailItem.readingRequest.anomaliaSec != null) {
+      _anomaliaSec = readingDetailItem.readingRequest.anomaliaSec!;
+      _claseAnomalia = anomalias
+          .firstWhere((element) => element.anomaliaSec == _anomaliaSec)
+          .claseAnomalia
+          .firstWhere((element) =>
+              element.nombre == readingDetailItem.readingRequest.claseAnomalia);
+    } else {
+      _anomaliaSec = anomalias[0].anomaliaSec;
+      _claseAnomalia = anomalias[0].claseAnomalia[0];
+    }
   }
 
   Stream<List<ReadingImagesModel>?> getReadingImagesByReadingId(
@@ -122,5 +136,26 @@ class ReadingDetailBloc extends ChangeNotifier {
     } catch (error) {
       rethrow;
     }
+  }
+
+  Future<void> updateReading(ReadingDetailItem readingDetailItem) async {
+    readingDetailState = ReadingDetailState.loading;
+    notifyListeners();
+    try {
+      return await _updateReadingUseCase(readingDetailItem);
+    } on Exception {
+      rethrow;
+    } finally {
+      readingDetailState = ReadingDetailState.initial;
+      notifyListeners();
+    }
+  }
+
+  void initializeInputValues(ReadingDetailItem readingDetailItem) {
+    readingIntegers.text =
+        readingDetailItem.readingRequest.lectura?.toInt().toString() ?? '';
+    readingDecimals.text =
+        readingDetailItem.readingRequest.lectura?.toString().split('.')[1] ??
+            '';
   }
 }

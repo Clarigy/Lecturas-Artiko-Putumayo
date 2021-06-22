@@ -2,6 +2,7 @@ import 'package:artiko/core/http/data/http_proxy_impl.dart';
 import 'package:artiko/core/readings/data/data_sources/anomalies_remote_data_source.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_remote_data_source.dart';
+import 'package:artiko/core/readings/data/data_sources/readings_request_dao.dart';
 import 'package:artiko/core/readings/data/repository/anomalies_repository.dart';
 import 'package:artiko/core/readings/data/repository/reading_repository.dart';
 import 'package:artiko/core/readings/domain/use_case/close_terminal_use_case.dart';
@@ -14,6 +15,7 @@ import 'package:artiko/features/home/domain/use_cases/get_reading_images_by_read
 import 'data/data_sources/anomalies_dao.dart';
 import 'data/data_sources/routes_dao.dart';
 import 'domain/use_case/save_readings_use_case.dart';
+import 'domain/use_case/update_reading_use_case.dart';
 
 Future<void> setUpReadingsProviders() async {
   // Anomalies
@@ -30,7 +32,10 @@ Future<void> setUpReadingsProviders() async {
           routesService: '/leer_rutas'));
 
   sl.registerLazySingleton<ReadingRepository>(() => ReadingRepository(
-      sl<ReadingsRemoteDataSource>(), sl<ReadingsDao>(), sl<RoutesDao>()));
+      sl<ReadingsRemoteDataSource>(),
+      sl<ReadingsDao>(),
+      sl<RoutesDao>(),
+      sl<ReadingsRequestDao>()));
 
   sl.registerLazySingleton<LoadAndSaveAllDataUseCase>(() =>
       LoadAndSaveAllDataUseCase(
@@ -38,6 +43,9 @@ Future<void> setUpReadingsProviders() async {
 
   sl.registerLazySingleton<SaveReadingsUseCase>(
       () => SaveReadingsUseCase(sl<ReadingRepository>()));
+
+  sl.registerLazySingleton<UpdateReadingUseCase>(
+      () => UpdateReadingUseCase(sl<ReadingRepository>()));
 
   sl.registerLazySingleton<SincronizarReadingsUseCase>(
       () => SincronizarReadingsUseCase(sl<ReadingRepository>()));

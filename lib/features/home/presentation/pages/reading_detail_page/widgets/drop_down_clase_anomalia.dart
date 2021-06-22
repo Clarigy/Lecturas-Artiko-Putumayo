@@ -18,7 +18,9 @@ class _DropDownClaseAnomaliaState extends State<DropDownClaseAnomalia> {
   @override
   void initState() {
     final bloc = context.read(readingDetailBlocProvider);
-    bloc.setClaseAnomaliaSinRefresh(_buildAnomaliaItems(bloc)[0].value!);
+    if (bloc.readingDetailItem.readingRequest.claseAnomalia == null) {
+      bloc.setClaseAnomaliaSinRefresh(_buildAnomaliaItems(bloc)[0].value!);
+    }
     super.initState();
   }
 
@@ -29,7 +31,10 @@ class _DropDownClaseAnomaliaState extends State<DropDownClaseAnomalia> {
           T Function<T>(ProviderBase<Object?, T>) watch, Widget? child) {
         final bloc = watch(readingDetailBlocProvider);
         if (!isSetState) {
-          bloc.setClaseAnomaliaSinRefresh(_buildAnomaliaItems(bloc)[0].value!);
+          if (bloc.readingDetailItem.readingRequest.claseAnomalia == null) {
+            bloc.setClaseAnomaliaSinRefresh(
+                _buildAnomaliaItems(bloc)[0].value!);
+          }
         }
         isSetState = false;
         return Container(

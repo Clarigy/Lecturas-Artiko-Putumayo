@@ -1,6 +1,7 @@
 import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
 import 'package:artiko/core/readings/domain/entities/reading_request.dart';
 import 'package:artiko/core/readings/domain/use_case/get_anomalies_use_case.dart';
+import 'package:artiko/core/readings/domain/use_case/update_reading_use_case.dart';
 import 'package:artiko/dependency_injector.dart';
 import 'package:artiko/features/home/domain/use_cases/delete_reading_images.dart';
 import 'package:artiko/features/home/domain/use_cases/get_reading_images_by_reading_id.dart';
@@ -18,6 +19,7 @@ import 'package:artiko/shared/widgets/default_app_bar.dart';
 import 'package:artiko/shared/widgets/main_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 
 final readingDetailBlocProvider = ChangeNotifierProvider.autoDispose((ref) {
   ref.onDispose(() {
@@ -29,6 +31,7 @@ final readingDetailBlocProvider = ChangeNotifierProvider.autoDispose((ref) {
     sl<UpdateReadingImages>(),
     sl<DeleteReadingImages>(),
     sl<GetAnomaliesUseCase>(),
+    sl<UpdateReadingUseCase>(),
   );
 });
 
@@ -53,22 +56,27 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
   @override
   void initState() {
     WidgetsBinding.instance!.addPostFrameCallback((_) => afterLayout());
-
+    final bloc = context.read<ReadingDetailBloc>(readingDetailBlocProvider);
     print('falsaMaxima  ${widget.readingDetailItem.falsaMaxima}');
     print('falsaMinima  ${widget.readingDetailItem.falsaMinima}');
     print('lecturaMaxima  ${widget.readingDetailItem.lecturaMaxima}');
     print('lecturaMinima  ${widget.readingDetailItem.lecturaMinima}');
     print('lecturaAnterior  ${widget.readingDetailItem.lecturaAnterior}');
-    context.read<ReadingDetailBloc>(readingDetailBlocProvider)
+    bloc
       ..readingDetailItem = widget.readingDetailItem
       ..readings = widget.readings;
 
-    final _item = context.read(readingDetailBlocProvider).readingDetailItem;
+    final _item = bloc.readingDetailItem;
 
     detailItem = _item.copyWith(
-        readingRequest:
-            ReadingRequest(detalleLecturaRutaSec: _item.detalleLecturaRutaSec));
+        id: _item.id,
+        readingRequest: _item.idRequest == null
+            ? ReadingRequest.empty(
+                detalleLecturaRutaSec: _item.detalleLecturaRutaSec,
+                id: _item.id)
+            : null);
 
+    bloc.initializeInputValues(detailItem);
     super.initState();
   }
 
@@ -76,7 +84,7 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
     try {
       await context
           .read<ReadingDetailBloc>(readingDetailBlocProvider)
-          .loadInitInfo();
+          .loadInitInfo(detailItem);
     } catch (_) {
       final snackBar =
           SnackBar(content: Text('No pudimos cargar la información'));
@@ -94,12 +102,12 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
     return Consumer(
       builder: (BuildContext context, watch, Widget? child) {
         final bloc = watch(readingDetailBlocProvider);
-        return bloc.readingDetailState == ReadingDetailState.loading
-            ? Center(child: CircularProgressIndicator())
-            : Scaffold(
-                appBar: DefaultAppBar(),
-                bottomNavigationBar: _NavigationButtons(detailItem),
-                body: Column(
+        return Scaffold(
+          appBar: DefaultAppBar(),
+          bottomNavigationBar: _NavigationButtons(detailItem),
+          body: bloc.readingDetailState == ReadingDetailState.loading
+              ? Center(child: CircularProgressIndicator())
+              : Column(
                   children: [
                     Expanded(
                       child: SingleChildScrollView(
@@ -150,7 +158,7 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
                     ),
                   ],
                 ),
-              );
+        );
       },
     );
   }
@@ -214,12 +222,20 @@ class _NavigationButtons extends ConsumerWidget {
             flex: 1,
             child: MainButton(
                 text: 'Guardar',
-                onTap: () {
-                  detailItem.readingRequest.anomaliaSec = bloc.anomaliaSec;
+                onTap: () async {
+                  try {
+                    final position = await Geolocator.getCurrentPosition();
+                    detailItem.readingRequest
+                      ..anomaliaSec = bloc.anomaliaSec
+                      ..latLecturaTomada = position.latitude.toString()
+                      ..longLecturaTomada = position.longitude.toString()
+                      ..claseAnomalia = bloc.claseAnomalia.nombre;
 
-                  print('fotos ${detailItem.readingRequest.fotos}');
-                  print('lectura ${detailItem.readingRequest.lectura}');
-                  print('anomaliaSec ${detailItem.readingRequest.anomaliaSec}');
+                    await bloc.updateReading(detailItem);
+                  } catch (_) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('No pudimos guardar la lectura')));
+                  }
                 }),
           ),
           SizedBox(width: 12),

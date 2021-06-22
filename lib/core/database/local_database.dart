@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:artiko/core/readings/data/data_sources/anomalies_dao.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
+import 'package:artiko/core/readings/data/data_sources/readings_request_dao.dart';
 import 'package:artiko/core/readings/data/data_sources/routes_dao.dart';
 import 'package:artiko/core/readings/domain/entities/anomalies_response.dart';
 import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
+import 'package:artiko/core/readings/domain/entities/reading_request.dart';
 import 'package:artiko/core/readings/domain/entities/routes_response.dart';
 import 'package:artiko/features/home/data/data_sources/local/reading_images_dao.dart';
 import 'package:artiko/features/home/data/models/reading_images_model.dart';
@@ -20,7 +22,8 @@ part 'local_database.g.dart';
   ReadingImagesModel,
   ReadingDetailItem,
   RoutesItem,
-  AnomalyItem
+  AnomalyItem,
+  ReadingRequest
 ])
 abstract class AppDatabase extends FloorDatabase {
   CurrentUserDao get currentUserDao;
@@ -32,4 +35,6 @@ abstract class AppDatabase extends FloorDatabase {
   RoutesDao get routesDao;
 
   AnomaliesDao get anomaliesDao;
+
+  ReadingsRequestDao get readingsRequestDao;
 }
