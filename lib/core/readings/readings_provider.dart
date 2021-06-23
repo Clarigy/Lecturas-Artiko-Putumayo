@@ -1,5 +1,7 @@
 import 'package:artiko/core/http/data/http_proxy_impl.dart';
 import 'package:artiko/core/readings/data/data_sources/anomalies_remote_data_source.dart';
+import 'package:artiko/core/readings/data/data_sources/observaciones_dao.dart';
+import 'package:artiko/core/readings/data/data_sources/observaciones_remote_data_source.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_remote_data_source.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_request_dao.dart';
@@ -14,6 +16,7 @@ import 'package:artiko/features/home/domain/use_cases/get_reading_images_by_read
 
 import 'data/data_sources/anomalies_dao.dart';
 import 'data/data_sources/routes_dao.dart';
+import 'data/repository/observaciones_repository.dart';
 import 'domain/use_case/save_readings_use_case.dart';
 import 'domain/use_case/update_reading_use_case.dart';
 
@@ -24,6 +27,17 @@ Future<void> setUpReadingsProviders() async {
 
   sl.registerLazySingleton<AnomaliesRepository>(() =>
       AnomaliesRepository(sl<AnomaliesRemoteDataSource>(), sl<AnomaliesDao>()));
+
+  //Observaciones
+  sl.registerLazySingleton<ObservacionesRemoteDataSource>(() =>
+      ObservacionesRemoteDataSource(
+          sl<HttpProxyImpl>(), '/observacion_lectura'));
+
+  sl.registerLazySingleton<ObservacionesRepository>(
+      () => ObservacionesRepository(
+            sl<ObservacionesRemoteDataSource>(),
+            sl<ObservacionesDao>(),
+          ));
 
   //Readings
   sl.registerLazySingleton<ReadingsRemoteDataSource>(() =>
@@ -38,8 +52,8 @@ Future<void> setUpReadingsProviders() async {
       sl<ReadingsRequestDao>()));
 
   sl.registerLazySingleton<LoadAndSaveAllDataUseCase>(() =>
-      LoadAndSaveAllDataUseCase(
-          sl<ReadingRepository>(), sl<AnomaliesRepository>()));
+      LoadAndSaveAllDataUseCase(sl<ReadingRepository>(),
+          sl<AnomaliesRepository>(), sl<ObservacionesRepository>()));
 
   sl.registerLazySingleton<SaveReadingsUseCase>(
       () => SaveReadingsUseCase(sl<ReadingRepository>()));

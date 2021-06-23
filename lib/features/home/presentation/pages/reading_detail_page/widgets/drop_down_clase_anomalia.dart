@@ -14,6 +14,7 @@ class DropDownClaseAnomalia extends StatefulWidget {
 
 class _DropDownClaseAnomaliaState extends State<DropDownClaseAnomalia> {
   bool isSetState = false;
+  int times = 0;
 
   @override
   void initState() {
@@ -31,9 +32,11 @@ class _DropDownClaseAnomaliaState extends State<DropDownClaseAnomalia> {
           T Function<T>(ProviderBase<Object?, T>) watch, Widget? child) {
         final bloc = watch(readingDetailBlocProvider);
         if (!isSetState) {
-          if (bloc.readingDetailItem.readingRequest.claseAnomalia == null) {
+          if (bloc.readingDetailItem.readingRequest.claseAnomalia == null &&
+              times == 0) {
             bloc.setClaseAnomaliaSinRefresh(
                 _buildAnomaliaItems(bloc)[0].value!);
+            times++;
           }
         }
         isSetState = false;
@@ -81,9 +84,6 @@ class _DropDownClaseAnomaliaState extends State<DropDownClaseAnomalia> {
         .forEach((claseAnomalia) => items.add(new DropdownMenuItem(
             value: claseAnomalia, child: new Text(claseAnomalia.nombre))));
 
-    return items
-      ..add(new DropdownMenuItem(
-          value: ClaseAnomalia.otro(),
-          child: new Text(ClaseAnomalia.otro().nombre)));
+    return items;
   }
 }

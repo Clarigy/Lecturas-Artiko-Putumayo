@@ -1,9 +1,12 @@
 import 'package:artiko/core/error/exception.dart';
 import 'package:artiko/core/readings/data/data_sources/anomalies_dao.dart';
 import 'package:artiko/core/readings/data/data_sources/anomalies_remote_data_source.dart';
+import 'package:artiko/core/readings/data/repository/observaciones_repository.dart';
 import 'package:artiko/core/readings/domain/entities/anomalia.dart';
 import 'package:artiko/core/readings/domain/entities/anomalies_response.dart';
+import 'package:artiko/core/readings/domain/entities/observaciones_response.dart';
 import 'package:artiko/core/readings/domain/repositories/anomalies_repository_contract.dart';
+import 'package:artiko/dependency_injector.dart';
 
 class AnomaliesRepository implements AnomaliesRepositoryContract {
   final AnomaliesRemoteDataSource _remoteDataSource;
@@ -24,12 +27,15 @@ class AnomaliesRepository implements AnomaliesRepositoryContract {
 
   Future<List<Anomalia>> getAnomalies() async {
     final anomaliesResponse = await loadAnomalies();
-    if (anomaliesResponse == null) return [];
-    return _convertAnomaliesResponseToAnomalias(anomaliesResponse);
+    final observaciones =
+        await sl<ObservacionesRepository>().getObservaciones();
+    if (anomaliesResponse == null || observaciones == null) return [];
+    return _convertAnomaliesResponseToAnomalias(
+        anomaliesResponse, observaciones);
   }
 
   List<Anomalia> _convertAnomaliesResponseToAnomalias(
-      List<AnomalyItem> anomalies) {
+      List<AnomalyItem> anomalies, List<ObservacionItem> observaciones) {
     final List<Anomalia> anomalias = [];
     final Set<String> claseAnomalias = Set.of([]);
 
@@ -61,9 +67,13 @@ class AnomaliesRepository implements AnomaliesRepositoryContract {
             lectura: tmp.lectura,
             fotografia: tmp.fotografia);
 
-        if (tmp.observacion != null) {
-          clase.observaciones.add(tmp.observacion!);
-        }
+        final tempObservaciones = observaciones
+            .where((element) => element.anomaliaSec == tmp.anomaliaSec)
+            .toList();
+
+        tempObservaciones.forEach((element) {
+          clase.observaciones.add(element.descripcion);
+        });
 
         anomalia.claseAnomalia.add(clase);
       });

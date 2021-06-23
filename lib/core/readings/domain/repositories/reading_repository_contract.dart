@@ -19,5 +19,5 @@ abstract class ReadingRepositoryContract {
 
   Future<void> closeTerminal(List<ReadingRequest> readings);
 
-  Future<void> updateReadings(ReadingDetailItem reading);
+  Future<ReadingDetailItem> updateReadings(ReadingDetailItem reading);
 }

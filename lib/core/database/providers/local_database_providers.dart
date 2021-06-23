@@ -1,4 +1,5 @@
 import 'package:artiko/core/readings/data/data_sources/anomalies_dao.dart';
+import 'package:artiko/core/readings/data/data_sources/observaciones_dao.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_request_dao.dart';
 import 'package:artiko/core/readings/data/data_sources/routes_dao.dart';
@@ -26,4 +27,6 @@ Future<void> injectionDatabase() async {
   sl.registerLazySingleton<AnomaliesDao>(() => db.anomaliesDao);
 
   sl.registerLazySingleton<ReadingsRequestDao>(() => db.readingsRequestDao);
+
+  sl.registerLazySingleton<ObservacionesDao>(() => db.observacionesDao);
 }

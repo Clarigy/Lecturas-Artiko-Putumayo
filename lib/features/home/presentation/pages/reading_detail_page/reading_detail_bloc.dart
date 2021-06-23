@@ -1,7 +1,10 @@
+import 'package:artiko/core/readings/data/repository/observaciones_repository.dart';
 import 'package:artiko/core/readings/domain/entities/anomalia.dart';
+import 'package:artiko/core/readings/domain/entities/observaciones_response.dart';
 import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
 import 'package:artiko/core/readings/domain/use_case/get_anomalies_use_case.dart';
 import 'package:artiko/core/readings/domain/use_case/update_reading_use_case.dart';
+import 'package:artiko/dependency_injector.dart';
 import 'package:artiko/features/home/data/models/reading_images_model.dart';
 import 'package:artiko/features/home/domain/use_cases/delete_reading_images.dart';
 import 'package:artiko/features/home/domain/use_cases/get_reading_images_by_reading_id.dart';
@@ -15,14 +18,12 @@ enum ReadingDetailState {
 }
 
 class ReadingDetailBloc extends ChangeNotifier {
-  ReadingDetailBloc(
-    this._getReadingImagesByReadingIdUseCase,
-    this._insertReadingImages,
-    this._updateReadingImages,
-    this._deleteReadingImages,
-    this._getAnomaliesUseCase,
-    this._updateReadingUseCase,
-  );
+  ReadingDetailBloc(this._getReadingImagesByReadingIdUseCase,
+      this._insertReadingImages,
+      this._updateReadingImages,
+      this._deleteReadingImages,
+      this._getAnomaliesUseCase,
+      this._updateReadingUseCase,);
 
   //Casos de uso
   final GetReadingImagesByReadingIdUseCase _getReadingImagesByReadingIdUseCase;
@@ -60,6 +61,10 @@ class ReadingDetailBloc extends ChangeNotifier {
   setAnomaliaSec(int anomaliaSecValue, ClaseAnomalia claseAnomalia) {
     _anomaliaSec = anomaliaSecValue;
     _claseAnomalia = claseAnomalia;
+    _observacion = claseAnomalia.observaciones.isEmpty
+        ? 'Otro'
+        : claseAnomalia.observaciones.first;
+
     notifyListeners();
   }
 
@@ -69,17 +74,34 @@ class ReadingDetailBloc extends ChangeNotifier {
 
   set claseAnomalia(ClaseAnomalia value) {
     _claseAnomalia = value;
+    _observacion = claseAnomalia.observaciones.isEmpty
+        ? 'Otro'
+        : claseAnomalia.observaciones.first;
+    notifyListeners();
+  }
+
+  late String _observacion;
+
+  String get observacion => _observacion;
+
+  set observacion(String value) {
+    _observacion = value;
     notifyListeners();
   }
 
   setClaseAnomaliaSinRefresh(ClaseAnomalia value) => _claseAnomalia = value;
 
+  setObservacionSinRefresh(String value) => _observacion = value;
+
   late ReadingDetailItem readingDetailItem;
   late List<ReadingDetailItem> readings;
 
+  late List<ObservacionItem> observaciones;
+
   Future<bool> loadInitInfo(ReadingDetailItem detailItem) async {
     try {
-      await Future.wait([_loadAnomalias(detailItem)], eagerError: true);
+      await Future.wait([_loadAnomalias(detailItem), _loadObservaciones()],
+          eagerError: true);
       return true;
     } on Exception {
       rethrow;
@@ -103,10 +125,20 @@ class ReadingDetailBloc extends ChangeNotifier {
       _anomaliaSec = anomalias[0].anomaliaSec;
       _claseAnomalia = anomalias[0].claseAnomalia[0];
     }
+
+    if (readingDetailItem.readingRequest.observacionSec != null) {
+      setObservacionSinRefresh(claseAnomalia.observaciones.isEmpty
+          ? 'Otro'
+          : claseAnomalia.observaciones.firstWhere((element) =>
+              element == readingDetailItem.readingRequest.observacionAnomalia));
+    } else {
+      setObservacionSinRefresh(claseAnomalia.observaciones.isEmpty
+          ? 'Otro'
+          : claseAnomalia.observaciones[0]);
+    }
   }
 
-  Stream<List<ReadingImagesModel>?> getReadingImagesByReadingId(
-      String readingId) {
+  Stream<List<ReadingImagesModel>?> getReadingImagesByReadingId(String readingId) {
     try {
       return _getReadingImagesByReadingIdUseCase(readingId);
     } catch (error) {
@@ -142,7 +174,7 @@ class ReadingDetailBloc extends ChangeNotifier {
     readingDetailState = ReadingDetailState.loading;
     notifyListeners();
     try {
-      return await _updateReadingUseCase(readingDetailItem);
+      this.readingDetailItem = await _updateReadingUseCase(readingDetailItem);
     } on Exception {
       rethrow;
     } finally {
@@ -157,5 +189,10 @@ class ReadingDetailBloc extends ChangeNotifier {
     readingDecimals.text =
         readingDetailItem.readingRequest.lectura?.toString().split('.')[1] ??
             '';
+  }
+
+  Future<void> _loadObservaciones() async {
+    observaciones =
+        (await sl<ObservacionesRepository>().getObservaciones()) ?? [];
   }
 }

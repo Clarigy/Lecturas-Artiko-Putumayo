@@ -40,9 +40,9 @@ class ReadingRepository implements ReadingRepositoryContract {
   }
 
   @override
-  Stream<List<ReadingDetailItem>?> getAllReadings() async* {
+  Stream<List<ReadingDetailItem>?> getAllReadings() {
     try {
-      yield* _readingsDao.getReadings().asyncMap((event) async {
+      return _readingsDao.getReadings().asyncMap((event) async {
         if (event == null) return event;
         final List<ReadingDetailItem> tempList = [];
 
@@ -110,12 +110,13 @@ class ReadingRepository implements ReadingRepositoryContract {
   }
 
   @override
-  Future<void> updateReadings(ReadingDetailItem reading) async {
+  Future<ReadingDetailItem> updateReadings(ReadingDetailItem reading) async {
     try {
       reading.readingRequest.detailId = reading.id;
       final id = await _readingsRequestDao.insert(reading.readingRequest);
       reading.idRequest = id;
       await _readingsDao.update(reading);
+      return reading;
     } catch (_) {
       throw ServerException();
     }

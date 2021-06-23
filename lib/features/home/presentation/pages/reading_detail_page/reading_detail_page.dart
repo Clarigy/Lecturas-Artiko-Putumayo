@@ -11,6 +11,7 @@ import 'package:artiko/features/home/presentation/pages/activities_page/widgets/
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/reading_detail_bloc.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/widgets/drop_down_anomalias.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/widgets/drop_down_clase_anomalia.dart';
+import 'package:artiko/features/home/presentation/pages/reading_detail_page/widgets/drop_down_input.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/widgets/meter_reading.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/widgets/take_pictures.dart';
 import 'package:artiko/shared/routes/app_routes.dart';
@@ -145,9 +146,13 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
                                 ],
                               ),
                               ...buildDependsWidgetMeter(context, bloc),
-                              // DropDownInput(
-                              //   label: 'Observaciones',
-                              // ),
+                              DropDownInput(
+                                onChanged: (value) {
+                                  bloc.observacion = value;
+                                },
+                                value: bloc.observacion,
+                                items: _buildObservacionesItems(bloc).toSet(),
+                              ),
                               SizedBox(
                                 height: screenHeight * .03,
                               )
@@ -174,6 +179,19 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
               readingId: widget.readingDetailItem.id.toString(),
             ),
           ];
+  }
+
+  List<DropdownMenuItem<String>> _buildObservacionesItems(
+      ReadingDetailBloc bloc) {
+    List<DropdownMenuItem<String>> items = [];
+
+    bloc.claseAnomalia.observaciones.forEach((observacion) => items.add(
+        new DropdownMenuItem(
+            value: observacion, child: new Text(observacion))));
+
+    items.add(new DropdownMenuItem(value: 'Otro', child: new Text('Otro')));
+
+    return items;
   }
 }
 
@@ -229,7 +247,15 @@ class _NavigationButtons extends ConsumerWidget {
                       ..anomaliaSec = bloc.anomaliaSec
                       ..latLecturaTomada = position.latitude.toString()
                       ..longLecturaTomada = position.longitude.toString()
-                      ..claseAnomalia = bloc.claseAnomalia.nombre;
+                      ..claseAnomalia = bloc.claseAnomalia.nombre
+                      ..observacionAnomalia = bloc.observacion
+                      ..observacionSec = bloc.observacion != 'Otro'
+                          ? bloc.observaciones
+                              .firstWhere((element) =>
+                                  element.descripcion == element.descripcion &&
+                                  element.anomaliaSec == bloc.anomaliaSec)
+                              .observacionSec
+                          : null;
 
                     await bloc.updateReading(detailItem);
                   } catch (_) {

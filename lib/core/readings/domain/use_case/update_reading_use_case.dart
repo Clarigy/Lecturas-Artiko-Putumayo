@@ -8,7 +8,7 @@ class UpdateReadingUseCase implements UseCase<ReadingDetailItem, Future<void>> {
   UpdateReadingUseCase(this._readingsRepositoryContract);
 
   @override
-  Future<void> call(ReadingDetailItem reading) async {
+  Future<ReadingDetailItem> call(ReadingDetailItem reading) async {
     try {
       reading.readingRequest.idFotos = '';
       reading.readingRequest.fotos.forEach((element) {
