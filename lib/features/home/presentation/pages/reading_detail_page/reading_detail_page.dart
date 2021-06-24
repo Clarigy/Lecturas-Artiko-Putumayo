@@ -17,6 +17,7 @@ import 'package:artiko/features/home/presentation/pages/reading_detail_page/widg
 import 'package:artiko/shared/routes/app_routes.dart';
 import 'package:artiko/shared/routes/route_args_keys.dart';
 import 'package:artiko/shared/widgets/default_app_bar.dart';
+import 'package:artiko/shared/widgets/input_with_label.dart';
 import 'package:artiko/shared/widgets/main_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -62,7 +63,7 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
     print('falsaMinima  ${widget.readingDetailItem.falsaMinima}');
     print('lecturaMaxima  ${widget.readingDetailItem.lecturaMaxima}');
     print('lecturaMinima  ${widget.readingDetailItem.lecturaMinima}');
-    print('lecturaAnterior  ${widget.readingDetailItem.lecturaAnterior}');
+    print('l}ecturaAnterior  ${widget.readingDetailItem.lecturaAnterior}');
     bloc
       ..readingDetailItem = widget.readingDetailItem
       ..readings = widget.readings;
@@ -83,9 +84,11 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
 
   void afterLayout() async {
     try {
-      await context
-          .read<ReadingDetailBloc>(readingDetailBlocProvider)
-          .loadInitInfo(detailItem);
+      final bloc = context.read<ReadingDetailBloc>(readingDetailBlocProvider);
+      await bloc.loadInitInfo(detailItem);
+
+      if (detailItem.readingRequest.lectura != null)
+        bloc.verifiedReading = true;
     } catch (_) {
       final snackBar =
           SnackBar(content: Text('No pudimos cargar la información'));
@@ -122,14 +125,17 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
                               MeterReading(
                                 readingDetailItem: detailItem,
                               ),
-                              Align(
-                                  alignment: AlignmentDirectional.bottomStart,
-                                  child: Text(
-                                      'Anomalia${bloc.requiredAnomaliaByMeterReading ?? false ? '*' : ''}',
-                                      style: theme.textTheme.bodyText2!
-                                          .copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: theme.primaryColor))),
+                              Container(
+                                margin: EdgeInsets.only(top: 10),
+                                child: Align(
+                                    alignment: AlignmentDirectional.bottomStart,
+                                    child: Text(
+                                        'Anomalia${bloc.requiredAnomaliaByMeterReading ?? false ? '*' : ''}',
+                                        style: theme.textTheme.bodyText2!
+                                            .copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: theme.primaryColor))),
+                              ),
                               Row(
                                 children: [
                                   Flexible(
@@ -146,13 +152,6 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
                                 ],
                               ),
                               ...buildDependsWidgetMeter(context, bloc),
-                              DropDownInput(
-                                onChanged: (value) {
-                                  bloc.observacion = value;
-                                },
-                                value: bloc.observacion,
-                                items: _buildObservacionesItems(bloc).toSet(),
-                              ),
                               SizedBox(
                                 height: screenHeight * .03,
                               )
@@ -178,6 +177,22 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
               margin: EdgeInsets.only(top: 24),
               readingId: widget.readingDetailItem.id.toString(),
             ),
+            DropDownInput(
+              onChanged: (value) {
+                bloc.observacion = value;
+              },
+              value: bloc.observacion,
+              items: _buildObservacionesItems(bloc).toSet(),
+            ),
+            if (bloc.observacion == 'Otro')
+              Container(
+                margin: EdgeInsets.only(top: 10),
+                child: InputWithLabel(
+                  width: double.infinity,
+                  label: '',
+                  textEditingController: bloc.observacionTextController,
+                ),
+              ),
           ];
   }
 
@@ -241,6 +256,28 @@ class _NavigationButtons extends ConsumerWidget {
             child: MainButton(
                 text: 'Guardar',
                 onTap: () async {
+                  if (!bloc.formKey.currentState!.validate()) return;
+                  if (!bloc.verifiedReading) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('La lectura no está verificada')));
+                    return;
+                  }
+                  if (bloc.requiredPhotoByMeterReading != null &&
+                          bloc.requiredPhotoByMeterReading! &&
+                          detailItem.readingRequest.fotos.isEmpty ||
+                      bloc.claseAnomalia.fotografia &&
+                          detailItem.readingRequest.fotos.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('Al menos una foto es requerida')));
+                    return;
+                  }
+                  if (bloc.requiredAnomaliaByMeterReading != null &&
+                      bloc.anomaliaSec == 3) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('La anomalía es requerida')));
+                    return;
+                  }
+
                   try {
                     final position = await Geolocator.getCurrentPosition();
                     detailItem.readingRequest
@@ -249,6 +286,9 @@ class _NavigationButtons extends ConsumerWidget {
                       ..longLecturaTomada = position.longitude.toString()
                       ..claseAnomalia = bloc.claseAnomalia.nombre
                       ..observacionAnomalia = bloc.observacion
+                      ..observacionLectura = bloc.observacion == 'Otro'
+                          ? bloc.observacionTextController.text
+                          : null
                       ..observacionSec = bloc.observacion != 'Otro'
                           ? bloc.observaciones
                               .firstWhere((element) =>

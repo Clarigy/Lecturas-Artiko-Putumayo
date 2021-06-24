@@ -37,8 +37,12 @@ class ReadingDetailBloc extends ChangeNotifier {
   //State
   ReadingDetailState readingDetailState = ReadingDetailState.loading;
 
+  //Form
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
   final readingIntegers = TextEditingController();
   final readingDecimals = TextEditingController();
+  final observacionTextController = TextEditingController();
 
   bool _verifiedReading = false;
 

@@ -26,70 +26,108 @@ class _MeterReadingState extends State<MeterReading> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     final theme = Theme.of(context);
 
     final bloc = context.read(readingDetailBlocProvider);
 
     return Container(
       margin: EdgeInsets.only(top: 22),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: screenWidth * .55,
-            child: TextFormField(
-              autocorrect: false,
-              controller: bloc.readingIntegers,
-              keyboardType: TextInputType.number,
-              textInputAction: TextInputAction.next,
-              decoration: InputDecoration(
+      child: Form(
+        key: bloc.formKey,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Flexible(
+              flex: 3,
+              child: TextFormField(
+                autocorrect: false,
+                controller: bloc.readingIntegers,
+                keyboardType: TextInputType.number,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                textInputAction: TextInputAction.next,
+                validator: (value) {
+                  if (!bloc.claseAnomalia.lectura ||
+                      bloc.readingDetailItem.detalleLecturaRutaSec == null)
+                    return null;
+                  if (value == null || value.isEmpty) return 'Campo requerido';
+                  if (value.trim().length > bloc.readingDetailItem.nroEnteros ||
+                      value.trim().length < bloc.readingDetailItem.nroEnteros) {
+                    return '${bloc.readingDetailItem.nroEnteros}  números son necesarios';
+                  }
+                },
+                style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 8),
+                decoration: InputDecoration(
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    )),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 6),
+              child: Text(
+                ',',
+                style: TextStyle(color: theme.primaryColor, fontSize: 60),
+              ),
+            ),
+            Flexible(
+              flex: 2,
+              child: TextFormField(
+                autocorrect: false,
+                controller: bloc.readingDecimals,
+                keyboardType: TextInputType.number,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  if (!bloc.claseAnomalia.lectura ||
+                      bloc.readingDetailItem.detalleLecturaRutaSec == null)
+                    return null;
+                  if (value == null ||
+                      value.isEmpty &&
+                          bloc.readingDetailItem.nroDecimales > 0) {
+                    return 'Campo requerido';
+                  }
+                  if (value.trim().length >
+                          bloc.readingDetailItem.nroDecimales ||
+                      value.trim().length <
+                          bloc.readingDetailItem.nroDecimales) {
+                    return '${bloc.readingDetailItem.nroDecimales} números son necesarios';
+                  }
+                },
+                style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 8),
+                decoration: InputDecoration(
                   filled: true,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                  )),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 6),
-            child: Text(
-              ',',
-              style: TextStyle(color: theme.primaryColor, fontSize: 60),
-            ),
-          ),
-          Container(
-            width: screenWidth * .2,
-            child: TextFormField(
-              autocorrect: false,
-              controller: bloc.readingDecimals,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  )),
-            ),
-          ),
-          Center(
-            child: IconButton(
-                icon: Icon(
-                  Icons.check_circle,
-                  color: theme.primaryColor,
-                  size: 36,
+                  ),
                 ),
-                onPressed: () {
-                  _validateReading(context);
-                }),
-          )
-        ],
+              ),
+            ),
+            Center(
+              child: IconButton(
+                  icon: Icon(
+                    Icons.check_circle,
+                    color: theme.primaryColor,
+                    size: 36,
+                  ),
+                  onPressed: () {
+                    _validateReading(context);
+                  }),
+            )
+          ],
+        ),
       ),
     );
   }
 
   void _validateReading(BuildContext context) {
     final bloc = context.read(readingDetailBlocProvider);
-
+    if (!bloc.formKey.currentState!.validate()) return;
     final request = detailItem.readingRequest;
 
     request.lectura = getReadingValue(bloc);
@@ -153,6 +191,7 @@ class _MeterReadingState extends State<MeterReading> {
     request
       ..lecturaIntento2 = request.lectura
       ..lectura = null;
+    bloc.verifiedReading = false;
     showSnackbar(
         context, 'Por favor, confirme Lectura. Lectura ingresada es excedida');
   }
@@ -227,6 +266,7 @@ class _MeterReadingState extends State<MeterReading> {
       ..lecturaIntento1 = request.lectura
       ..lecturaIntento2 = null
       ..lectura = null;
+    bloc.verifiedReading = false;
     showSnackbar(context, 'Por favor, confirme lectura');
   }
 
@@ -236,6 +276,7 @@ class _MeterReadingState extends State<MeterReading> {
     request
       ..lecturaIntento2 = request.lectura
       ..lectura = null;
+    bloc.verifiedReading = false;
     showSnackbar(context,
         'Por favor, confirme lectura. Lectura ingresada es menor o igual que la lectura anterior');
   }

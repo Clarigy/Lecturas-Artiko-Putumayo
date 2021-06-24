@@ -9,7 +9,7 @@ String readingRequestToJson(List<ReadingRequest> data, String tipo) =>
 class ReadingRequest {
   @PrimaryKey(autoGenerate: true)
   final int? id;
-  int detalleLecturaRutaSec;
+  int? detalleLecturaRutaSec;
   int? detailId;
   double? lectura;
   double? lecturaIntento1;

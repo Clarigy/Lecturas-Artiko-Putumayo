@@ -91,12 +91,6 @@ class CreateMeasureBloc extends ChangeNotifier {
 
   List<ReadingDetailItem> buildReadingDetailItem(
       List<ReadingDetailItem> readings) {
-    double promedio = 0;
-    readings.forEach((element) {
-      promedio += element.detalleLecturaRutaSec;
-    });
-
-    promedio /= readings.length;
 
     return tiposConsumoSeleccionados
         .map((e) => ReadingDetailItem.other(
@@ -122,7 +116,7 @@ class CreateMeasureBloc extends ChangeNotifier {
             suscriptorSec: 0,
             tipoConsumo: tiposConsumo[e]!['tipoConsumo']!,
             nombreTipoConsumo: tiposConsumo[e]!['nombreTipoConsumo']!,
-            detalleLecturaRutaSec: promedio.toInt()))
+            detalleLecturaRutaSec: null))
         .toList();
   }
 }

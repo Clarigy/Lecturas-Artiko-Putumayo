@@ -125,7 +125,7 @@ class ReadingDetailItem {
   String nombreTipoConsumo;
   String? latPuntoMedicion;
   String? longPuntoMedicion;
-  int detalleLecturaRutaSec;
+  int? detalleLecturaRutaSec;
 
   int? idRequest;
 
