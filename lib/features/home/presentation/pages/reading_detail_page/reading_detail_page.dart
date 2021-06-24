@@ -169,13 +169,18 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
 
   List<Widget> buildDependsWidgetMeter(
       BuildContext context, ReadingDetailBloc bloc) {
+    final theme = Theme.of(context);
     return !bloc.verifiedReading
         ? []
         : [
-            TakePictures(
-              detailItem: detailItem,
-              margin: EdgeInsets.only(top: 24),
-              readingId: widget.readingDetailItem.id.toString(),
+            Container(
+              margin: EdgeInsets.only(top: 10),
+              child: Align(
+                  alignment: AlignmentDirectional.bottomStart,
+                  child: Text('Observaciones',
+                      style: theme.textTheme.bodyText2!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.primaryColor))),
             ),
             DropDownInput(
               onChanged: (value) {
@@ -193,6 +198,11 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
                   textEditingController: bloc.observacionTextController,
                 ),
               ),
+            TakePictures(
+              detailItem: detailItem,
+              margin: EdgeInsets.only(top: 24),
+              readingId: widget.readingDetailItem.id.toString(),
+            ),
           ];
   }
 

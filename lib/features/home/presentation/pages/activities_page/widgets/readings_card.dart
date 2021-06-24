@@ -82,7 +82,10 @@ class _CardHeader extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 14),
           child: Row(
             children: [
-              Text('001258 - 0001'),
+              Container(
+                margin: EdgeInsets.only(top: 10),
+                child: Text('001258 - 0001'),
+              ),
               Expanded(child: Offstage()),
               if (item.indicadorSuspension) SvgPicture.asset(IMAGE_CUT)
             ],
@@ -145,7 +148,8 @@ class _TypeOfConsumption extends StatelessWidget {
         ),
       ),
       decoration: BoxDecoration(
-          color: Colors.grey, borderRadius: BorderRadius.circular(100)),
+          color: Theme.of(context).secondaryHeaderColor,
+          borderRadius: BorderRadius.circular(100)),
     );
   }
 }
