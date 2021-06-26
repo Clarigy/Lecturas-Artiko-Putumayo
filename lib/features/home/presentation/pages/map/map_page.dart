@@ -14,6 +14,7 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   late GoogleMapController mapController;
   BitmapDescriptor? marker;
+  BitmapDescriptor? markerDone;
 
   @override
   void initState() {
@@ -23,7 +24,7 @@ class _MapPageState extends State<MapPage> {
   }
 
   Future<void> afterLayout() async {
-    await loadMarker();
+    await loadMarkers();
   }
 
   void _onMapCreated(GoogleMapController controller) {
@@ -91,9 +92,11 @@ class _MapPageState extends State<MapPage> {
         .toSet();
   }
 
-  Future<void> loadMarker() async {
+  Future<void> loadMarkers() async {
     marker = await BitmapDescriptor.fromAssetImage(
         ImageConfiguration.empty, 'assets/images/png/marker.png');
+    markerDone = await BitmapDescriptor.fromAssetImage(
+        ImageConfiguration.empty, 'assets/images/png/marker_done.png');
     setState(() {});
   }
 }
