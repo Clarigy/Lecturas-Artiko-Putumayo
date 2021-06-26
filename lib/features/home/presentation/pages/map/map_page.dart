@@ -86,7 +86,7 @@ class _MapPageState extends State<MapPage> {
             element.longPuntoMedicion != null)
         .map((e) => Marker(
             markerId: MarkerId(e.numeroMedidor),
-            icon: marker!,
+            icon: e.readingRequest.lectura != null ? markerDone! : marker!,
             position: LatLng(double.parse(e.latPuntoMedicion!),
                 double.parse(e.longPuntoMedicion!))))
         .toSet();
