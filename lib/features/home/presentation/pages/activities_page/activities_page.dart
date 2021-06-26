@@ -34,7 +34,7 @@ class ActivitiesPage extends StatelessWidget {
                 }
 
                 if (snapshot.hasData) {
-                  if (bloc.readings == null) bloc.readings = snapshot.data;
+                   bloc.readings = snapshot.data;
 
                   return Expanded(
                     child: ListView.builder(

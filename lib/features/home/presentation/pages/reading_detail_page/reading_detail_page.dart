@@ -63,7 +63,7 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
     print('falsaMinima  ${widget.readingDetailItem.falsaMinima}');
     print('lecturaMaxima  ${widget.readingDetailItem.lecturaMaxima}');
     print('lecturaMinima  ${widget.readingDetailItem.lecturaMinima}');
-    print('l}ecturaAnterior  ${widget.readingDetailItem.lecturaAnterior}');
+    print('lecturaAnterior  ${widget.readingDetailItem.lecturaAnterior}');
     bloc
       ..readingDetailItem = widget.readingDetailItem
       ..readings = widget.readings;
@@ -170,7 +170,7 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
   List<Widget> buildDependsWidgetMeter(
       BuildContext context, ReadingDetailBloc bloc) {
     final theme = Theme.of(context);
-    return !bloc.verifiedReading
+    return !bloc.verifiedReading && bloc.claseAnomalia.lectura
         ? []
         : [
             Container(
@@ -267,10 +267,12 @@ class _NavigationButtons extends ConsumerWidget {
                 text: 'Guardar',
                 onTap: () async {
                   if (!bloc.formKey.currentState!.validate()) return;
-                  if (!bloc.verifiedReading) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('La lectura no está verificada')));
-                    return;
+                  if (bloc.claseAnomalia.lectura) {
+                    if (!bloc.verifiedReading) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('La lectura no está verificada')));
+                      return;
+                    }
                   }
                   if (bloc.requiredPhotoByMeterReading != null &&
                           bloc.requiredPhotoByMeterReading! &&
@@ -290,6 +292,8 @@ class _NavigationButtons extends ConsumerWidget {
 
                   try {
                     final position = await Geolocator.getCurrentPosition();
+                    detailItem.anomSec = bloc.claseAnomalia.anomSec;
+
                     detailItem.readingRequest
                       ..anomaliaSec = bloc.anomaliaSec
                       ..latLecturaTomada = position.latitude.toString()
@@ -308,6 +312,9 @@ class _NavigationButtons extends ConsumerWidget {
                           : null;
 
                     await bloc.updateReading(detailItem);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Lectura guardada con éxito')));
                   } catch (_) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Text('No pudimos guardar la lectura')));

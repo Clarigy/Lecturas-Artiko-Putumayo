@@ -18,12 +18,14 @@ enum ReadingDetailState {
 }
 
 class ReadingDetailBloc extends ChangeNotifier {
-  ReadingDetailBloc(this._getReadingImagesByReadingIdUseCase,
-      this._insertReadingImages,
-      this._updateReadingImages,
-      this._deleteReadingImages,
-      this._getAnomaliesUseCase,
-      this._updateReadingUseCase,);
+  ReadingDetailBloc(
+    this._getReadingImagesByReadingIdUseCase,
+    this._insertReadingImages,
+    this._updateReadingImages,
+    this._deleteReadingImages,
+    this._getAnomaliesUseCase,
+    this._updateReadingUseCase,
+  );
 
   //Casos de uso
   final GetReadingImagesByReadingIdUseCase _getReadingImagesByReadingIdUseCase;
@@ -120,11 +122,13 @@ class ReadingDetailBloc extends ChangeNotifier {
 
     if (readingDetailItem.readingRequest.anomaliaSec != null) {
       _anomaliaSec = readingDetailItem.readingRequest.anomaliaSec!;
-      _claseAnomalia = anomalias
-          .firstWhere((element) => element.anomaliaSec == _anomaliaSec)
-          .claseAnomalia
-          .firstWhere((element) =>
-              element.nombre == readingDetailItem.readingRequest.claseAnomalia);
+      for (final element in anomalias) {
+        for (final clase in element.claseAnomalia) {
+          if (clase.nombre == readingDetailItem.readingRequest.claseAnomalia) {
+            _claseAnomalia = clase;
+          }
+        }
+      }
     } else {
       _anomaliaSec = anomalias[0].anomaliaSec;
       _claseAnomalia = anomalias[0].claseAnomalia[0];
@@ -142,7 +146,8 @@ class ReadingDetailBloc extends ChangeNotifier {
     }
   }
 
-  Stream<List<ReadingImagesModel>?> getReadingImagesByReadingId(String readingId) {
+  Stream<List<ReadingImagesModel>?> getReadingImagesByReadingId(
+      String readingId) {
     try {
       return _getReadingImagesByReadingIdUseCase(readingId);
     } catch (error) {
@@ -193,6 +198,8 @@ class ReadingDetailBloc extends ChangeNotifier {
     readingDecimals.text =
         readingDetailItem.readingRequest.lectura?.toString().split('.')[1] ??
             '';
+    observacionTextController.text =
+        readingDetailItem.readingRequest.observacionLectura ?? '';
   }
 
   Future<void> _loadObservaciones() async {

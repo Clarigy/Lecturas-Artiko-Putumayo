@@ -15,6 +15,7 @@ class ReadingRequest {
   double? lecturaIntento1;
   double? lecturaIntento2;
   int? anomaliaSec;
+  // int? claseAnomaliaSec;
   String? claseAnomalia;
   int? observacionSec;
   String? observacionAnomalia;

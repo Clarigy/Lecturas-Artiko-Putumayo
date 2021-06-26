@@ -1,6 +1,7 @@
 import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
 import 'package:artiko/core/readings/domain/entities/reading_request.dart';
 import 'package:artiko/core/readings/domain/entities/routes_response.dart';
+import 'package:artiko/features/home/presentation/pages/activities_page/activities_bloc.dart';
 
 abstract class ReadingRepositoryContract {
   Future<RoutesResponse> getRoutes(int lectorSec);
@@ -9,7 +10,7 @@ abstract class ReadingRepositoryContract {
 
   Future<List<int>> saveReadings(List<ReadingDetailItem> readings);
 
-  Stream<List<ReadingDetailItem>?> getAllReadings();
+  Stream<List<ReadingDetailItem>?> getAllReadings(FilterType filterType);
 
   Future<List<RoutesItem>?> getAllRoutes();
 

@@ -116,7 +116,8 @@ class CreateMeasureBloc extends ChangeNotifier {
             suscriptorSec: 0,
             tipoConsumo: tiposConsumo[e]!['tipoConsumo']!,
             nombreTipoConsumo: tiposConsumo[e]!['nombreTipoConsumo']!,
-            detalleLecturaRutaSec: null))
+            detalleLecturaRutaSec: null,
+            anomSec: null))
         .toList();
   }
 }

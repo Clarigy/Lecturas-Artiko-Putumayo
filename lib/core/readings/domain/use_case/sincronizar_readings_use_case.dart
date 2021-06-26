@@ -15,7 +15,7 @@ class SincronizarReadingsUseCase
   Future<void> call(List<ReadingDetailItem> readings) async {
     try {
       final List<ReadingRequest> readingsRequest = readings
-          .where((element) => element.readingRequest.lectura != null)
+          .where((element) => element.readingRequest.id != null)
           .map((e) => e.readingRequest)
           .toList();
 

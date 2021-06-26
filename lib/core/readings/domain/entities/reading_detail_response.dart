@@ -52,17 +52,18 @@ class ReadingDetailItem {
     required this.claseServicio,
     required this.fechaUltimaLectura,
     required this.indRangoCritica,
-    required this.indicadorSuspension,
-    required this.nombre,
-    required this.direccion,
-    required this.suscriptorSec,
-    required this.idRequest,
-    required this.tipoConsumo,
-    required this.nombreTipoConsumo,
-    required this.latPuntoMedicion,
-    required this.longPuntoMedicion,
-    required this.detalleLecturaRutaSec,
-  }) : readingRequest = ReadingRequest.empty(
+      required this.indicadorSuspension,
+      required this.nombre,
+      required this.direccion,
+      required this.suscriptorSec,
+      required this.idRequest,
+      required this.tipoConsumo,
+      required this.nombreTipoConsumo,
+      required this.latPuntoMedicion,
+      required this.longPuntoMedicion,
+      required this.detalleLecturaRutaSec,
+      required this.anomSec})
+      : readingRequest = ReadingRequest.empty(
             detalleLecturaRutaSec: detalleLecturaRutaSec, id: id);
 
   ReadingDetailItem.other({
@@ -93,6 +94,7 @@ class ReadingDetailItem {
     this.latPuntoMedicion,
     this.longPuntoMedicion,
     required this.detalleLecturaRutaSec,
+    required this.anomSec,
   }) : readingRequest = ReadingRequest.empty(
             detalleLecturaRutaSec: detalleLecturaRutaSec, id: id);
 
@@ -128,6 +130,7 @@ class ReadingDetailItem {
   int? detalleLecturaRutaSec;
 
   int? idRequest;
+  int? anomSec;
 
   @ignore
   ReadingRequest readingRequest;
@@ -163,6 +166,7 @@ class ReadingDetailItem {
         detalleLecturaRutaSec: json["detalle_lectura_ruta_sec"],
         idRequest: null,
         id: null,
+        anomSec: null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -225,6 +229,7 @@ class ReadingDetailItem {
       latPuntoMedicion: this.latPuntoMedicion,
       longPuntoMedicion: longPuntoMedicion,
       indRangoCritica: indRangoCritica,
+      anomSec: this.anomSec,
     )..readingRequest = readingRequest ?? this.readingRequest;
   }
 }

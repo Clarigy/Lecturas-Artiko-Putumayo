@@ -51,21 +51,22 @@ class AnomaliesRepository implements AnomaliesRepositoryContract {
       final anomalia = Anomalia(
         anomaliaSec: tempItem1.anomaliaSec,
         anomalia: tempItem1.anomalia,
-        nombre: tempItem1.nombre,
         terminal: tempItem1.terminal,
         telemedida: tempItem1.telemedida,
         detectable: tempItem1.detectable,
         imprimeFactura: tempItem1.imprimeFactura,
         revisionCritica: tempItem1.revisionCritica,
-        fallida: tempItem1.fallida,
         solucionCritica: tempItem1.solucionCritica,
       );
 
       temp.forEach((tmp) {
         final clase = ClaseAnomalia(
-            nombre: tmp.nombre,
-            lectura: tmp.lectura,
-            fotografia: tmp.fotografia);
+          nombre: tmp.nombre,
+          lectura: tmp.lectura,
+          fotografia: tmp.fotografia,
+          anomSec: tmp.anomaliaSec,
+          fallida: tmp.fallida,
+        );
 
         final tempObservaciones = observaciones
             .where((element) => element.anomaliaSec == tmp.anomaliaSec)

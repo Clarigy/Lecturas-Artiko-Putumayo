@@ -102,6 +102,9 @@ class _LoadingPageState extends State<LoadingPage> with WidgetsBindingObserver {
           SnackBar(content: Text(error.message ?? 'Error inesperado'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return false;
+    } catch (e) {
+      print(e);
+      return false;
     }
   }
 }

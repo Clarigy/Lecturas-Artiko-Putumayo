@@ -46,16 +46,22 @@ class _TakePicturesState extends State<TakePictures> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            margin: EdgeInsets.only(bottom: 10),
-            child: Text(
-                'Fotografía del medidor${bloc.claseAnomalia.fotografia || (bloc.requiredPhotoByMeterReading ?? false) ? '*' : ''}',
-                style: theme.textTheme.bodyText2!.copyWith(
-                    fontWeight: FontWeight.bold, color: theme.primaryColor)),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: Container(
+              margin: EdgeInsets.only(bottom: 10),
+              child: Text(
+                  'Fotografía del medidor${bloc.claseAnomalia.fotografia || (bloc.requiredPhotoByMeterReading ?? false) ? '*' : ''}',
+                  style: theme.textTheme.bodyText2!.copyWith(
+                      fontWeight: FontWeight.bold, color: theme.primaryColor)),
+            ),
           ),
           StreamBuilder<List<ReadingImagesModel>?>(
               stream: bloc.getReadingImagesByReadingId(widget.readingId),
               builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                }
                 if (!snapshot.hasData || snapshot.data == null) {
                   return Offstage();
                 }

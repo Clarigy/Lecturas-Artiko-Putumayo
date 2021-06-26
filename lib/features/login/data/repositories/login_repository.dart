@@ -1,5 +1,6 @@
+import 'package:artiko/core/cache/domain/repositories/cache_storage_repository.dart';
+import 'package:artiko/core/cache/keys/cache_keys.dart';
 import 'package:artiko/core/http/domain/repositories/http_proxy_repository.dart';
-import 'package:artiko/features/login/data/data_sources/local/current_user_dao.dart';
 import 'package:artiko/features/login/domain/entities/request/login_request.dart';
 import 'package:artiko/features/login/domain/entities/response/login_response.dart';
 import 'package:artiko/features/login/domain/repositories/login_repository_contract.dart';
@@ -10,9 +11,9 @@ import '../../../../core/error/exception.dart';
 class LoginRepository implements LoginRepositoryContract {
   final HttpProxyInterface _httpImpl;
   final String _service;
-  final CurrentUserDao currentUserDao;
+  final CacheStorageInterface _cacheStorageInterface;
 
-  LoginRepository(this._httpImpl, this._service, this.currentUserDao);
+  LoginRepository(this._httpImpl, this._service, this._cacheStorageInterface);
 
   @override
   Future<LoginResponse> doLogin(LoginRequest loginRequest) async {
@@ -25,17 +26,20 @@ class LoginRepository implements LoginRepositoryContract {
 
       final response = LoginResponse.fromJson(_response.data["items"][0]);
 
-      _saveCurrentUser(response);
+      await _saveCurrentUser(response);
       return response;
     } on DioError catch (e) {
       throw ServerException(e.message);
     } on Exception catch (_) {
       throw ServerException(
           'Ocurrió un error inesperado, por favor intente más tarde');
+    } catch (e) {
+      rethrow;
     }
   }
 
   Future<void> _saveCurrentUser(LoginResponse response) async {
-    return await currentUserDao.insert(response);
+    return await _cacheStorageInterface.save(
+        key: CacheKeys.USER, value: loginResponseToJson(response));
   }
 }

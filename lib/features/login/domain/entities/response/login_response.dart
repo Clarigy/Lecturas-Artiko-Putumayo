@@ -4,35 +4,30 @@
 
 import 'dart:convert';
 
-import 'package:floor/floor.dart';
-
 LoginResponse loginResponseFromJson(String str) =>
     LoginResponse.fromJson(json.decode(str));
 
 String loginResponseToJson(LoginResponse data) => json.encode(data.toJson());
 
-@Entity(tableName: 'current_user')
 class LoginResponse {
   LoginResponse({
     required this.idUsuario,
     required this.nombre,
     required this.cargo,
     required this.correoLector,
-    this.telefonoLector,
-    this.empresa,
-    this.supervisor,
-    this.telefonoSupervisor,
-    this.correoSupervisor,
+    required this.telefonoLector,
+    required this.empresa,
+    required this.supervisor,
+    required this.telefonoSupervisor,
+    required this.correoSupervisor,
     required this.lectorSec,
     required this.href,
   });
 
-  @primaryKey
   int idUsuario;
   String nombre;
   String cargo;
-  @ColumnInfo(name: 'correoLector')
-  String correoLector;
+  String? correoLector;
   String? telefonoLector;
   String? empresa;
   String? supervisor;
@@ -52,7 +47,7 @@ class LoginResponse {
         telefonoSupervisor: json["telefono_supervisor"],
         correoSupervisor: json["correo_supervisor"],
         lectorSec: json["lector_sec"],
-        href: json["links"][0]['href'],
+        href: json['href'] == null ? json['links'][0]['href'] : json['href'],
       );
 
   Map<String, dynamic> toJson() => {

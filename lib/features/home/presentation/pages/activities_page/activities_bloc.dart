@@ -2,6 +2,8 @@ import 'package:artiko/core/readings/domain/entities/reading_detail_response.dar
 import 'package:artiko/features/home/domain/use_cases/get_readings_use_case.dart';
 import 'package:flutter/material.dart';
 
+enum FilterType { PENDING, EXCECUTED, FAILED }
+
 class ActivitiesBloc extends ChangeNotifier {
   ActivitiesBloc(this._getReadingsUseCase);
 
@@ -12,11 +14,21 @@ class ActivitiesBloc extends ChangeNotifier {
 
   final TextEditingController filterTextController = TextEditingController();
 
+  FilterType _filterType = FilterType.PENDING;
+
+  FilterType get filterType => _filterType;
+
+  set filterType(FilterType value) {
+    _filterType = value;
+    needRefreshList = true;
+    notifyListeners();
+  }
+
   Stream<List<ReadingDetailItem>?> getReadings() {
     try {
       if (readings == null || readings!.isEmpty || needRefreshList) {
         needRefreshList = false;
-        return _getReadingsUseCase(null);
+        return _getReadingsUseCase(_filterType);
       }
 
       return readings != null && filterTextController.text.isNotEmpty

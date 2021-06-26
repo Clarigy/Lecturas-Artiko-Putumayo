@@ -14,13 +14,14 @@ import 'features/splash_screen/providers/splash_provider.dart';
 GetIt sl = GetIt.instance;
 
 Future<void> setupInjector() async {
+  await injectionDatabase();
+
   await setUpHttpProviders();
   await setUpLoginProviders();
   await setUpLoadingProviders();
   await setUpReadingsProviders();
   await setUpProfileProviders();
   await injectionDependenciesStorage();
-  await injectionDatabase();
   await setUpHomeProviders();
   await setUpCreateMeasureProviders();
   await setUpSplashProviders();
