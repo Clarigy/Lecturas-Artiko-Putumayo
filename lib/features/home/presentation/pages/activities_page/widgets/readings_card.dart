@@ -84,7 +84,7 @@ class _CardHeader extends StatelessWidget {
             children: [
               Container(
                 margin: EdgeInsets.only(top: 10),
-                child: Text('001258 - 0001'),
+                child: Text(_getSubHeader()),
               ),
               Expanded(child: Offstage()),
               if (item.indicadorSuspension) SvgPicture.asset(IMAGE_CUT)
@@ -93,6 +93,19 @@ class _CardHeader extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String _getSubHeader() {
+    final ciclo = item.routesItem.ciclo;
+    final zona = item.routesItem.zona;
+    final sector = item.routesItem.sector;
+    final ruta = item.routesItem.ruta;
+    final itinerario = item.routesItem.itinerario;
+
+    final orden = item.orden;
+    final secuencia = item.secuencia;
+
+    return '$ciclo-$zona-$sector-$ruta-$itinerario/$orden-$secuencia';
   }
 }
 
@@ -119,8 +132,12 @@ class _ReadingInformation extends StatelessWidget {
                 borderRadius: BorderRadius.circular(30)),
           ),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(item.nombre),
+              Container(
+                child: Text(item.nombre),
+                width: MediaQuery.of(context).size.width * .6,
+              ),
               Text(item.direccion),
             ],
           ),

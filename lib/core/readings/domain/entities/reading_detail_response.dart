@@ -5,10 +5,12 @@
 import 'dart:convert';
 
 import 'package:artiko/core/readings/domain/entities/reading_request.dart';
+import 'package:artiko/core/readings/domain/entities/routes_response.dart';
 import 'package:floor/floor.dart';
 
-ReadingDetailResponse readingDetailResponseFromJson(String str) =>
-    ReadingDetailResponse.fromJson(json.decode(str));
+ReadingDetailResponse readingDetailResponseFromJson(
+        String str, int lecturaRutaSec) =>
+    ReadingDetailResponse.fromJson(json.decode(str), lecturaRutaSec);
 
 String readingDetailResponseToJson(ReadingDetailResponse data) =>
     json.encode(data.toJson());
@@ -20,10 +22,11 @@ class ReadingDetailResponse {
 
   List<ReadingDetailItem> items;
 
-  factory ReadingDetailResponse.fromJson(Map<String, dynamic> json) =>
+  factory ReadingDetailResponse.fromJson(
+          Map<String, dynamic> json, int lecturaRutaSec) =>
       ReadingDetailResponse(
-        items: List<ReadingDetailItem>.from(
-            json["items"].map((x) => ReadingDetailItem.fromJson(x))),
+        items: List<ReadingDetailItem>.from(json["items"]
+            .map((x) => ReadingDetailItem.fromJson(x, lecturaRutaSec))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -33,25 +36,25 @@ class ReadingDetailResponse {
 
 @Entity(tableName: 'readings')
 class ReadingDetailItem {
-  ReadingDetailItem({
-    required this.id,
-    required this.orden,
-    required this.secuencia,
-    required this.numeroMedidor,
-    required this.tipoMedidor,
-    required this.marcaMedidor,
-    required this.nroEnteros,
-    required this.nroDecimales,
-    required this.constante,
-    required this.lecturaMinima,
-    required this.lecturaMaxima,
-    required this.falsaMinima,
-    required this.falsaMaxima,
-    required this.factor,
-    required this.lecturaAnterior,
-    required this.claseServicio,
-    required this.fechaUltimaLectura,
-    required this.indRangoCritica,
+  ReadingDetailItem(
+      {required this.id,
+      required this.orden,
+      required this.secuencia,
+      required this.numeroMedidor,
+      required this.tipoMedidor,
+      required this.marcaMedidor,
+      required this.nroEnteros,
+      required this.nroDecimales,
+      required this.constante,
+      required this.lecturaMinima,
+      required this.lecturaMaxima,
+      required this.falsaMinima,
+      required this.falsaMaxima,
+      required this.factor,
+      required this.lecturaAnterior,
+      required this.claseServicio,
+      required this.fechaUltimaLectura,
+      required this.indRangoCritica,
       required this.indicadorSuspension,
       required this.nombre,
       required this.direccion,
@@ -61,6 +64,7 @@ class ReadingDetailItem {
       required this.nombreTipoConsumo,
       required this.latPuntoMedicion,
       required this.longPuntoMedicion,
+      required this.lecturaRutaSec,
       required this.detalleLecturaRutaSec,
       required this.anomSec})
       : readingRequest = ReadingRequest.empty(
@@ -95,6 +99,7 @@ class ReadingDetailItem {
     this.longPuntoMedicion,
     required this.detalleLecturaRutaSec,
     required this.anomSec,
+    required this.lecturaRutaSec,
   }) : readingRequest = ReadingRequest.empty(
             detalleLecturaRutaSec: detalleLecturaRutaSec, id: id);
 
@@ -131,22 +136,26 @@ class ReadingDetailItem {
 
   int? idRequest;
   int? anomSec;
+  int lecturaRutaSec;
 
   @ignore
   ReadingRequest readingRequest;
+  @ignore
+  late RoutesItem routesItem;
 
-  factory ReadingDetailItem.fromJson(Map<String, dynamic> json) =>
+  factory ReadingDetailItem.fromJson(
+          Map<String, dynamic> json, int lecturaRutaSec) =>
       ReadingDetailItem(
-        orden: json["orden"],
-        secuencia: json["secuencia"],
-        numeroMedidor: json["numero_medidor"],
-        tipoMedidor: json["tipo_medidor"],
-        marcaMedidor: json["marca_medidor"],
-        nroEnteros: json["nro_enteros"],
-        nroDecimales: json["nro_decimales"],
-        constante: json["constante"],
-        lecturaMinima: json["lectura_minima"],
-        lecturaMaxima: json["lectura_maxima"],
+          orden: json["orden"],
+          secuencia: json["secuencia"],
+          numeroMedidor: json["numero_medidor"],
+          tipoMedidor: json["tipo_medidor"],
+          marcaMedidor: json["marca_medidor"],
+          nroEnteros: json["nro_enteros"],
+          nroDecimales: json["nro_decimales"],
+          constante: json["constante"],
+          lecturaMinima: json["lectura_minima"],
+          lecturaMaxima: json["lectura_maxima"],
         falsaMinima: json["falsa_minima"],
         falsaMaxima: json["falsa_maxima"],
         factor: json["factor"],
@@ -167,7 +176,7 @@ class ReadingDetailItem {
         idRequest: null,
         id: null,
         anomSec: null,
-      );
+          lecturaRutaSec: lecturaRutaSec);
 
   Map<String, dynamic> toJson() => {
         "orden": orden,
@@ -230,6 +239,7 @@ class ReadingDetailItem {
       longPuntoMedicion: longPuntoMedicion,
       indRangoCritica: indRangoCritica,
       anomSec: this.anomSec,
+      lecturaRutaSec: this.lecturaRutaSec,
     )..readingRequest = readingRequest ?? this.readingRequest;
   }
 }

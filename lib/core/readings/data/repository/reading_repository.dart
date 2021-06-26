@@ -61,6 +61,12 @@ class ReadingRepository implements ReadingRepositoryContract {
               value.readingRequest = request;
             }
           }
+
+          final route = await sl<RoutesDao>()
+              .getRouteByLecturaRutaSec(value.lecturaRutaSec);
+
+          if (route != null) value.routesItem = route;
+
           tempList.add(value);
         }
 

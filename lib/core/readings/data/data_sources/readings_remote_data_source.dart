@@ -30,7 +30,7 @@ class ReadingsRemoteDataSource {
         '$readingDetailService?lectura_ruta_sec=$lecturaRutaSec',
       );
 
-      return ReadingDetailResponse.fromJson(_response.data);
+      return ReadingDetailResponse.fromJson(_response.data, lecturaRutaSec);
     } catch (e) {
       print(e);
       return ReadingDetailResponse(items: []);

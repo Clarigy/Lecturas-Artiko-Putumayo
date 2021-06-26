@@ -91,7 +91,6 @@ class CreateMeasureBloc extends ChangeNotifier {
 
   List<ReadingDetailItem> buildReadingDetailItem(
       List<ReadingDetailItem> readings) {
-
     return tiposConsumoSeleccionados
         .map((e) => ReadingDetailItem.other(
             orden: 0,
@@ -117,7 +116,8 @@ class CreateMeasureBloc extends ChangeNotifier {
             tipoConsumo: tiposConsumo[e]!['tipoConsumo']!,
             nombreTipoConsumo: tiposConsumo[e]!['nombreTipoConsumo']!,
             detalleLecturaRutaSec: null,
-            anomSec: null))
+            anomSec: null,
+            lecturaRutaSec: readings[0].lecturaRutaSec))
         .toList();
   }
 }
