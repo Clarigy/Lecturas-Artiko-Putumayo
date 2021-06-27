@@ -8,10 +8,12 @@ class Anomalia {
     required this.imprimeFactura,
     required this.revisionCritica,
     required this.solucionCritica,
+    required this.nombreClase,
   }) : this.claseAnomalia = [];
 
   final int anomaliaSec;
   final String anomalia;
+  final String nombreClase;
   final bool terminal;
   final bool telemedida;
   final bool detectable;

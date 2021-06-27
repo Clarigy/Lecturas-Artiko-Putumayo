@@ -43,17 +43,16 @@ class _MeterReadingState extends State<MeterReading> {
                 autocorrect: false,
                 controller: bloc.readingIntegers,
                 keyboardType: TextInputType.number,
+                maxLength: bloc.readingDetailItem.nroEnteros,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                textInputAction: TextInputAction.next,
+                textInputAction: bloc.readingDetailItem.nroDecimales == 0
+                    ? TextInputAction.done
+                    : TextInputAction.next,
                 validator: (value) {
                   if (!bloc.claseAnomalia.lectura ||
                       bloc.readingDetailItem.detalleLecturaRutaSec == null)
                     return null;
                   if (value == null || value.isEmpty) return 'Campo requerido';
-                  if (value.trim().length > bloc.readingDetailItem.nroEnteros ||
-                      value.trim().length < bloc.readingDetailItem.nroEnteros) {
-                    return '${bloc.readingDetailItem.nroEnteros}  números son necesarios';
-                  }
                 },
                 style: TextStyle(
                     fontSize: 36,
@@ -61,53 +60,54 @@ class _MeterReadingState extends State<MeterReading> {
                     letterSpacing: 8),
                 decoration: InputDecoration(
                     filled: true,
+                    counterText: '',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     )),
               ),
             ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 6),
-              child: Text(
-                ',',
-                style: TextStyle(color: theme.primaryColor, fontSize: 60),
-              ),
-            ),
-            Flexible(
-              flex: 2,
-              child: TextFormField(
-                autocorrect: false,
-                controller: bloc.readingDecimals,
-                keyboardType: TextInputType.number,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) {
-                  if (!bloc.claseAnomalia.lectura ||
-                      bloc.readingDetailItem.detalleLecturaRutaSec == null)
-                    return null;
-                  if (value == null ||
-                      value.isEmpty &&
-                          bloc.readingDetailItem.nroDecimales > 0) {
-                    return 'Campo requerido';
-                  }
-                  if (value.trim().length >
-                          bloc.readingDetailItem.nroDecimales ||
-                      value.trim().length <
-                          bloc.readingDetailItem.nroDecimales) {
-                    return '${bloc.readingDetailItem.nroDecimales} números son necesarios';
-                  }
-                },
-                style: TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 8),
-                decoration: InputDecoration(
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
+            if (bloc.readingDetailItem.nroDecimales > 0)
+              Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 6),
+                    child: Text(
+                      ',',
+                      style: TextStyle(color: theme.primaryColor, fontSize: 60),
+                    ),
                   ),
-                ),
+                  Flexible(
+                    flex: 2,
+                    child: TextFormField(
+                      autocorrect: false,
+                      maxLength: bloc.readingDetailItem.nroDecimales,
+                      controller: bloc.readingDecimals,
+                      keyboardType: TextInputType.number,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (!bloc.claseAnomalia.lectura ||
+                            bloc.readingDetailItem.detalleLecturaRutaSec ==
+                                null) return null;
+                        if (value == null ||
+                            value.isEmpty &&
+                                bloc.readingDetailItem.nroDecimales > 0) {
+                          return 'Campo requerido';
+                        }
+                      },
+                      style: TextStyle(
+                          fontSize: 36,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 8),
+                      decoration: InputDecoration(
+                        filled: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
             Center(
               child: IconButton(
                   icon: Icon(

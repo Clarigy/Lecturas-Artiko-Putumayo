@@ -69,7 +69,7 @@ class _CardHeader extends StatelessWidget {
                 Container(
                   width: width * .8,
                   child: Text(
-                    'No. medidor ${item.numeroMedidor}',
+                    'No. medidor ${item.numeroMedidor} - ${item.marcaMedidor}',
                     style: theme.textTheme.subtitle1!.copyWith(
                         color: Colors.white, fontWeight: FontWeight.w900),
                   ),
@@ -138,7 +138,19 @@ class _ReadingInformation extends StatelessWidget {
                 child: Text(item.nombre),
                 width: MediaQuery.of(context).size.width * .6,
               ),
-              Text(item.direccion),
+              Row(
+                children: [
+                  Text(item.direccion),
+                  SizedBox(
+                    width: 4,
+                  ),
+                  Icon(
+                    Icons.info,
+                    color: theme.primaryColor,
+                    size: 20,
+                  )
+                ],
+              ),
             ],
           ),
         ],

@@ -57,6 +57,7 @@ class AnomaliesRepository implements AnomaliesRepositoryContract {
         imprimeFactura: tempItem1.imprimeFactura,
         revisionCritica: tempItem1.revisionCritica,
         solucionCritica: tempItem1.solucionCritica,
+        nombreClase: tempItem1.nombreClase,
       );
 
       temp.forEach((tmp) {

@@ -24,6 +24,15 @@ class ActivitiesBloc extends ChangeNotifier {
     notifyListeners();
   }
 
+  int _activitiesCount = 0;
+
+  int get activitiesCount => _activitiesCount;
+
+  set activitiesCount(int value) {
+    _activitiesCount = value;
+    notifyListeners();
+  }
+
   Stream<List<ReadingDetailItem>?> getReadings() {
     try {
       if (readings == null || readings!.isEmpty || needRefreshList) {

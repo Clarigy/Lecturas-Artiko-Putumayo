@@ -140,7 +140,7 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
                               Row(
                                 children: [
                                   Flexible(
-                                    flex: 1,
+                                    flex: 2,
                                     child: DropDownAnomalias(),
                                   ),
                                   SizedBox(

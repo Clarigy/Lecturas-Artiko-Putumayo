@@ -31,7 +31,7 @@ class DropDownAnomalias extends ConsumerWidget {
     List<DropdownMenuItem<int>> items = [];
 
     anomalias.forEach((anomalia) => items.add(new DropdownMenuItem(
-        value: anomalia.anomaliaSec, child: new Text(anomalia.anomalia))));
+        value: anomalia.anomaliaSec, child: new Text(anomalia.nombreClase))));
 
     return items;
   }
