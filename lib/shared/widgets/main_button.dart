@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class MainButton extends StatelessWidget {
   final String text;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   const MainButton({required this.text, required this.onTap});
 

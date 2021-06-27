@@ -101,7 +101,7 @@ class _TakePicturesState extends State<TakePictures> {
     if (snapshot.hasData) {
       countImages = snapshot.data?.length ?? 0;
     }
-    return countImages == 3
+    return countImages == 3 || detailItem.readingRequest.alreadySync
         ? Offstage()
         : Container(
             width: screenWidth * .2,
@@ -182,7 +182,9 @@ class _TakePicturesState extends State<TakePictures> {
     return Stack(
       children: [
         InkWell(
-          onTap: () async => await _onTapImageView(readingImagesModel, bloc),
+          onTap: detailItem.readingRequest.alreadySync
+              ? null
+              : () async => await _onTapImageView(readingImagesModel, bloc),
           child: Container(
             width: screenWidth * .2,
             height: screenHeight * .1,
@@ -198,16 +200,18 @@ class _TakePicturesState extends State<TakePictures> {
         Positioned(
           right: 5,
           top: -10,
-          child: IconButton(
-              icon: Icon(
-                Icons.remove_circle,
-                color: theme.errorColor,
-              ),
-              onPressed: () async {
-                await bloc.deleteReadingImage(readingImagesModel);
-                detailItem.readingRequest.fotos
-                    .remove(readingImagesModel.getSpecialId());
-              }),
+          child: detailItem.readingRequest.alreadySync
+              ? Offstage()
+              : IconButton(
+                  icon: Icon(
+                    Icons.remove_circle,
+                    color: theme.errorColor,
+                  ),
+                  onPressed: () async {
+                    await bloc.deleteReadingImage(readingImagesModel);
+                    detailItem.readingRequest.fotos
+                        .remove(readingImagesModel.getSpecialId());
+                  }),
         ),
       ],
     );

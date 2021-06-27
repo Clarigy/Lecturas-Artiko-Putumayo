@@ -19,7 +19,10 @@ class SincronizarReadingsUseCase
           .map((e) => e.readingRequest)
           .toList();
 
-      return await _repository.sincronizarReadings(readingsRequest);
+      return await _repository.sincronizarReadings(readingsRequest.map((e) {
+        e.alreadySync = true;
+        return e;
+      }).toList());
     } on ServerException catch (e) {
       throw Failure(e.message);
     }

@@ -75,7 +75,8 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
         readingRequest: _item.idRequest == null
             ? ReadingRequest.empty(
                 detalleLecturaRutaSec: _item.detalleLecturaRutaSec,
-                id: _item.id)
+                id: _item.id,
+                alreadySync: false)
             : null);
 
     bloc.initializeInputValues(detailItem);
@@ -265,18 +266,21 @@ class _NavigationButtons extends ConsumerWidget {
             flex: 1,
             child: MainButton(
                 text: 'Guardar',
-                onTap: () async {
-                  if (!bloc.formKey.currentState!.validate()) return;
-                  if (bloc.claseAnomalia.lectura) {
-                    if (!bloc.verifiedReading) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('La lectura no está verificada')));
-                      return;
-                    }
-                  }
-                  if (bloc.requiredPhotoByMeterReading != null &&
-                          bloc.requiredPhotoByMeterReading! &&
-                          detailItem.readingRequest.fotos.isEmpty ||
+                onTap: detailItem.readingRequest.alreadySync
+                    ? null
+                    : () async {
+                        if (!bloc.formKey.currentState!.validate()) return;
+                        if (bloc.claseAnomalia.lectura) {
+                          if (!bloc.verifiedReading) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content:
+                                    Text('La lectura no está verificada')));
+                            return;
+                          }
+                        }
+                        if (bloc.requiredPhotoByMeterReading != null &&
+                                bloc.requiredPhotoByMeterReading! &&
+                                detailItem.readingRequest.fotos.isEmpty ||
                       bloc.claseAnomalia.fotografia &&
                           detailItem.readingRequest.fotos.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(

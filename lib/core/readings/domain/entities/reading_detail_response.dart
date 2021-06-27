@@ -68,7 +68,9 @@ class ReadingDetailItem {
       required this.detalleLecturaRutaSec,
       required this.anomSec})
       : readingRequest = ReadingRequest.empty(
-            detalleLecturaRutaSec: detalleLecturaRutaSec, id: id);
+            detalleLecturaRutaSec: detalleLecturaRutaSec,
+            id: id,
+            alreadySync: false);
 
   ReadingDetailItem.other({
     this.id,
@@ -101,7 +103,9 @@ class ReadingDetailItem {
     required this.anomSec,
     required this.lecturaRutaSec,
   }) : readingRequest = ReadingRequest.empty(
-            detalleLecturaRutaSec: detalleLecturaRutaSec, id: id);
+            detalleLecturaRutaSec: detalleLecturaRutaSec,
+            id: id,
+            alreadySync: false);
 
   @PrimaryKey(autoGenerate: true)
   final int? id;

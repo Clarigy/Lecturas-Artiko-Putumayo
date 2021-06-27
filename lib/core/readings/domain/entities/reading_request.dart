@@ -26,6 +26,7 @@ class ReadingRequest {
   List<String> fotos = [];
 
   String idFotos = '';
+  bool alreadySync;
 
   ReadingRequest(
       {required this.id,
@@ -41,6 +42,7 @@ class ReadingRequest {
       required this.observacionLectura,
       required this.latLecturaTomada,
       required this.longLecturaTomada,
+      required this.alreadySync,
       required this.idFotos});
 
   ReadingRequest.all(
@@ -57,16 +59,20 @@ class ReadingRequest {
       this.observacionLectura,
       this.latLecturaTomada,
       this.longLecturaTomada,
+      required this.alreadySync,
       required this.fotos,
       required this.idFotos});
 
-  ReadingRequest.empty({required this.detalleLecturaRutaSec, this.id});
+  ReadingRequest.empty(
+      {required this.detalleLecturaRutaSec,
+      required this.alreadySync,
+      this.id});
 
   ReadingRequest.failed({
     this.id = -1,
     this.anomaliaSec = 26,
     this.claseAnomalia = 'AL13',
-  });
+    this.alreadySync = true});
 
   ReadingRequest copyWith({
     int? id,
@@ -101,6 +107,7 @@ class ReadingRequest {
         fotos: fotos ?? this.fotos,
         id: id ?? this.id,
         idFotos: idFotos ?? this.idFotos,
+        alreadySync: alreadySync,
         detailId: detailId ?? this.detailId,
       );
 

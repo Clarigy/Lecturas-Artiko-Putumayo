@@ -57,5 +57,6 @@ class ActivitiesBloc extends ChangeNotifier {
   }
 
   @override
+  // ignore: must_call_super
   void dispose() {}
 }
