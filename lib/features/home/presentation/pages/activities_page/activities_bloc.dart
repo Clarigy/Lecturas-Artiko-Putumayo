@@ -55,4 +55,7 @@ class ActivitiesBloc extends ChangeNotifier {
   void doFilter() {
     notifyListeners();
   }
+
+  @override
+  void dispose() {}
 }

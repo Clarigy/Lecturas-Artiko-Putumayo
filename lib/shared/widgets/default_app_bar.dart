@@ -1,5 +1,8 @@
 import 'package:artiko/core/cache/domain/repositories/cache_storage_repository.dart';
+import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
+import 'package:artiko/core/readings/domain/use_case/close_terminal_use_case.dart';
 import 'package:artiko/dependency_injector.dart';
+import 'package:artiko/features/home/presentation/pages/activities_page/activities_bloc.dart';
 import 'package:artiko/features/login/domain/entities/response/login_response.dart';
 import 'package:artiko/features/profile/presentation/manager/profile_bloc.dart';
 import 'package:artiko/shared/routes/app_routes.dart';
@@ -24,6 +27,7 @@ class DefaultAppBar extends StatefulWidget implements PreferredSizeWidget {
 
 class _DefaultAppBarState extends State<DefaultAppBar> {
   LoginResponse? _currentUser;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -72,11 +76,18 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
           padding: const EdgeInsets.all(8),
           margin: EdgeInsets.only(right: 20),
           child: PopupMenuButton(
-            onSelected: (itemSelected) {
-              if (itemSelected == PopUpMenuItemOption.PROFILE)
-                _goToProfilePage();
-              else if (itemSelected == PopUpMenuItemOption.LOGOUT)
-                _goToLoginPage();
+            onSelected: (PopUpMenuItemOption itemSelected) async {
+              switch (itemSelected) {
+                case PopUpMenuItemOption.PROFILE:
+                  _goToProfilePage();
+                  break;
+                case PopUpMenuItemOption.CLOSE_TERMINAL:
+                  await _closeTerminal();
+                  break;
+                case PopUpMenuItemOption.LOGOUT:
+                  _logout();
+                  break;
+              }
             },
             itemBuilder: (BuildContext context) => popUpButtonItems,
             child: Row(
@@ -84,11 +95,16 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
                 Container(
                     margin: EdgeInsets.only(right: 8),
                     child: Text(_currentUser?.nombre ?? '')),
-                CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.transparent,
-                  // backgroundImage: NetworkImage('${_currentUser?.href}/foto'),
-                )
+                isLoading
+                    ? CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            theme.secondaryHeaderColor),
+                      )
+                    : CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Colors.transparent,
+                        // backgroundImage: NetworkImage('${_currentUser?.href}/foto'),
+                      )
               ],
             ),
           ),
@@ -101,15 +117,59 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
     Navigator.pushNamed(context, AppRoutes.ProfileScreen);
   }
 
-  void _goToLoginPage() async {
-    sl<FloorDatabase>().database.delete('current_user');
+  void _clearData() {
     sl<FloorDatabase>().database.delete('anomalies');
     sl<FloorDatabase>().database.delete('routes');
     sl<FloorDatabase>().database.delete('readings');
     sl<FloorDatabase>().database.delete('reading_images');
 
     sl<CacheStorageInterface>().clear();
+  }
 
-    Navigator.pushNamed(context, AppRoutes.LoginScreen);
+  void _logout() async {
+    sl<ActivitiesBloc>().needRefreshList = true;
+    Navigator.pushNamedAndRemoveUntil(
+        context, AppRoutes.LoginScreen, (route) => false);
+  }
+
+  Future<void> _closeTerminal() async {
+    try {
+      final readings = await sl<ReadingsDao>().getFutureReadings();
+      if (readings!.any((element) => element.anomSec == null)) {
+        showDialog(
+            context: context,
+            builder: (_) {
+              return AlertDialog(
+                title: Text('Tienes lecturas por hacer, ¿deseas continuar?'),
+                actions: [
+                  TextButton(
+                      onPressed: () async {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(
+                                'No cierres la aplicación hasta que el proceso finalice')));
+                        await sl<CloseTerminalUseCase>()(readings);
+                        _clearData();
+                        _logout();
+                      },
+                      child: Text('Sí, continuar')),
+                  TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text('No'))
+                ],
+              );
+            });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                'No cierres la aplicación hasta que el proceso finalice')));
+        await sl<CloseTerminalUseCase>()(readings);
+        _clearData();
+        _logout();
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('No pudimos cerrar la terminal, inténtalo más tarde')));
+    }
   }
 }

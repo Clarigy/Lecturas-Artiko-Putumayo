@@ -20,17 +20,22 @@ class CloseTerminalUseCase
     try {
       final List<ReadingRequest> tempList = [];
       for (final reading in readings) {
-        final readingWithFotos = reading.readingRequest.fotos.isEmpty
+        ReadingRequest readingWithFotos = reading.readingRequest.fotos.isEmpty
             ? reading.readingRequest
             : reading.readingRequest
           ..fotos = (await _getReadingImagesByReadingIdUseCaseFuture(
                   reading.id.toString()))!
               .map((e) => e.imageBase64)
               .toList();
+
+        if (reading.anomSec == null) {
+          readingWithFotos = ReadingRequest.failed();
+        }
+
         tempList.add(readingWithFotos);
       }
 
-      return await _repository.sincronizarReadings(tempList);
+      return await _repository.closeTerminal(tempList);
     } on ServerException catch (e) {
       throw Failure(e.message);
     }

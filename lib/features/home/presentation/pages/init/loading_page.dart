@@ -1,5 +1,6 @@
 import 'package:artiko/core/error/exception.dart';
 import 'package:artiko/core/permissions_handler/gps_permission.dart';
+import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
 import 'package:artiko/dependency_injector.dart';
 import 'package:artiko/features/home/presentation/pages/init/loading_bloc.dart';
 import 'package:artiko/shared/routes/app_routes.dart';
@@ -92,6 +93,12 @@ class _LoadingPageState extends State<LoadingPage> with WidgetsBindingObserver {
     if (currentUser == null) {
       Navigator.pushReplacementNamed(context, AppRoutes.LoginScreen);
       return false;
+    }
+
+    final readings = await sl<ReadingsDao>().getFutureReadings();
+
+    if (readings != null && readings.isNotEmpty) {
+      return true;
     }
 
     try {

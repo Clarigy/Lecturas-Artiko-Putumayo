@@ -15,7 +15,6 @@ class ReadingRequest {
   double? lecturaIntento1;
   double? lecturaIntento2;
   int? anomaliaSec;
-  // int? claseAnomaliaSec;
   String? claseAnomalia;
   int? observacionSec;
   String? observacionAnomalia;
@@ -63,6 +62,12 @@ class ReadingRequest {
 
   ReadingRequest.empty({required this.detalleLecturaRutaSec, this.id});
 
+  ReadingRequest.failed({
+    this.id = -1,
+    this.anomaliaSec = 26,
+    this.claseAnomalia = 'AL13',
+  });
+
   ReadingRequest copyWith({
     int? id,
     int? detalleLecturaRutaSec,
@@ -100,22 +105,22 @@ class ReadingRequest {
       );
 
   Map<String, dynamic> toJson(String tipo) => {
-    "detalle_lectura_ruta_sec": detalleLecturaRutaSec,
-    "lectura": lectura,
-    "lectura_intento_1": lecturaIntento1,
-    "lectura_intento_2": lecturaIntento2,
-    "anomalia_sec": anomaliaSec,
-    "observacion_sec": observacionSec,
-    "observacion_anomalia": observacionAnomalia,
-    "observacion_lectura": observacionLectura,
-    "origen_lectura": 'Terreno',
-    "lat_lectura_tomada": latLecturaTomada,
-    "long_lectura_tomada": longLecturaTomada,
-    "tipo": tipo,
-    "fotos": List<dynamic>.from(fotos.map((image) => {
-      'image': image,
-      'filename': '$detalleLecturaRutaSec-${fotos.indexOf(image)}',
-      'mimetype': 'png'
-    })),
-  };
+        "detalle_lectura_ruta_sec": detalleLecturaRutaSec,
+        "lectura": lectura,
+        "lectura_intento_1": lecturaIntento1,
+        "lectura_intento_2": lecturaIntento2,
+        "anomalia_sec": anomaliaSec,
+        "observacion_sec": observacionSec,
+        "observacion_anomalia": observacionAnomalia,
+        "observacion_lectura": observacionLectura,
+        "origen_lectura": 'Terreno',
+        "lat_lectura_tomada": latLecturaTomada,
+        "long_lectura_tomada": longLecturaTomada,
+        "tipo": tipo,
+        "fotos": List<dynamic>.from(fotos.map((image) => {
+              'image': image,
+              'filename': '$detalleLecturaRutaSec-${fotos.indexOf(image)}',
+              'mimetype': 'png'
+            })),
+      };
 }

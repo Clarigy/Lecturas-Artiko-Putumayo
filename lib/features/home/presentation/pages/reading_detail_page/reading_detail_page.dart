@@ -284,6 +284,7 @@ class _NavigationButtons extends ConsumerWidget {
                     return;
                   }
                   if (bloc.requiredAnomaliaByMeterReading != null &&
+                      bloc.requiredAnomaliaByMeterReading! &&
                       bloc.anomaliaSec == 3) {
                     ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('La anomalía es requerida')));
