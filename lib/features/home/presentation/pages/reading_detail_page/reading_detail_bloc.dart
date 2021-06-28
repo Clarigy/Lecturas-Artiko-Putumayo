@@ -1,3 +1,5 @@
+import 'package:artiko/core/cache/domain/repositories/cache_storage_repository.dart';
+import 'package:artiko/core/cache/keys/cache_keys.dart';
 import 'package:artiko/core/readings/data/repository/observaciones_repository.dart';
 import 'package:artiko/core/readings/domain/entities/anomalia.dart';
 import 'package:artiko/core/readings/domain/entities/observaciones_response.dart';
@@ -184,6 +186,9 @@ class ReadingDetailBloc extends ChangeNotifier {
     notifyListeners();
     try {
       this.readingDetailItem = await _updateReadingUseCase(readingDetailItem);
+      await sl<CacheStorageInterface>().save(
+          key: CacheKeys.PREVIOUS_ORDER,
+          value: readingDetailItem.orden.toString());
     } on Exception {
       rethrow;
     } finally {
@@ -205,5 +210,11 @@ class ReadingDetailBloc extends ChangeNotifier {
   Future<void> _loadObservaciones() async {
     observaciones =
         (await sl<ObservacionesRepository>().getObservaciones()) ?? [];
+  }
+
+  void reset() {
+    verifiedReading = false;
+    requiredAnomaliaByMeterReading = null;
+    requiredPhotoByMeterReading = null;
   }
 }

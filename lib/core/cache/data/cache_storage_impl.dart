@@ -27,11 +27,11 @@ class CacheStorageImpl extends CacheStorageInterface {
   }
 
   @override
-  Future save({required String key, dynamic value}) async {
+  Future save({required String key, required String value}) async {
     try {
       await cacheStorage.write(key: key, value: value);
     } catch (_) {
-      CacheException(
+      throw CacheException(
           'Hubo un error al tratar de escribir $key en el almacenamiento');
     }
   }

@@ -1,7 +1,10 @@
-import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
+import 'package:artiko/core/cache/domain/repositories/cache_storage_repository.dart';
+import 'package:artiko/core/cache/keys/cache_keys.dart';
+import 'package:artiko/core/readings/data/repository/reading_repository.dart';
 import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
 import 'package:artiko/core/readings/domain/use_case/save_readings_use_case.dart';
 import 'package:artiko/dependency_injector.dart';
+import 'package:artiko/features/home/presentation/pages/activities_page/activities_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -9,9 +12,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class CreateMeasureBloc extends ChangeNotifier {
   CreateMeasureBloc(
     this._saveReadingsUseCase,
+    this._cacheStorageInterface,
   );
 
   final SaveReadingsUseCase _saveReadingsUseCase;
+  final CacheStorageInterface _cacheStorageInterface;
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   TextEditingController locationTextEditingController = TextEditingController();
@@ -79,9 +84,9 @@ class CreateMeasureBloc extends ChangeNotifier {
     }
   }
 
-  Future<List<ReadingDetailItem>?> getReadings() async {
+  Future<List<ReadingDetailItem>?> getReadings(FilterType filterType) async {
     try {
-      return await sl<ReadingsDao>().getFutureReadings();
+      return await sl<ReadingRepository>().getAllReadingsFuture(filterType);
     } catch (_) {
       rethrow;
     } finally {
@@ -89,35 +94,53 @@ class CreateMeasureBloc extends ChangeNotifier {
     }
   }
 
-  List<ReadingDetailItem> buildReadingDetailItem(
-      List<ReadingDetailItem> readings) {
-    return tiposConsumoSeleccionados
-        .map((e) => ReadingDetailItem.other(
-            orden: 0,
-            secuencia: 0,
-            numeroMedidor: numeroMedidor,
-            tipoMedidor: 'EM-ELECTROMECANICO',
-            marcaMedidor: marcaMedidor,
-            nroEnteros: int.parse(enteros),
-            nroDecimales: int.parse(decimales),
-            constante: 1,
-            lecturaMinima: 0,
-            lecturaMaxima: 9999999999,
-            falsaMinima: 0,
-            falsaMaxima: 9999999999,
-            factor: 1,
-            lecturaAnterior: "0",
-            claseServicio: _claseServicio,
-            fechaUltimaLectura: null,
-            indicadorSuspension: false,
-            nombre: '',
-            direccion: '',
-            suscriptorSec: 0,
-            tipoConsumo: tiposConsumo[e]!['tipoConsumo']!,
-            nombreTipoConsumo: tiposConsumo[e]!['nombreTipoConsumo']!,
-            detalleLecturaRutaSec: null,
-            anomSec: null,
-            lecturaRutaSec: readings[0].lecturaRutaSec))
-        .toList();
+  Future<List<ReadingDetailItem>> buildReadingDetailItem(
+      List<ReadingDetailItem> readings) async {
+    final List<ReadingDetailItem> tempReadings = [];
+    for (final e in tiposConsumoSeleccionados) {
+      String? ordenAnterior =
+          await _cacheStorageInterface.fetch(CacheKeys.PREVIOUS_ORDER);
+
+      if (ordenAnterior == null) {
+        int max = readings.first.orden;
+        readings.forEach((e) {
+          if (e.orden > max) max = e.orden;
+        });
+
+        ordenAnterior = max.toString();
+      }
+
+      await _cacheStorageInterface.save(
+          key: CacheKeys.PREVIOUS_ORDER,
+          value: (int.parse(ordenAnterior)).toString());
+
+      tempReadings.add(ReadingDetailItem.other(
+          orden: int.parse(ordenAnterior) + 1,
+          secuencia: 0,
+          numeroMedidor: numeroMedidor,
+          tipoMedidor: 'EM-ELECTROMECANICO',
+          marcaMedidor: marcaMedidor,
+          nroEnteros: int.parse(enteros),
+          nroDecimales: int.parse(decimales),
+          constante: 1,
+          lecturaMinima: 0,
+          lecturaMaxima: 9999999999,
+          falsaMinima: 0,
+          falsaMaxima: 9999999999,
+          factor: 1,
+          lecturaAnterior: "0",
+          claseServicio: _claseServicio,
+          fechaUltimaLectura: null,
+          indicadorSuspension: false,
+          nombre: '',
+          direccion: '',
+          suscriptorSec: 0,
+          tipoConsumo: tiposConsumo[e]!['tipoConsumo']!,
+          nombreTipoConsumo: tiposConsumo[e]!['nombreTipoConsumo']!,
+          detalleLecturaRutaSec: null,
+          anomSec: null,
+          lecturaRutaSec: readings[0].lecturaRutaSec));
+    }
+    return tempReadings;
   }
 }

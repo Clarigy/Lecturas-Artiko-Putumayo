@@ -8,7 +8,11 @@ class LoginHeader extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.only(top: 28.0),
         child: Center(
-          child: Image.asset(IMAGE_COMPANY),
+          child: Image.asset(
+            IMAGE_COMPANY,
+            width: 135,
+            height: 119,
+          ),
         ),
       ),
     );

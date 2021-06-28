@@ -1,7 +1,9 @@
+import 'package:artiko/core/readings/data/data_sources/routes_dao.dart';
 import 'package:artiko/dependency_injector.dart';
 import 'package:artiko/features/create_measurer/presentation/manager/create_measure_bloc.dart';
 import 'package:artiko/features/create_measurer/presentation/pages/validators/create_measure_validators.dart';
 import 'package:artiko/features/home/presentation/pages/activities_page/activities_bloc.dart';
+import 'package:artiko/features/home/presentation/pages/reading_detail_page/reading_detail_bloc.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/widgets/drop_down_input.dart';
 import 'package:artiko/shared/routes/app_routes.dart';
 import 'package:artiko/shared/routes/route_args_keys.dart';
@@ -159,17 +161,23 @@ class _CreateMeasureFormState extends State<CreateMeasureForm> {
     bloc.formKey.currentState!.save();
 
     try {
-      final data = bloc.buildReadingDetailItem(sl<ActivitiesBloc>().readings!);
+      final data =
+          await bloc.buildReadingDetailItem(sl<ActivitiesBloc>().readings!);
       final ids = await bloc.createMeasures(data);
-      final readings = await bloc.getReadings();
+      final activitiesBloc = sl<ActivitiesBloc>()..needRefreshList = true;
+      final readings = await bloc.getReadings(activitiesBloc.filterType);
 
-      sl<ActivitiesBloc>()..needRefreshList = true;
+      final r = data[0].copyWith(id: ids[0]);
+      final route =
+          await sl<RoutesDao>().getRouteByLecturaRutaSec(r.lecturaRutaSec);
 
-      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.ReadingDetailScreen,
-          (route) => route.settings.name == AppRoutes.MainScreen, arguments: {
-        READING_DETAIL: data[0].copyWith(id: ids[0]),
-        READINGS: readings
-      });
+      if (route != null) r.routesItem = route;
+
+      sl<ReadingDetailBloc>().reset();
+      Navigator.pop(context);
+      Navigator.pushReplacementNamed(context, AppRoutes.ReadingDetailScreen,
+          // (route) => route.settings.name == AppRoutes.MainScreen,
+          arguments: {READING_DETAIL: r, READINGS: readings});
     } on Exception catch (_) {
       showSnackbar(context, 'No pudimos guardar la lectura, intenta de nuevo');
     }

@@ -96,11 +96,11 @@ class _CardHeader extends StatelessWidget {
   }
 
   String _getSubHeader() {
-    final ciclo = item.routesItem.ciclo;
-    final zona = item.routesItem.zona;
-    final sector = item.routesItem.sector;
-    final ruta = item.routesItem.ruta;
-    final itinerario = item.routesItem.itinerario;
+    final ciclo = item.routesItem?.ciclo;
+    final zona = item.routesItem?.zona;
+    final sector = item.routesItem?.sector;
+    final ruta = item.routesItem?.ruta;
+    final itinerario = item.routesItem?.itinerario;
 
     final orden = item.orden;
     final secuencia = item.secuencia;

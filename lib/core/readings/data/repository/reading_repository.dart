@@ -4,6 +4,7 @@ import 'package:artiko/core/readings/data/data_sources/readings_remote_data_sour
 import 'package:artiko/core/readings/data/data_sources/readings_request_dao.dart';
 import 'package:artiko/core/readings/data/data_sources/routes_dao.dart';
 import 'package:artiko/core/readings/domain/entities/anomalia.dart';
+import 'package:artiko/core/readings/domain/entities/new_meter_request.dart';
 import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
 import 'package:artiko/core/readings/domain/entities/reading_request.dart';
 import 'package:artiko/core/readings/domain/entities/routes_response.dart';
@@ -106,6 +107,69 @@ class ReadingRepository implements ReadingRepositoryContract {
   }
 
   @override
+  Future<List<ReadingDetailItem>> getAllReadingsFuture(
+      FilterType filterType) async {
+    try {
+      final readings = await _readingsDao.getFutureReadings();
+
+      if (readings == null) return [];
+
+      final List<ReadingDetailItem> tempReadings = [];
+
+      for (final reading in readings) {
+        if (reading.idRequest != null && reading.idRequest != -1) {
+          final request = (await _readingsRequestDao
+              .getReadingsRequestById(reading.idRequest.toString()));
+
+          if (request != null) {
+            reading.readingRequest = request;
+          }
+        }
+
+        final route = await sl<RoutesDao>()
+            .getRouteByLecturaRutaSec(reading.lecturaRutaSec);
+
+        if (route != null) reading.routesItem = route;
+
+        tempReadings.add(reading);
+      }
+
+      final anomalias = await sl<GetAnomaliesUseCase>()(null);
+
+      final x = tempReadings.where((element) {
+        switch (filterType) {
+          case FilterType.PENDING:
+            return element.readingRequest.lectura == null &&
+                element.readingRequest.anomaliaSec == null;
+          case FilterType.FAILED:
+            if (element.readingRequest.anomaliaSec == null) return false;
+
+            return anomalias.any((anomalia) => anomalia.claseAnomalia.any(
+                (claseAnomalia) =>
+                    claseAnomalia.anomSec == element.anomSec &&
+                    claseAnomalia.fallida));
+          case FilterType.EXCECUTED:
+            final List<ClaseAnomalia> clasesAnomalia = [];
+            for (final anomalia in anomalias) {
+              clasesAnomalia.addAll(anomalia.claseAnomalia);
+            }
+
+            if (element.readingRequest.anomaliaSec == null) return false;
+
+            final current = clasesAnomalia.firstWhere((clase) =>
+                clase.nombre == element.readingRequest.claseAnomalia);
+
+            return !current.fallida;
+        }
+      });
+
+      return x.toList();
+    } catch (_) {
+      throw ServerException();
+    }
+  }
+
+  @override
   Future<List<int>> saveReadings(List<ReadingDetailItem> readings) async {
     try {
       return await _readingsDao.insertAll(readings);
@@ -136,6 +200,15 @@ class ReadingRepository implements ReadingRepositoryContract {
   Future<void> sincronizarReadings(List<ReadingRequest> readings) async {
     try {
       return await _remoteDataSource.sincronizarReadings(readings);
+    } catch (_) {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<void> updateNewMeter(List<NewMeterRequestItem> readings) async {
+    try {
+      return await _remoteDataSource.updateNewMeter(readings);
     } catch (_) {
       throw ServerException();
     }

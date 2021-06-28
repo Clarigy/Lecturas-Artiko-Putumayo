@@ -145,7 +145,7 @@ class ReadingDetailItem {
   @ignore
   ReadingRequest readingRequest;
   @ignore
-  late RoutesItem routesItem;
+  RoutesItem? routesItem;
 
   factory ReadingDetailItem.fromJson(
           Map<String, dynamic> json, int lecturaRutaSec) =>

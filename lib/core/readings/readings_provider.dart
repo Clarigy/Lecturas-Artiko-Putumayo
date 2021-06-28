@@ -1,3 +1,4 @@
+import 'package:artiko/core/cache/domain/repositories/cache_storage_repository.dart';
 import 'package:artiko/core/http/data/http_proxy_impl.dart';
 import 'package:artiko/core/readings/data/data_sources/anomalies_remote_data_source.dart';
 import 'package:artiko/core/readings/data/data_sources/observaciones_dao.dart';
@@ -18,6 +19,7 @@ import 'data/data_sources/anomalies_dao.dart';
 import 'data/data_sources/routes_dao.dart';
 import 'data/repository/observaciones_repository.dart';
 import 'domain/use_case/save_readings_use_case.dart';
+import 'domain/use_case/update_new_meter_use_case.dart';
 import 'domain/use_case/update_reading_use_case.dart';
 
 Future<void> setUpReadingsProviders() async {
@@ -49,7 +51,7 @@ Future<void> setUpReadingsProviders() async {
       sl<ReadingsRemoteDataSource>(),
       sl<ReadingsDao>(),
       sl<RoutesDao>(),
-      sl<ReadingsRequestDao>()));
+          sl<ReadingsRequestDao>()));
 
   sl.registerLazySingleton<LoadAndSaveAllDataUseCase>(() =>
       LoadAndSaveAllDataUseCase(sl<ReadingRepository>(),
@@ -65,7 +67,14 @@ Future<void> setUpReadingsProviders() async {
       () => SincronizarReadingsUseCase(sl<ReadingRepository>()));
 
   sl.registerLazySingleton<CloseTerminalUseCase>(() => CloseTerminalUseCase(
-      sl<ReadingRepository>(), sl<GetReadingImagesByReadingIdUseCaseFuture>()));
+      sl<ReadingRepository>(),
+      sl<GetReadingImagesByReadingIdUseCaseFuture>(),
+      sl<UpdateNewMeterUseCase>()));
+
+  sl.registerLazySingleton<UpdateNewMeterUseCase>(() => UpdateNewMeterUseCase(
+        sl<ReadingRepository>(),
+        sl<CacheStorageInterface>(),
+      ));
 
   sl.registerLazySingleton<GetAnomaliesUseCase>(
       () => GetAnomaliesUseCase(sl<AnomaliesRepository>()));

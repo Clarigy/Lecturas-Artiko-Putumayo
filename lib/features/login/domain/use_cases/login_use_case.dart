@@ -25,6 +25,7 @@ class LoginUseCase extends UseCase<LoginRequest, Future<LoginResponse>> {
   }
 
   Future<void> _saveInCache(LoginResponse result) async {
-    await _storage.save(key: CacheKeys.ID_USER, value: result.idUsuario);
+    await _storage.save(
+        key: CacheKeys.ID_USER, value: result.idUsuario.toString());
   }
 }

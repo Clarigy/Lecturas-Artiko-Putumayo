@@ -64,8 +64,4 @@ class ActivitiesBloc extends ChangeNotifier {
   void doFilter() {
     notifyListeners();
   }
-
-  @override
-  // ignore: must_call_super
-  void dispose() {}
 }

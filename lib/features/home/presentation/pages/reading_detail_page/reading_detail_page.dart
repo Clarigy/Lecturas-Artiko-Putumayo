@@ -124,7 +124,7 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
                                 item: widget.readingDetailItem,
                               ),
                               MeterReading(
-                                readingDetailItem: detailItem,
+                                readingDetailItem: widget.readingDetailItem,
                               ),
                               Container(
                                 margin: EdgeInsets.only(top: 10),
@@ -347,6 +347,7 @@ class _NavigationButtons extends ConsumerWidget {
       ));
       return;
     }
+
     Navigator.pushReplacementNamed(context, AppRoutes.ReadingDetailScreen,
         arguments: {
           READING_DETAIL: bloc.readings[index + 1],

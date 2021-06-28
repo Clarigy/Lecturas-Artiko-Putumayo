@@ -67,47 +67,7 @@ class _MeterReadingState extends State<MeterReading> {
               ),
             ),
             if (bloc.readingDetailItem.nroDecimales > 0)
-              Column(
-                children: [
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 6),
-                    child: Text(
-                      ',',
-                      style: TextStyle(color: theme.primaryColor, fontSize: 60),
-                    ),
-                  ),
-                  Flexible(
-                    flex: 2,
-                    child: TextFormField(
-                      autocorrect: false,
-                      maxLength: bloc.readingDetailItem.nroDecimales,
-                      controller: bloc.readingDecimals,
-                      keyboardType: TextInputType.number,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      validator: (value) {
-                        if (!bloc.claseAnomalia.lectura ||
-                            bloc.readingDetailItem.detalleLecturaRutaSec ==
-                                null) return null;
-                        if (value == null ||
-                            value.isEmpty &&
-                                bloc.readingDetailItem.nroDecimales > 0) {
-                          return 'Campo requerido';
-                        }
-                      },
-                      style: TextStyle(
-                          fontSize: 36,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 8),
-                      decoration: InputDecoration(
-                        filled: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              ...decimalPart(context),
             Center(
               child: IconButton(
                   icon: Icon(
@@ -123,6 +83,50 @@ class _MeterReadingState extends State<MeterReading> {
         ),
       ),
     );
+  }
+
+  List<Widget> decimalPart(BuildContext context) {
+    final theme = Theme.of(context);
+
+    final bloc = context.read(readingDetailBlocProvider);
+
+    return [
+      Container(
+        margin: EdgeInsets.symmetric(horizontal: 6),
+        child: Text(
+          ',',
+          style: TextStyle(color: theme.primaryColor, fontSize: 60),
+        ),
+      ),
+      Flexible(
+        flex: 2,
+        child: TextFormField(
+          autocorrect: false,
+          maxLength: bloc.readingDetailItem.nroDecimales,
+          controller: bloc.readingDecimals,
+          keyboardType: TextInputType.number,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: (value) {
+            if (!bloc.claseAnomalia.lectura ||
+                bloc.readingDetailItem.detalleLecturaRutaSec == null)
+              return null;
+            if (value == null ||
+                value.isEmpty && bloc.readingDetailItem.nroDecimales > 0) {
+              return 'Campo requerido';
+            }
+          },
+          style: TextStyle(
+              fontSize: 36, fontWeight: FontWeight.w600, letterSpacing: 8),
+          decoration: InputDecoration(
+            filled: true,
+            counterText: '',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
+      )
+    ];
   }
 
   void _validateReading(BuildContext context) {

@@ -92,49 +92,37 @@ class _Counter extends StatefulWidget {
 }
 
 class __CounterState extends State<_Counter> {
-  bool isLoading = true;
   int doneReadings = 0;
-  int allReadingsCount = 0;
-  List<ReadingDetailItem>? allReadings;
   late String activitiesType;
-
-  @override
-  void initState() {
-    WidgetsBinding.instance?.addPostFrameCallback((_) => afterLayout());
-    super.initState();
-  }
-
-  void afterLayout() async {
-    try {
-      allReadings = await sl<ReadingsDao>().getFutureReadings();
-      allReadingsCount = allReadings!.length;
-    } on Exception catch (_) {} finally {
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     final bloc = P.Provider.of<ActivitiesBloc>(context);
 
-    doneReadings = 0;
-
-    _setDoneReadings(bloc);
-
     return Align(
         alignment: AlignmentDirectional.bottomStart,
-        child: isLoading
-            ? CircularProgressIndicator()
-            : Container(
-                margin: EdgeInsets.only(bottom: 10),
-                child: Text(
-                    '$doneReadings/$allReadingsCount actividades $activitiesType'),
-              ));
+        child: StreamBuilder<List<ReadingDetailItem>?>(
+            stream: sl<ReadingsDao>().getReadings(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData || snapshot.hasError) return Offstage();
+
+              if (snapshot.hasData) {
+                doneReadings = 0;
+
+                _setDoneReadings(bloc, snapshot.data);
+
+                return Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  child: Text(
+                      '$doneReadings/${snapshot.data?.length ?? '0'} actividades $activitiesType'),
+                );
+              }
+              return Offstage();
+            }));
   }
 
-  void _setDoneReadings(ActivitiesBloc bloc) {
+  void _setDoneReadings(
+      ActivitiesBloc bloc, List<ReadingDetailItem>? allReadings) {
     allReadings?.forEach((element) {
       switch (bloc.filterType) {
         case FilterType.PENDING:

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:artiko/shared/routes/route_generator.dart';
 import 'package:artiko/shared/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +12,18 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await setupInjector();
+  // This captures errors reported by the Flutter framework.
+  FlutterError.onError = (FlutterErrorDetails details) {
+    Zone.current.handleUncaughtError(
+        details.exception, details.stack ?? StackTrace.empty);
+  };
 
+  runZonedGuarded(
+    () => runApp(MyApp()),
+    (Object error, stackTrace) {
+      print(stackTrace.toString());
+    },
+  );
   runApp(MyApp());
 }
 
