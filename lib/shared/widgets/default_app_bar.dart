@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:artiko/core/cache/domain/repositories/cache_storage_repository.dart';
+import 'package:artiko/core/cache/keys/cache_keys.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
 import 'package:artiko/core/readings/domain/use_case/close_terminal_use_case.dart';
 import 'package:artiko/dependency_injector.dart';
@@ -26,8 +29,9 @@ class DefaultAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _DefaultAppBarState extends State<DefaultAppBar> {
+  late String photo;
   LoginResponse? _currentUser;
-  bool isLoading = false;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -42,6 +46,9 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
       await profileBloc.getCurrentUserFromDb();
     }
 
+    photo = await sl<CacheStorageInterface>().fetch(CacheKeys.USER_PHOTO);
+
+    isLoading = false;
     setState(() => _currentUser = profileBloc.currentUser);
   }
 
@@ -93,17 +100,18 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
             child: Row(
               children: [
                 Container(
-                    margin: EdgeInsets.only(right: 8),
+                    margin: EdgeInsets.only(right: 12),
                     child: Text(_currentUser?.nombre ?? '')),
                 isLoading
                     ? CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                            theme.secondaryHeaderColor),
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       )
                     : CircleAvatar(
-                        radius: 30,
+                  radius: 18,
                         backgroundColor: Colors.transparent,
-                        // backgroundImage: NetworkImage('${_currentUser?.href}/foto'),
+                        backgroundImage: MemoryImage(
+                          Base64Decoder().convert(photo),
+                        ),
                       )
               ],
             ),

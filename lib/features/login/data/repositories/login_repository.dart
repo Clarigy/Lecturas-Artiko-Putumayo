@@ -27,6 +27,7 @@ class LoginRepository implements LoginRepositoryContract {
       final response = LoginResponse.fromJson(_response.data["items"][0]);
 
       await _saveCurrentUser(response);
+      await _getAndSaveUserPhoto(response);
       return response;
     } on DioError catch (e) {
       throw ServerException(e.message);
@@ -41,5 +42,21 @@ class LoginRepository implements LoginRepositoryContract {
   Future<void> _saveCurrentUser(LoginResponse response) async {
     return await _cacheStorageInterface.save(
         key: CacheKeys.USER, value: loginResponseToJson(response));
+  }
+
+  Future<void> _getAndSaveUserPhoto(LoginResponse loginResponse) async {
+    final _http = _httpImpl.instance();
+
+    final _response = await _http.get(
+      '${loginResponse.href}/foto',
+    );
+
+    print(_response);
+    return await _cacheStorageInterface.save(
+        key: CacheKeys.USER_PHOTO,
+        value: _response.data
+            .toString()
+            .replaceAll('\n', '')
+            .replaceAll('\r', ''));
   }
 }

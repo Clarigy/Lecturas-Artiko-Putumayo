@@ -2,6 +2,7 @@ import 'package:artiko/features/login/domain/entities/response/login_response.da
 import 'package:artiko/features/profile/domain/entities/profile_input_model.dart';
 import 'package:artiko/features/profile/domain/use_cases/get_current_user_use_case.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 enum ProfileState { withData, loading }
 
@@ -37,8 +38,7 @@ class ProfileBloc extends ChangeNotifier {
       ProfileInputModel(text: 'Contrato', label: 'contrato'),
       ProfileInputModel(text: _currentUser!.correoLector, label: 'correo'),
       ProfileInputModel(
-          text: _currentUser!.telefonoLector ?? 'numero no está',
-          label: 'numero'),
+          text: _currentUser!.telefonoLector ?? '', label: 'numero'),
       ProfileInputModel(text: _currentUser!.supervisor, label: 'supervisor'),
       ProfileInputModel(
           text: _currentUser!.telefonoSupervisor,
@@ -49,4 +49,9 @@ class ProfileBloc extends ChangeNotifier {
 
     return profileInputModels;
   }
+
+  Future<void> launchURL() async =>
+      await canLaunch('tel: ${currentUser?.telefonoSupervisor ?? '0'}')
+          ? await launch('tel: ${currentUser?.telefonoSupervisor ?? '0'}')
+          : throw 'Could not launch phone';
 }

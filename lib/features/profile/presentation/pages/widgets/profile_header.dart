@@ -1,7 +1,13 @@
+import 'dart:convert';
+
+import 'package:artiko/core/cache/domain/repositories/cache_storage_repository.dart';
+import 'package:artiko/core/cache/keys/cache_keys.dart';
 import 'package:artiko/features/profile/presentation/manager/profile_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../../../../../dependency_injector.dart';
 
 class ProfileHeader extends StatelessWidget {
   @override
@@ -38,23 +44,33 @@ class ProfileHeader extends StatelessWidget {
                 thickness: 2,
               ),
             ),
-            Container(
-              width: 80.0,
-              height: 80.0,
-              margin: EdgeInsets.symmetric(vertical: screenHeight * .02),
-              decoration: new BoxDecoration(
-                color: const Color(0xff7c94b6),
-                image: new DecorationImage(
-                  image: new NetworkImage('${bloc.currentUser?.href}/foto'),
-                  fit: BoxFit.cover,
-                ),
-                borderRadius: new BorderRadius.all(new Radius.circular(50.0)),
-                border: new Border.all(
-                  color: theme.primaryColor,
-                  width: 4.0,
-                ),
-              ),
-            ),
+            FutureBuilder(
+                future: sl<CacheStorageInterface>().fetch(CacheKeys.USER_PHOTO),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData || snapshot.hasError) return Offstage();
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  }
+                  return Container(
+                    width: 80.0,
+                    height: 80.0,
+                    margin: EdgeInsets.symmetric(vertical: screenHeight * .02),
+                    decoration: new BoxDecoration(
+                      color: const Color(0xff7c94b6),
+                      image: new DecorationImage(
+                        image: MemoryImage(
+                            Base64Decoder().convert(snapshot.data.toString())),
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius:
+                          new BorderRadius.all(new Radius.circular(50.0)),
+                      border: new Border.all(
+                        color: theme.primaryColor,
+                        width: 4.0,
+                      ),
+                    ),
+                  );
+                }),
           ],
         ),
       ),

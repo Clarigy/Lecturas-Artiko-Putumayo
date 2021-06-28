@@ -32,16 +32,20 @@ class ProfileForm extends StatelessWidget {
               initialValue: profileInputModel.text,
               suffixIcon: !profileInputModel.allowCall
                   ? null
-                  : Icon(
-                      Icons.call,
-                      color: theme.primaryColor,
+                  : GestureDetector(
+                      onTap: () async => await bloc.launchURL(),
+                      child: Icon(
+                        Icons.call,
+                        color: theme.primaryColor,
+                      ),
                     ),
             );
           }).toList(),
-          Container(
-              padding: EdgeInsets.all(10),
-              margin: EdgeInsets.only(top: 25),
-              child: Image.asset(IMAGE_COMPANY)),
+          Image.asset(
+            IMAGE_COMPANY,
+            height: 62,
+            width: 70,
+          ),
         ],
       ),
     );

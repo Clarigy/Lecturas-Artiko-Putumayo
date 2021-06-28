@@ -40,22 +40,23 @@ class _ProfilePageState extends State<ProfilePage> {
 
     final bloc = Provider.of<ProfileBloc>(context);
 
-    print('El usuario es: ${bloc.currentUser?.nombre ?? 'NoHay'}');
-
     return Scaffold(
       appBar: DefaultAppBar(
         leadingWidth: screenWidth * .4,
-        leading: Row(
-          children: [
-            Container(
-              margin: EdgeInsets.only(left: 18, right: 8),
-              child: Icon(
-                Icons.call,
-                color: theme.scaffoldBackgroundColor,
+        leading: GestureDetector(
+          onTap: () async => await bloc.launchURL(),
+          child: Row(
+            children: [
+              Container(
+                margin: EdgeInsets.only(left: 18, right: 8),
+                child: Icon(
+                  Icons.call,
+                  color: theme.scaffoldBackgroundColor,
+                ),
               ),
-            ),
-            Text(LABEL_CALL)
-          ],
+              Text(LABEL_CALL)
+            ],
+          ),
         ),
       ),
       body: bloc.profileState == ProfileState.loading
