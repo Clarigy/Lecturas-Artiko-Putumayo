@@ -104,8 +104,8 @@ class _TakePicturesState extends State<TakePictures> {
     return countImages == 3 || detailItem.readingRequest.alreadySync
         ? Offstage()
         : Container(
-            width: screenWidth * .2,
-            height: screenHeight * .1,
+            width: screenWidth * .23,
+            height: screenHeight * .13,
             margin: EdgeInsets.only(right: 12, left: 4),
             child: DottedBorder(
               color: theme.primaryColor,
@@ -186,8 +186,8 @@ class _TakePicturesState extends State<TakePictures> {
               ? null
               : () async => await _onTapImageView(readingImagesModel, bloc),
           child: Container(
-            width: screenWidth * .2,
-            height: screenHeight * .1,
+            width: screenWidth * .23,
+            height: screenHeight * .13,
             margin: EdgeInsets.only(right: 12),
             child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),

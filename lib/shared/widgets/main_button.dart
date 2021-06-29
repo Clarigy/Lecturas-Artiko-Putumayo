@@ -20,7 +20,7 @@ class MainButton extends StatelessWidget {
             textAlign: TextAlign.center,
             style: theme.textTheme.headline6?.copyWith(
                 color: theme.scaffoldBackgroundColor,
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.bold),
           )),
     );

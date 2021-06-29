@@ -72,7 +72,6 @@ class InputWithLabel extends StatelessWidget {
 
     return Center(
       child: Container(
-        margin: EdgeInsets.only(top: 10),
         width: width ?? screenWidth * .8,
         child: Column(
           children: [

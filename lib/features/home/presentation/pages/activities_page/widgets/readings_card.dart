@@ -126,7 +126,7 @@ class _ReadingInformation extends StatelessWidget {
           Container(
             margin: EdgeInsets.only(right: 8),
             width: 6,
-            height: 30,
+            height: MediaQuery.of(context).size.height * .05,
             decoration: BoxDecoration(
                 color: theme.primaryColor,
                 borderRadius: BorderRadius.circular(30)),

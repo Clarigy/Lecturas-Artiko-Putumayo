@@ -8,6 +8,7 @@ import 'package:artiko/shared/routes/app_routes.dart';
 import 'package:artiko/shared/routes/route_args_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart' as P show Provider;
 
 import '../../../../../dependency_injector.dart';
@@ -52,6 +53,31 @@ class ActivitiesPage extends StatelessWidget {
                 }
 
                 if (snapshot.hasData) {
+                  if (snapshot.data!.isEmpty) {
+                    return Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Expanded(child: Offstage()),
+                          Center(
+                            child: SvgPicture.asset(
+                              'assets/images/svg/check_circle.svg',
+                              height: 97,
+                              width: 97,
+                            ),
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * .05,
+                          ),
+                          Text(
+                            'Wow, todas tus actividades están completas, no tienes actividades por hacer.',
+                            textAlign: TextAlign.center,
+                          ),
+                          Expanded(child: Offstage()),
+                        ],
+                      ),
+                    );
+                  }
                   bloc.readings = snapshot.data;
 
                   return Expanded(

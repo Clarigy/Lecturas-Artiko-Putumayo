@@ -45,8 +45,11 @@ class _CreateMeasureFormState extends State<CreateMeasureForm> {
     final bloc = Provider.of<CreateMeasureBloc>(context);
 
     return bloc.isLoading
-        ? Center(
-            child: CircularProgressIndicator(),
+        ? Padding(
+            padding: EdgeInsets.only(top: 32),
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
           )
         : SingleChildScrollView(
             child: Container(
@@ -64,23 +67,29 @@ class _CreateMeasureFormState extends State<CreateMeasureForm> {
                           onChanged: (value) =>
                               bloc.claseServicio = value.toString(),
                           value: bloc.claseServicio),
-                      InputWithLabel.number(
-                        label: 'Número del medidor (*)',
-                        textEditingController:
-                            bloc.numeroMedidorTextEditingController,
-                        width: double.infinity,
-                        validator: validateNumber,
-                        onSaved: (value) => bloc.numeroMedidor = value!,
+                      Container(
+                        margin: EdgeInsets.only(top: 10),
+                        child: InputWithLabel.number(
+                          label: 'Número del medidor (*)',
+                          textEditingController:
+                              bloc.numeroMedidorTextEditingController,
+                          width: double.infinity,
+                          validator: validateNumber,
+                          onSaved: (value) => bloc.numeroMedidor = value!,
+                        ),
                       ),
-                      InputWithLabel(
-                        label: 'Marca del medidor (*)',
-                        textEditingController:
-                            bloc.marcaMedidorTextEditingController,
-                        width: double.infinity,
-                        validator: validateRequiredValue,
-                        onSaved: (value) {
-                          bloc.marcaMedidor = value!;
-                        },
+                      Container(
+                        margin: EdgeInsets.only(top: 10),
+                        child: InputWithLabel(
+                          label: 'Marca del medidor (*)',
+                          textEditingController:
+                              bloc.marcaMedidorTextEditingController,
+                          width: double.infinity,
+                          validator: validateRequiredValue,
+                          onSaved: (value) {
+                            bloc.marcaMedidor = value!;
+                          },
+                        ),
                       ),
                       InputWithLabel.number(
                         label: 'Enteros del medidor (*)',
@@ -90,27 +99,33 @@ class _CreateMeasureFormState extends State<CreateMeasureForm> {
                         width: double.infinity,
                         onSaved: (value) => bloc.enteros = value!,
                       ),
-                      InputWithLabel.number(
-                        label: 'Decimales del medidor (*)',
-                        validator: validateNumber,
-                        textEditingController:
-                            bloc.decimalesTextEditingController,
-                        width: double.infinity,
-                        onSaved: (value) {
-                          bloc.decimales = value!;
-                        },
-                      ),
-                      InputWithLabel(
-                          label: 'Ubicación del medidor (*)',
+                      Container(
+                        margin: EdgeInsets.only(top: 10),
+                        child: InputWithLabel.number(
+                          label: 'Decimales del medidor (*)',
+                          validator: validateNumber,
                           textEditingController:
-                              bloc.locationTextEditingController,
-                          prefixIcon: Icon(
-                            Icons.location_on,
-                            color: theme.primaryColor,
-                          ),
-                          readOnly: true,
-                          onSaved: (_) {},
-                          width: double.infinity),
+                              bloc.decimalesTextEditingController,
+                          width: double.infinity,
+                          onSaved: (value) {
+                            bloc.decimales = value!;
+                          },
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 10),
+                        child: InputWithLabel(
+                            label: 'Ubicación del medidor (*)',
+                            textEditingController:
+                                bloc.locationTextEditingController,
+                            prefixIcon: Icon(
+                              Icons.location_on,
+                              color: theme.primaryColor,
+                            ),
+                            readOnly: true,
+                            onSaved: (_) {},
+                            width: double.infinity),
+                      ),
                       Container(
                           margin: EdgeInsets.only(top: 12),
                           child: DefaultLabel(label: 'Tipo medidor (*)')),
