@@ -48,7 +48,7 @@ class __FormState extends State<LoginForm> {
                   obscureText: !bloc.isPasswordVisible,
                   textInputType: TextInputType.visiblePassword,
                 ),
-                SizedBox(height: screenHeight * .05),
+                SizedBox(height: screenHeight * .03),
                 MainButton(
                     text: BTN_LOG_IN,
                     onTap: () {

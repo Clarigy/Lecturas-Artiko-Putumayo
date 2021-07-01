@@ -68,6 +68,7 @@ class InputWithLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     final theme = Theme.of(context);
 
     return Center(
@@ -76,7 +77,7 @@ class InputWithLabel extends StatelessWidget {
         child: Column(
           children: [
             Container(
-                margin: EdgeInsets.only(bottom: 10),
+                margin: EdgeInsets.only(bottom: screenHeight * .01),
                 child: Align(
                     alignment: AlignmentDirectional.centerStart,
                     child: Text(label,
@@ -100,6 +101,8 @@ class InputWithLabel extends StatelessWidget {
                   filled: true,
                   isDense: true,
                   suffixIcon: suffixIcon,
+                  contentPadding: EdgeInsets.fromLTRB(
+                      12, screenHeight * .02, 12, screenHeight * .02),
                   hintText: hintText,
                   prefixIcon: prefixIcon,
                   border: OutlineInputBorder(

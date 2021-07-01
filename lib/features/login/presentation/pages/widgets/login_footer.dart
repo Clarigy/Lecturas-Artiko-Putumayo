@@ -17,21 +17,22 @@ class LoginFooter extends StatelessWidget {
               margin: EdgeInsets.only(top: size.width * .15),
               child: Center(child: Image.asset(IMAGE_ARTIKO))),
           Positioned(
-            right: -45,
-            top: 60,
+            right: -size.width * .109,
+            top: size.height * .071,
             child: InkWell(
               onTap: () async => await _launchURL(),
               child: Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    color: theme.scaffoldBackgroundColor),
-                child: Container(
-                  margin: EdgeInsets.only(right: 26, bottom: 26),
-                  child: Icon(
-                    Icons.call,
-                    color: theme.secondaryHeaderColor,
+                width: size.width * .25,
+                height: size.height * .142,
+                child: CircleAvatar(
+                  backgroundColor: Colors.white,
+                  child: Container(
+                    margin: EdgeInsets.only(
+                        right: size.width * .06, bottom: size.height * .01),
+                    child: Icon(
+                      Icons.call,
+                      color: theme.secondaryHeaderColor,
+                    ),
                   ),
                 ),
               ),

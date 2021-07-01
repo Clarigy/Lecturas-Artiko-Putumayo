@@ -1,4 +1,5 @@
 import 'package:artiko/features/login/presentation/pages/exports/images_path.dart';
+import 'package:artiko/features/login/presentation/pages/widgets/login_body.dart';
 import 'package:artiko/features/login/presentation/pages/widgets/login_footer.dart';
 import 'package:artiko/features/login/presentation/pages/widgets/login_header.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,7 +9,6 @@ import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
 import '../manager/login_bloc.dart';
-import 'widgets/login_body.dart';
 
 class LoginPage extends StatelessWidget {
   final sl = GetIt.instance;
@@ -28,15 +28,17 @@ class LoginPage extends StatelessWidget {
             height: height,
             child: Stack(
               children: [
-                Column(
-                  children: [
-                    Expanded(child: Container()),
-                    SvgPicture.asset(
+                Positioned(
+                  bottom: 0,
+                  child: Container(
+                    width: width,
+                    height: height * .7,
+                    child: SvgPicture.asset(
                       IMAGE_LOGIN_BACKGROUND,
-                      width: width,
+                      fit: BoxFit.fill,
                       alignment: Alignment.bottomCenter,
                     ),
-                  ],
+                  ),
                 ),
                 Align(
                     alignment: AlignmentDirectional.bottomEnd,
