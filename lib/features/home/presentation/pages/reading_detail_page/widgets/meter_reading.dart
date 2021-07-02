@@ -72,7 +72,9 @@ class _MeterReadingState extends State<MeterReading> {
               child: IconButton(
                   icon: Icon(
                     Icons.check_circle,
-                    color: theme.primaryColor,
+                    color: bloc.verifiedReading
+                        ? theme.secondaryHeaderColor
+                        : theme.primaryColor,
                     size: 36,
                   ),
                   onPressed: () {

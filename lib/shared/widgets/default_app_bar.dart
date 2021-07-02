@@ -100,14 +100,20 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
             child: Row(
               children: [
                 Container(
+                    width: MediaQuery.of(context).size.width * .5,
                     margin: EdgeInsets.only(right: 12),
-                    child: Text(_currentUser?.nombre ?? '')),
+                    child: Text(
+                      _currentUser?.nombre ?? '',
+                      textAlign: TextAlign.end,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    )),
                 isLoading
                     ? CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       )
                     : CircleAvatar(
-                  radius: 18,
+                        radius: 18,
                         backgroundColor: Colors.transparent,
                         backgroundImage: MemoryImage(
                           Base64Decoder().convert(photo),

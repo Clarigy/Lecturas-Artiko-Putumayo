@@ -131,25 +131,25 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
                                 child: Align(
                                     alignment: AlignmentDirectional.bottomStart,
                                     child: Text(
-                                        'Anomalia${bloc.requiredAnomaliaByMeterReading ?? false ? '*' : ''}',
+                                        'Clase Anomalía${bloc.requiredAnomaliaByMeterReading ?? false ? '*' : ''}',
                                         style: theme.textTheme.bodyText2!
                                             .copyWith(
                                                 fontWeight: FontWeight.bold,
                                                 color: theme.primaryColor))),
                               ),
-                              Row(
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Flexible(
-                                    flex: 2,
-                                    child: DropDownAnomalias(),
+                                  DropDownAnomalias(),
+                                  Container(
+                                    margin: EdgeInsets.only(top: 10),
+                                    child: Text('Anomalía',
+                                        style: theme.textTheme.bodyText2!
+                                            .copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: theme.primaryColor)),
                                   ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  Flexible(
-                                    flex: 2,
-                                    child: DropDownClaseAnomalia(),
-                                  ),
+                                  DropDownClaseAnomalia(),
                                 ],
                               ),
                               ...buildDependsWidgetMeter(context, bloc),
@@ -195,7 +195,7 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
                 margin: EdgeInsets.only(top: 10),
                 child: InputWithLabel(
                   width: double.infinity,
-                  label: '',
+                  label: '¿Cuál?',
                   textEditingController: bloc.observacionTextController,
                 ),
               ),
