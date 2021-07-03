@@ -19,6 +19,7 @@ class LoginResponse {
     required this.empresa,
     required this.supervisor,
     required this.telefonoSupervisor,
+    required this.contrato,
     required this.correoSupervisor,
     required this.lectorSec,
     required this.href,
@@ -33,6 +34,7 @@ class LoginResponse {
   String? supervisor;
   String? telefonoSupervisor;
   String? correoSupervisor;
+  String contrato;
   int lectorSec;
   String href;
 
@@ -46,6 +48,7 @@ class LoginResponse {
         supervisor: json["supervisor"],
         telefonoSupervisor: json["telefono_supervisor"],
         correoSupervisor: json["correo_supervisor"],
+        contrato: json["contrato"],
         lectorSec: json["lector_sec"],
         href: json['href'] == null ? json['links'][0]['href'] : json['href'],
       );
@@ -62,5 +65,6 @@ class LoginResponse {
         "correo_supervisor": correoSupervisor,
         "lector_sec": lectorSec,
         "href": href,
+        "contrato": contrato,
       };
 }
