@@ -61,8 +61,11 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       body: bloc.profileState == ProfileState.loading
           ? CircularProgressIndicator()
-          : Column(
-              children: [ProfileHeader(), ProfileForm()],
+          : SingleChildScrollView(
+              primary: true,
+              child: Column(
+                children: [ProfileHeader(), ProfileForm()],
+              ),
             ),
     );
   }

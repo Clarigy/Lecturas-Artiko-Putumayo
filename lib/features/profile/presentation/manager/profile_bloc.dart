@@ -38,11 +38,11 @@ class ProfileBloc extends ChangeNotifier {
       ProfileInputModel(text: 'Contrato', label: 'contrato'),
       ProfileInputModel(text: _currentUser!.correoLector, label: 'correo'),
       ProfileInputModel(
-          text: _currentUser!.telefonoLector ?? '', label: 'numero'),
+          text: _currentUser!.telefonoLector ?? '', label: 'número'),
       ProfileInputModel(text: _currentUser!.supervisor, label: 'supervisor'),
       ProfileInputModel(
           text: _currentUser!.telefonoSupervisor,
-          label: 'numero',
+          label: 'número',
           allowCall: true),
       ProfileInputModel(text: _currentUser!.empresa, label: 'empresa'),
     ];

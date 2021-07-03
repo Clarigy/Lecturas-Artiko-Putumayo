@@ -29,7 +29,8 @@ class ProfileHeader extends StatelessWidget {
           children: [
             Text(
               bloc.currentUser?.nombre.toUpperCase() ?? '',
-              style: theme.textTheme.headline6,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.headline6!.copyWith(fontSize: 18),
             ),
             SizedBox(height: screenHeight * .01),
             Text(

@@ -17,13 +17,15 @@ class ProfileForm extends StatelessWidget {
 
     return Container(
       width: screenWidth,
-      height: screenHeight * .55,
+      height: screenHeight * .8,
       child: GridView.count(
+        physics: NeverScrollableScrollPhysics(),
+        primary: false,
         crossAxisCount: 2,
         padding: EdgeInsets.all(screenWidth * .05),
         crossAxisSpacing: 12,
         mainAxisSpacing: 5,
-        childAspectRatio: 2,
+        childAspectRatio: 1.7,
         children: [
           ...bloc.getProfileInputModels().map((profileInputModel) {
             return InputWithLabel(
@@ -35,16 +37,16 @@ class ProfileForm extends StatelessWidget {
                   : GestureDetector(
                       onTap: () async => await bloc.launchURL(),
                       child: Icon(
-                        Icons.call,
-                        color: theme.primaryColor,
-                      ),
-                    ),
+                  Icons.call,
+                  color: theme.primaryColor,
+                ),
+              ),
             );
           }).toList(),
           Image.asset(
             IMAGE_COMPANY,
-            height: 62,
-            width: 70,
+            height: screenHeight * .07,
+            width: screenWidth * .15,
           ),
         ],
       ),
