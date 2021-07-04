@@ -66,6 +66,7 @@ class ReadingDetailItem {
       required this.longPuntoMedicion,
       required this.lecturaRutaSec,
       required this.detalleLecturaRutaSec,
+      required this.observacionDireccion,
       required this.anomSec})
       : readingRequest = ReadingRequest.empty(
             detalleLecturaRutaSec: detalleLecturaRutaSec,
@@ -116,6 +117,7 @@ class ReadingDetailItem {
   int secuencia;
   String tipoMedidor;
   String marcaMedidor;
+  String? observacionDireccion;
   int nroEnteros;
   int nroDecimales;
   int constante;
@@ -167,19 +169,20 @@ class ReadingDetailItem {
         claseServicio: json["clase_servicio"],
         fechaUltimaLectura: json["fecha_ultima_lectura"],
         indRangoCritica: json["ind_rango_critica"],
-        indicadorSuspension: json["indicador_suspension"] != null &&
-            json["indicador_suspension"] == "S",
-        nombre: json["nombre"],
-        direccion: json["direccion"],
-        suscriptorSec: json["suscriptor_sec"],
-        tipoConsumo: json["tipo_consumo"],
-        nombreTipoConsumo: json["nombre_tipo_consumo"],
-        latPuntoMedicion: json["lat_punto_medicion"],
-        longPuntoMedicion: json["long_punto_medicion"],
-        detalleLecturaRutaSec: json["detalle_lectura_ruta_sec"],
-        idRequest: null,
-        id: null,
-        anomSec: null,
+          indicadorSuspension: json["indicador_suspension"] != null &&
+              json["indicador_suspension"] == "S",
+          nombre: json["nombre"],
+          direccion: json["direccion"],
+          suscriptorSec: json["suscriptor_sec"],
+          tipoConsumo: json["tipo_consumo"],
+          nombreTipoConsumo: json["nombre_tipo_consumo"],
+          latPuntoMedicion: json["lat_punto_medicion"],
+          longPuntoMedicion: json["long_punto_medicion"],
+          detalleLecturaRutaSec: json["detalle_lectura_ruta_sec"],
+          observacionDireccion: json["observacion_direccion"],
+          idRequest: null,
+          id: null,
+          anomSec: null,
           lecturaRutaSec: lecturaRutaSec);
 
   Map<String, dynamic> toJson() => {
@@ -244,6 +247,7 @@ class ReadingDetailItem {
       indRangoCritica: indRangoCritica,
       anomSec: this.anomSec,
       lecturaRutaSec: this.lecturaRutaSec,
+      observacionDireccion: observacionDireccion,
     )..readingRequest = readingRequest ?? this.readingRequest;
   }
 }

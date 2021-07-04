@@ -18,23 +18,28 @@ class ReadingsCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _CardHeader(item: item),
-          Divider(
-            thickness: 1,
-          ),
+          if (item.detalleLecturaRutaSec != null)
+            Divider(
+              thickness: 1,
+            ),
           Padding(
-            padding: EdgeInsets.all(14),
+            padding: item.detalleLecturaRutaSec != null
+                ? EdgeInsets.all(14)
+                : EdgeInsets.only(right: 14, bottom: 14),
             child: Column(
               children: [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _ReadingInformation(
-                      item: item,
-                    ),
+                    if (item.detalleLecturaRutaSec != null)
+                      _ReadingInformation(
+                        item: item,
+                      ),
                     Expanded(child: Offstage()),
-                    _TypeOfConsumption(
-                      tipoConsumo: item.tipoConsumo,
-                    ),
+                    if (item.detalleLecturaRutaSec != null)
+                      _TypeOfConsumption(
+                        tipoConsumo: item.tipoConsumo,
+                      ),
                   ],
                 ),
               ],
@@ -56,6 +61,7 @@ class _CardHeader extends StatelessWidget {
     final theme = Theme.of(context);
     final width = MediaQuery.of(context).size.width;
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           padding: EdgeInsets.symmetric(vertical: 6),
@@ -65,6 +71,7 @@ class _CardHeader extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 14),
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
                   width: width * .8,
@@ -81,13 +88,22 @@ class _CardHeader extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 14),
           child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
                 margin: EdgeInsets.only(top: 10),
                 child: Text(_getSubHeader()),
               ),
               Expanded(child: Offstage()),
-              if (item.indicadorSuspension) SvgPicture.asset(IMAGE_CUT)
+              if (item.indicadorSuspension) SvgPicture.asset(IMAGE_CUT),
+              if (item.detalleLecturaRutaSec == null)
+                Padding(
+                  padding: EdgeInsets.only(top: 8.0),
+                  child: _TypeOfConsumption(
+                    tipoConsumo: item.tipoConsumo,
+                  ),
+                )
             ],
           ),
         ),
@@ -144,10 +160,27 @@ class _ReadingInformation extends StatelessWidget {
                   SizedBox(
                     width: 4,
                   ),
-                  Icon(
-                    Icons.info,
-                    color: theme.primaryColor,
-                    size: 20,
+                  GestureDetector(
+                    onTap: () {
+                      if (item.observacionDireccion != null) {
+                        showDialog(
+                            context: context,
+                            builder: (_) {
+                              return AlertDialog(
+                                title: Text(item.observacionDireccion!),
+                              );
+                            });
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Sin observación de dirección'),
+                        ));
+                      }
+                    },
+                    child: Icon(
+                      Icons.info,
+                      color: theme.primaryColor,
+                      size: 20,
+                    ),
                   )
                 ],
               ),
