@@ -104,8 +104,9 @@ class _TakePicturesState extends State<TakePictures> {
     return countImages == 3 || detailItem.readingRequest.alreadySync
         ? Offstage()
         : Container(
-            width: screenWidth * .23,
-            height: screenHeight * .13,
+            width: screenWidth * .26,
+            height:
+                screenHeight < 600 ? screenHeight * .16 : screenHeight * .13,
             margin: EdgeInsets.only(right: 12, left: 4),
             child: DottedBorder(
               color: theme.primaryColor,
@@ -114,7 +115,7 @@ class _TakePicturesState extends State<TakePictures> {
               borderType: BorderType.RRect,
               padding: EdgeInsets.all(12),
               radius: Radius.circular(12),
-              child: Container(
+              child: Center(
                 child: _buildCaptureImageContainer(snapshot),
               ),
             ),
@@ -137,7 +138,9 @@ class _TakePicturesState extends State<TakePictures> {
             ),
             Text(
               'Capturar',
-              style: TextStyle(color: theme.primaryColor),
+              style: TextStyle(
+                  color: theme.primaryColor,
+                  fontSize: MediaQuery.of(context).size.height < 600 ? 12 : 14),
             )
           ],
         ),
