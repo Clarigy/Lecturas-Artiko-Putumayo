@@ -68,7 +68,7 @@ class _CreateMeasureFormState extends State<CreateMeasureForm> {
                               bloc.claseServicio = value.toString(),
                           value: bloc.claseServicio),
                       Container(
-                        margin: EdgeInsets.only(top: 10),
+                        margin: EdgeInsets.only(top: 16),
                         child: InputWithLabel.number(
                           label: 'Número del medidor (*)',
                           textEditingController:
@@ -79,7 +79,7 @@ class _CreateMeasureFormState extends State<CreateMeasureForm> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(top: 10),
+                        margin: EdgeInsets.only(top: 16),
                         child: InputWithLabel(
                           label: 'Marca del medidor (*)',
                           textEditingController:
@@ -91,16 +91,19 @@ class _CreateMeasureFormState extends State<CreateMeasureForm> {
                           },
                         ),
                       ),
-                      InputWithLabel.number(
-                        label: 'Enteros del medidor (*)',
-                        validator: validateNumber,
-                        textEditingController:
-                            bloc.enterosTextEditingController,
-                        width: double.infinity,
-                        onSaved: (value) => bloc.enteros = value!,
+                      Container(
+                        margin: EdgeInsets.only(top: 16),
+                        child: InputWithLabel.number(
+                          label: 'Enteros del medidor (*)',
+                          validator: validateNumber,
+                          textEditingController:
+                              bloc.enterosTextEditingController,
+                          width: double.infinity,
+                          onSaved: (value) => bloc.enteros = value!,
+                        ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(top: 10),
+                        margin: EdgeInsets.only(top: 16),
                         child: InputWithLabel.number(
                           label: 'Decimales del medidor (*)',
                           validator: validateNumber,
@@ -113,7 +116,7 @@ class _CreateMeasureFormState extends State<CreateMeasureForm> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(top: 10),
+                        margin: EdgeInsets.only(top: 16),
                         child: InputWithLabel(
                             label: 'Ubicación del medidor (*)',
                             textEditingController:

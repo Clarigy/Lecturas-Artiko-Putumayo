@@ -6,7 +6,6 @@ import 'package:artiko/shared/widgets/default_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'
     show StateNotifier, StateNotifierProvider, Consumer, BuildContextX;
-import 'package:provider/provider.dart' show ChangeNotifierProvider;
 
 import 'activities_page/activities_bloc.dart';
 import 'exports/main_screen_labels.dart';
@@ -66,48 +65,45 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return ChangeNotifierProvider(
-      create: (context) => sl<ActivitiesBloc>(),
-      builder: (_, __) => Scaffold(
-        appBar: DefaultAppBar(),
-        bottomNavigationBar: BottomNavigationBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Consumer(
-                builder: (BuildContext context, watch, Widget? child) {
-                  final isLoading = watch(_mainScreenProvider);
-                  return isLoading
-                      ? CircularProgressIndicator(strokeWidth: 2)
-                      : Icon(
-                          Icons.sync,
-                          color: AppColors.redColor,
-                        );
-                },
-              ),
-              label: LABEL_SYNCHRONIZE,
+    return Scaffold(
+      appBar: DefaultAppBar(),
+      bottomNavigationBar: BottomNavigationBar(
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Consumer(
+              builder: (BuildContext context, watch, Widget? child) {
+                final isLoading = watch(_mainScreenProvider);
+                return isLoading
+                    ? CircularProgressIndicator(strokeWidth: 2)
+                    : Icon(
+                        Icons.sync,
+                        color: AppColors.redColor,
+                      );
+              },
             ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.assignment,
-                color: theme.primaryColor,
-              ),
-              label: LABEL_ACTIVITIES,
+            label: LABEL_SYNCHRONIZE,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.assignment,
+              color: theme.primaryColor,
             ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.location_on,
-                color: theme.primaryColor,
-              ),
-              label: LABEL_MAP,
+            label: LABEL_ACTIVITIES,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.location_on,
+              color: theme.primaryColor,
             ),
-          ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: theme.primaryColor,
-          onTap: (index) async => await _onItemTapped(index),
-        ),
-        body: Center(
-          child: _widgetOptions.elementAt(_selectedIndex),
-        ),
+            label: LABEL_MAP,
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: theme.primaryColor,
+        onTap: (index) async => await _onItemTapped(index),
+      ),
+      body: Center(
+        child: _widgetOptions.elementAt(_selectedIndex),
       ),
     );
   }
