@@ -71,7 +71,6 @@ class _CardHeader extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 14),
             child: Row(
-              mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
                   width: width * .8,
