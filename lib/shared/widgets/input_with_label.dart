@@ -84,20 +84,37 @@ class InputWithLabel extends StatelessWidget {
                         style: theme.textTheme.bodyText2!.copyWith(
                             fontWeight: FontWeight.bold,
                             color: labelColor ?? theme.primaryColor)))),
-            TextFormField(
-              initialValue: initialValue,
-              autovalidateMode: autovalidateMode,
-              autocorrect: false,
-              controller: textEditingController,
-              textInputAction: textInputAction,
-              keyboardType: textInputType,
-              validator: validator,
-              onSaved: onSaved,
-              readOnly: readOnly,
-              obscureText: obscureText,
-              onChanged: onChange,
-              decoration: InputDecoration(
+            Container(
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 5,
+                    offset: const Offset(0, -1),
+                  ),
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: TextFormField(
+                initialValue: initialValue,
+                autovalidateMode: autovalidateMode,
+                autocorrect: false,
+                controller: textEditingController,
+                textInputAction: textInputAction,
+                keyboardType: textInputType,
+                validator: validator,
+                onSaved: onSaved,
+                readOnly: readOnly,
+                obscureText: obscureText,
+                onChanged: onChange,
+                decoration: InputDecoration(
                   errorText: errorText,
+                  border: InputBorder.none,
+                  fillColor: Colors.white,
                   filled: true,
                   isDense: true,
                   suffixIcon: suffixIcon,
@@ -105,9 +122,8 @@ class InputWithLabel extends StatelessWidget {
                       12, screenHeight * .02, 12, screenHeight * .02),
                   hintText: hintText,
                   prefixIcon: prefixIcon,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  )),
+                ),
+              ),
             )
           ],
         ),
