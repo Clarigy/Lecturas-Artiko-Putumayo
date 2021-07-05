@@ -217,9 +217,7 @@ class _MeterReadingState extends State<MeterReading> {
   void _lecturaBandaConsumoExcedidadSegundoIntento(
       ReadingDetailBloc bloc, ReadingRequest request, BuildContext context) {
     clearInputs(bloc);
-    request
-      ..lecturaIntento2 = request.lectura
-      ..lectura = null;
+    request..lecturaIntento2 = request.lectura;
     bloc.verifiedReading = false;
     showSnackbar(
         context, 'Por favor, confirme Lectura. Lectura ingresada es excedida');
@@ -291,10 +289,7 @@ class _MeterReadingState extends State<MeterReading> {
   void _lecturaPosibleAnomaliaErradaPrimerIntento(
       ReadingDetailBloc bloc, ReadingRequest request, BuildContext context) {
     clearInputs(bloc);
-    request
-      ..lecturaIntento1 = request.lectura
-      ..lecturaIntento2 = null
-      ..lectura = null;
+    request..lecturaIntento1 = request.lectura;
     bloc.verifiedReading = false;
     showSnackbar(context, 'Por favor, confirme lectura');
   }
@@ -302,9 +297,7 @@ class _MeterReadingState extends State<MeterReading> {
   void _lecturaPosibleAnomaliaErradaSegundoIntento(
       ReadingDetailBloc bloc, ReadingRequest request, BuildContext context) {
     clearInputs(bloc);
-    request
-      ..lecturaIntento2 = request.lectura
-      ..lectura = null;
+    request..lecturaIntento2 = request.lectura;
     bloc.verifiedReading = false;
     showSnackbar(context,
         'Por favor, confirme lectura. Lectura ingresada es menor o igual que la lectura anterior');

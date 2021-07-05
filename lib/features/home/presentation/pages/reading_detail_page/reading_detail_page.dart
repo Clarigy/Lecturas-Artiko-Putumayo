@@ -124,7 +124,7 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
                                 item: widget.readingDetailItem,
                               ),
                               MeterReading(
-                                readingDetailItem: widget.readingDetailItem,
+                                readingDetailItem: detailItem,
                               ),
                               Container(
                                 margin: EdgeInsets.only(top: 10),
@@ -281,50 +281,52 @@ class _NavigationButtons extends ConsumerWidget {
                         if (bloc.requiredPhotoByMeterReading != null &&
                                 bloc.requiredPhotoByMeterReading! &&
                                 detailItem.readingRequest.fotos.isEmpty ||
-                      bloc.claseAnomalia.fotografia &&
-                          detailItem.readingRequest.fotos.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Al menos una foto es requerida')));
-                    return;
-                  }
-                  if (bloc.requiredAnomaliaByMeterReading != null &&
-                      bloc.requiredAnomaliaByMeterReading! &&
-                      bloc.anomaliaSec == 3) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('La anomalía es requerida')));
-                    return;
-                  }
+                            bloc.claseAnomalia.fotografia &&
+                                detailItem.readingRequest.fotos.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text('Al menos una foto es requerida')));
+                          return;
+                        }
+                        if (bloc.requiredAnomaliaByMeterReading != null &&
+                            bloc.requiredAnomaliaByMeterReading! &&
+                            bloc.anomaliaSec == 3) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text('La anomalía es requerida')));
+                          return;
+                        }
 
-                  try {
-                    final position = await Geolocator.getCurrentPosition();
-                    detailItem.anomSec = bloc.claseAnomalia.anomSec;
+                        try {
+                          final position =
+                              await Geolocator.getCurrentPosition();
+                          detailItem.anomSec = bloc.claseAnomalia.anomSec;
 
-                    detailItem.readingRequest
-                      ..anomaliaSec = bloc.anomaliaSec
-                      ..latLecturaTomada = position.latitude.toString()
-                      ..longLecturaTomada = position.longitude.toString()
-                      ..claseAnomalia = bloc.claseAnomalia.nombre
-                      ..observacionAnomalia = bloc.observacion
-                      ..observacionLectura = bloc.observacion == 'Otro'
-                          ? bloc.observacionTextController.text
-                          : null
-                      ..observacionSec = bloc.observacion != 'Otro'
-                          ? bloc.observaciones
-                              .firstWhere((element) =>
-                                  element.descripcion == element.descripcion &&
-                                  element.anomaliaSec == bloc.anomaliaSec)
-                              .observacionSec
-                          : null;
+                          detailItem.readingRequest
+                            ..anomaliaSec = bloc.anomaliaSec
+                            ..latLecturaTomada = position.latitude.toString()
+                            ..longLecturaTomada = position.longitude.toString()
+                            ..claseAnomalia = bloc.claseAnomalia.nombre
+                            ..observacionAnomalia = bloc.observacion
+                            ..observacionLectura = bloc.observacion == 'Otro'
+                                ? bloc.observacionTextController.text
+                                : null
+                            ..observacionSec = bloc.observacion != 'Otro'
+                                ? bloc.observaciones
+                                    .firstWhere((element) =>
+                                        element.descripcion ==
+                                            element.descripcion &&
+                                        element.anomaliaSec == bloc.anomaliaSec)
+                                    .observacionSec
+                                : null;
 
-                    await bloc.updateReading(detailItem);
+                          await bloc.updateReading(detailItem);
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Lectura guardada con éxito')));
-                  } catch (_) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('No pudimos guardar la lectura')));
-                  }
-                }),
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text('Lectura guardada con éxito')));
+                        } catch (_) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text('No pudimos guardar la lectura')));
+                        }
+                      }),
           ),
           SizedBox(width: 12),
           InkWell(
@@ -353,5 +355,14 @@ class _NavigationButtons extends ConsumerWidget {
           READING_DETAIL: bloc.readings[index + 1],
           READINGS: bloc.readings
         });
+  }
+
+  double? getReadingValue(ReadingDetailBloc bloc) {
+    final integer = bloc.readingIntegers.text;
+    final decimal = bloc.readingDecimals.text;
+
+    final valueInString = '$integer.$decimal';
+
+    return double.tryParse(valueInString);
   }
 }
