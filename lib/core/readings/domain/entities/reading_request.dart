@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:floor/floor.dart';
 
 String readingRequestToJson(List<ReadingRequest> data, String tipo) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson(tipo))));
+    json.encode({'items': List<dynamic>.from(data.map((x) => x.toJson(tipo)))});
 
 @Entity(tableName: 'readings_request')
 class ReadingRequest {
@@ -124,10 +124,11 @@ class ReadingRequest {
         "lat_lectura_tomada": latLecturaTomada,
         "long_lectura_tomada": longLecturaTomada,
         "tipo": tipo,
-        "fotos": List<dynamic>.from(fotos.map((image) => {
-              'image': image,
-              'filename': '$detalleLecturaRutaSec-${fotos.indexOf(image)}',
-              'mimetype': 'png'
-            })),
+        "fotos": {},
+        // "fotos": List<dynamic>.from(fotos.map((image) => {
+        //       'image': image,
+        //       'filename': '$detalleLecturaRutaSec-${fotos.indexOf(image)}',
+        //       'mimetype': 'png'
+        //     })),
       };
 }

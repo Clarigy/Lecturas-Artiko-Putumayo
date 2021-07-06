@@ -199,7 +199,7 @@ class ReadingRepository implements ReadingRepositoryContract {
   @override
   Future<void> sincronizarReadings(List<ReadingRequest> readings) async {
     try {
-      return await _remoteDataSource.sincronizarReadings(readings);
+      await _remoteDataSource.sincronizarReadings(readings);
     } catch (_) {
       throw ServerException();
     }

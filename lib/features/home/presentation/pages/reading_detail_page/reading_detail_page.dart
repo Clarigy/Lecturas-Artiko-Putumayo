@@ -59,6 +59,12 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
   void initState() {
     WidgetsBinding.instance!.addPostFrameCallback((_) => afterLayout());
     final bloc = context.read<ReadingDetailBloc>(readingDetailBlocProvider);
+    bloc
+      ..verifiedReading = false
+      ..formKey.currentState?.reset()
+      ..readingIntegers.clear()
+      ..readingDecimals.clear();
+
     print('falsaMaxima  ${widget.readingDetailItem.falsaMaxima}');
     print('falsaMinima  ${widget.readingDetailItem.falsaMinima}');
     print('lecturaMaxima  ${widget.readingDetailItem.lecturaMaxima}');
@@ -244,6 +250,12 @@ class _NavigationButtons extends ConsumerWidget {
                 final index = bloc.readings.indexWhere(
                     (element) => bloc.readingDetailItem.id == element.id);
                 if (index == -1 || index == 0) return;
+                bloc
+                  ..verifiedReading = false
+                  ..formKey.currentState?.reset()
+                  ..readingIntegers.clear()
+                  ..readingDecimals.clear();
+
                 Navigator.pushReplacementNamed(
                     context, AppRoutes.ReadingDetailScreen, arguments: {
                   READING_DETAIL: bloc.readings[index - 1],
@@ -349,6 +361,12 @@ class _NavigationButtons extends ConsumerWidget {
       ));
       return;
     }
+
+    bloc
+      ..verifiedReading = false
+      ..formKey.currentState?.reset()
+      ..readingIntegers.clear()
+      ..readingDecimals.clear();
 
     Navigator.pushReplacementNamed(context, AppRoutes.ReadingDetailScreen,
         arguments: {

@@ -25,9 +25,6 @@ class LoadAndSaveAllDataUseCase implements UseCase<int, Future<void>> {
   }
 
   Future<void> _loadAndSaveReadingsDetails(RoutesResponse routes) async {
-    //TODO DEJAR NORMAL
-    routes.items = routes.items.sublist(0, 2);
-
     for (final route in routes.items) {
       try {
         if (route.tipoMedicion == 'OPERACION CAMPO') {

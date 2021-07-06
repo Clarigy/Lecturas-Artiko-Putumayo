@@ -47,7 +47,9 @@ class CloseTerminalUseCase
         _updateNewMeterUseCase(otherReadings);
       }
 
-      return await _repository.closeTerminal(tempList);
+      return await _repository.closeTerminal(tempList
+          .where((element) => element.detalleLecturaRutaSec != null)
+          .toList());
     } on ServerException catch (e) {
       throw Failure(e.message);
     }

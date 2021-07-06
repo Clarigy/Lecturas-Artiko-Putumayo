@@ -23,7 +23,7 @@ class AuthenticationImpl extends AuthenticationInterface {
       ));
       var _basicAuth = 'Basic ' +
           base64Encode(
-              utf8.encode('pu5RP4Jbk33078vCnbalvg..:_eglVuQIwaZ3VJrIsyqC0A..'));
+              utf8.encode('6Dl0i8vCaz7yoQPX_bfSgw..:9JMKTzGscIOhxOlyG1N5kw..'));
 
       var _headers = <String, dynamic>{
         'content-type': 'application/json',

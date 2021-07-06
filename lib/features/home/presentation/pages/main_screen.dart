@@ -1,3 +1,4 @@
+import 'package:artiko/core/readings/data/repository/reading_repository.dart';
 import 'package:artiko/core/readings/domain/use_case/sincronizar_readings_use_case.dart';
 import 'package:artiko/dependency_injector.dart';
 import 'package:artiko/features/home/presentation/pages/activities_page/activities_page.dart';
@@ -12,7 +13,7 @@ import 'exports/main_screen_labels.dart';
 import 'map/map_page.dart';
 
 final _mainScreenProvider =
-    StateNotifierProvider.autoDispose<_MainStateNotifier, bool>(
+StateNotifierProvider.autoDispose<_MainStateNotifier, bool>(
         (ref) => _MainStateNotifier());
 
 class _MainStateNotifier extends StateNotifier<bool> {
@@ -51,7 +52,8 @@ class _MainScreenState extends State<MainScreen> {
     try {
       mainScreenProvider.changeIsLoading(true);
 
-      final readings = sl<ActivitiesBloc>().readings!;
+      final readings = await sl<ReadingRepository>()
+          .getAllReadingsFuture(FilterType.EXCECUTED);
       await sl<SincronizarReadingsUseCase>().call(readings);
     } catch (_) {
       ScaffoldMessenger.of(context)
@@ -76,9 +78,9 @@ class _MainScreenState extends State<MainScreen> {
                 return isLoading
                     ? CircularProgressIndicator(strokeWidth: 2)
                     : Icon(
-                        Icons.sync,
-                        color: AppColors.redColor,
-                      );
+                  Icons.sync,
+                  color: AppColors.redColor,
+                );
               },
             ),
             label: LABEL_SYNCHRONIZE,

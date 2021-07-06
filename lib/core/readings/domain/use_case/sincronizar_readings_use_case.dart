@@ -1,5 +1,4 @@
 import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
-import 'package:artiko/core/readings/domain/entities/reading_request.dart';
 import 'package:artiko/core/readings/domain/repositories/reading_repository_contract.dart';
 
 import '../../../../../core/error/exception.dart';
@@ -14,15 +13,22 @@ class SincronizarReadingsUseCase
   @override
   Future<void> call(List<ReadingDetailItem> readings) async {
     try {
-      final List<ReadingRequest> readingsRequest = readings
-          .where((element) => element.readingRequest.id != null)
-          .map((e) => e.readingRequest)
-          .toList();
+      List<ReadingDetailItem> temp = [];
 
-      return await _repository.sincronizarReadings(readingsRequest.map((e) {
-        e.alreadySync = true;
-        return e;
-      }).toList());
+      for (final element in readings) {
+        if (element.readingRequest.id != null &&
+            element.readingRequest.detalleLecturaRutaSec != null &&
+            !element.readingRequest.alreadySync) {
+          element.readingRequest.alreadySync = true;
+          temp.add(element);
+        }
+      }
+      await _repository
+          .sincronizarReadings(temp.map((e) => e.readingRequest).toList());
+
+      for (final element in temp) {
+        _repository.updateReadings(element);
+      }
     } on ServerException catch (e) {
       throw Failure(e.message);
     }
