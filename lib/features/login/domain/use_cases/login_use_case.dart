@@ -16,6 +16,15 @@ class LoginUseCase extends UseCase<LoginRequest, Future<LoginResponse>> {
   @override
   Future<LoginResponse> call(request) async {
     try {
+      final String? currentUser = await _storage.fetch(CacheKeys.USER);
+
+      if (currentUser != null) {
+        final loginResponse = loginResponseFromJson(currentUser);
+        if (loginResponse.correoLector != request.email)
+          throw Failure(
+              'No puedes iniciar sesión con otro usuario porque el anterior tiene una ruta asignada. Para iniciar sesión con otro usuario presiona Cerrar terminal');
+      }
+
       final result = await _repository.doLogin(request);
       await _saveInCache(result);
       return result;

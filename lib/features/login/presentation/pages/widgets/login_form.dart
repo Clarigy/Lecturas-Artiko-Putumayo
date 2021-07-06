@@ -71,7 +71,7 @@ class __FormState extends State<LoginForm> {
       goToLoadingScreen();
     }).catchError((onError) async {
       print(onError);
-      _showAlertBadCredentials();
+      _showAlertBadCredentials(onError);
     });
   }
 
@@ -80,13 +80,17 @@ class __FormState extends State<LoginForm> {
         AppRoutes.LoadingScreen, (Route<dynamic> route) => false);
   }
 
-  void _showAlertBadCredentials() async {
+  void _showAlertBadCredentials(onError) async {
     await showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Credenciales incorrectas'),
-            content: Text('Error al iniciar sesión'),
+            title: Text('Error al iniciar sesión'),
+            content: Text(onError
+                    .toString()
+                    .startsWith('No puedes iniciar sesión con otro')
+                ? onError.toString()
+                : 'Tuvimos un problema al iniciar sesión, inténtalo de nuevo'),
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
