@@ -4,12 +4,12 @@ import 'package:artiko/features/home/presentation/pages/activities_page/activiti
 import 'package:artiko/features/home/presentation/pages/activities_page/widgets/filter_buttons.dart';
 import 'package:artiko/features/home/presentation/pages/activities_page/widgets/readings_card.dart';
 import 'package:artiko/features/home/presentation/pages/activities_page/widgets/search_input.dart';
+import 'package:artiko/features/home/presentation/pages/providers/home_provider.dart';
 import 'package:artiko/shared/routes/app_routes.dart';
 import 'package:artiko/shared/routes/route_args_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:provider/provider.dart' as P show Provider;
 
 import '../../../../../dependency_injector.dart';
 
@@ -44,7 +44,6 @@ class ActivitiesFilter extends ChangeNotifier {
 class ActivitiesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final bloc = P.Provider.of<ActivitiesBloc>(context);
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
@@ -59,77 +58,85 @@ class ActivitiesPage extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
-          StreamBuilder<List<ReadingDetailItem>?>(
-              stream: bloc.getReadings(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Center(child: Text(snapshot.error.toString()));
-                }
+          Consumer(
+            builder: (BuildContext context,
+                T Function<T>(ProviderBase<Object?, T>) watch, Widget? child) {
+              final bloc = watch(activitiesBlocProvider);
 
-                if (snapshot.connectionState == ConnectionState.waiting ||
-                    bloc.isLoading) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
+              return StreamBuilder<List<ReadingDetailItem>?>(
+                  stream: bloc.getReadings(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Center(child: Text(snapshot.error.toString()));
+                    }
 
-                if (snapshot.hasData) {
-                  if (snapshot.data!.isEmpty) {
-                    return Expanded(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(child: Offstage()),
-                          Center(
-                            child: SvgPicture.asset(
-                              'assets/images/svg/check_circle.svg',
-                              height: 97,
-                              width: 97,
-                            ),
-                          ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * .05,
-                          ),
-                          Text(
-                            'Wow, todas tus actividades están completas, no tienes actividades por hacer.',
-                            textAlign: TextAlign.center,
-                          ),
-                          Expanded(child: Offstage()),
-                        ],
-                      ),
-                    );
-                  }
+                    if (snapshot.connectionState == ConnectionState.waiting ||
+                        bloc.isLoading) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
 
-                  if (bloc.readings == null ||
-                      bloc.readings!.isEmpty ||
-                      bloc.needRefreshList) {
-                    bloc.readings = [...snapshot.data!];
-                  }
-
-                  return Expanded(
-                    child: ListView.builder(
-                        itemCount: snapshot.data?.length ?? 0,
-                        itemBuilder: (_, i) => InkWell(
-                              child: Column(
-                                children: [
-                                  if (i == 0) _Counter(),
-                                  ReadingsCard(item: snapshot.data![i]),
-                                ],
+                    if (snapshot.hasData) {
+                      if (snapshot.data!.isEmpty) {
+                        return Expanded(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Expanded(child: Offstage()),
+                              Center(
+                                child: SvgPicture.asset(
+                                  'assets/images/svg/check_circle.svg',
+                                  height: 97,
+                                  width: 97,
+                                ),
                               ),
-                              onTap: () => Navigator.pushNamed(
-                                  context, AppRoutes.ReadingDetailScreen,
-                                  arguments: {
-                                    READING_DETAIL: snapshot.data![i],
-                                    READINGS: snapshot.data
-                                  }),
-                            )),
-                  );
-                }
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * .05,
+                              ),
+                              Text(
+                                'Wow, todas tus actividades están completas, no tienes actividades por hacer.',
+                                textAlign: TextAlign.center,
+                              ),
+                              Expanded(child: Offstage()),
+                            ],
+                          ),
+                        );
+                      }
 
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }),
+                      if (bloc.readings == null ||
+                          bloc.readings!.isEmpty ||
+                          bloc.needRefreshList) {
+                        bloc.readings = [...snapshot.data!];
+                      }
+
+                      return Expanded(
+                        child: ListView.builder(
+                            itemCount: snapshot.data?.length ?? 0,
+                            itemBuilder: (_, i) => InkWell(
+                                  child: Column(
+                                    children: [
+                                      if (i == 0) _Counter(),
+                                      ReadingsCard(item: snapshot.data![i]),
+                                    ],
+                                  ),
+                                  onTap: () => Navigator.pushNamed(
+                                      context, AppRoutes.ReadingDetailScreen,
+                                      arguments: {
+                                        READING_DETAIL: snapshot.data![i],
+                                        READINGS: snapshot.data
+                                      }),
+                                )),
+                      );
+                    }
+
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  });
+            },
+          ),
         ],
       ),
     );
@@ -149,28 +156,33 @@ class __CounterState extends State<_Counter> {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = P.Provider.of<ActivitiesBloc>(context);
-
     return Align(
         alignment: AlignmentDirectional.bottomStart,
-        child: StreamBuilder<List<ReadingDetailItem>?>(
-            stream: sl<ReadingsDao>().getReadings(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData || snapshot.hasError) return Offstage();
+        child: Consumer(
+          builder: (BuildContext context,
+              T Function<T>(ProviderBase<Object?, T>) watch, Widget? child) {
+            final bloc = watch(activitiesBlocProvider);
 
-              if (snapshot.hasData) {
-                doneReadings = 0;
+            return StreamBuilder<List<ReadingDetailItem>?>(
+                stream: sl<ReadingsDao>().getReadings(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData || snapshot.hasError) return Offstage();
 
-                _setDoneReadings(bloc, snapshot.data);
+                  if (snapshot.hasData) {
+                    doneReadings = 0;
 
-                return Container(
-                  margin: EdgeInsets.only(bottom: 10),
-                  child: Text(
-                      '$doneReadings/${snapshot.data?.length ?? '0'} actividades $activitiesType'),
-                );
-              }
-              return Offstage();
-            }));
+                    _setDoneReadings(bloc, snapshot.data);
+
+                    return Container(
+                      margin: EdgeInsets.only(bottom: 10),
+                      child: Text(
+                          '$doneReadings/${snapshot.data?.length ?? '0'} actividades $activitiesType'),
+                    );
+                  }
+                  return Offstage();
+                });
+          },
+        ));
   }
 
   void _setDoneReadings(

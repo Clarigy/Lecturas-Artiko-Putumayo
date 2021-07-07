@@ -248,6 +248,8 @@ class ReadingDetailItem {
       anomSec: this.anomSec,
       lecturaRutaSec: this.lecturaRutaSec,
       observacionDireccion: observacionDireccion,
-    )..readingRequest = readingRequest ?? this.readingRequest;
+    )
+      ..readingRequest = readingRequest ?? this.readingRequest
+      ..routesItem = routesItem;
   }
 }

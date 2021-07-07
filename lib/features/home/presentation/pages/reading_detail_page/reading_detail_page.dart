@@ -15,7 +15,6 @@ import 'package:artiko/features/home/presentation/pages/reading_detail_page/widg
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/widgets/meter_reading.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/widgets/take_pictures.dart';
 import 'package:artiko/shared/routes/app_routes.dart';
-import 'package:artiko/shared/routes/route_args_keys.dart';
 import 'package:artiko/shared/widgets/default_app_bar.dart';
 import 'package:artiko/shared/widgets/input_with_label.dart';
 import 'package:artiko/shared/widgets/main_button.dart';
@@ -53,8 +52,6 @@ class ReadingDetailPage extends StatefulWidget {
 }
 
 class _ReadingDetailPageState extends State<ReadingDetailPage> {
-  late ReadingDetailItem detailItem;
-
   @override
   void initState() {
     WidgetsBinding.instance!.addPostFrameCallback((_) => afterLayout());
@@ -65,13 +62,11 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
     print('lecturaMaxima  ${widget.readingDetailItem.lecturaMaxima}');
     print('lecturaMinima  ${widget.readingDetailItem.lecturaMinima}');
     print('lecturaAnterior  ${widget.readingDetailItem.lecturaAnterior}');
-    bloc
-      ..readingDetailItem = widget.readingDetailItem
-      ..readings = widget.readings;
+    bloc.readings = widget.readings;
 
-    final _item = bloc.readingDetailItem;
+    final _item = widget.readingDetailItem;
 
-    detailItem = _item.copyWith(
+    bloc.readingDetailItem = _item.copyWith(
         id: _item.id,
         readingRequest: _item.idRequest == null
             ? ReadingRequest.empty(
@@ -80,7 +75,6 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
                 alreadySync: false)
             : null);
 
-    bloc.initializeInputValues(detailItem);
     super.initState();
   }
 
@@ -88,15 +82,13 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
     try {
       final bloc = context.read<ReadingDetailBloc>(readingDetailBlocProvider);
 
-      bloc
-        ..verifiedReading = false
-        ..formKey.currentState?.reset()
-        ..readingIntegers.clear()
-        ..readingDecimals.clear();
+      bloc.formKey.currentState?.reset();
 
-      await bloc.loadInitInfo(detailItem);
+      await bloc.loadInitInfo();
 
-      if (detailItem.readingRequest.lectura != null)
+      bloc.initializeInputValues();
+
+      if (bloc.readingDetailItem.readingRequest.lectura != null)
         bloc.verifiedReading = true;
     } catch (_) {
       final snackBar =
@@ -112,69 +104,69 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
 
     final theme = Theme.of(context);
 
-    return Consumer(
-      builder: (BuildContext context, watch, Widget? child) {
-        final bloc = watch(readingDetailBlocProvider);
-        return Scaffold(
-          appBar: DefaultAppBar(),
-          bottomNavigationBar: _NavigationButtons(detailItem),
-          body: bloc.readingDetailState == ReadingDetailState.loading
-              ? Center(child: CircularProgressIndicator())
-              : Column(
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Padding(
-                          padding: EdgeInsets.all(screenWidth * .03),
-                          child: Column(
-                            children: [
-                              ReadingsCard(
-                                item: widget.readingDetailItem,
-                              ),
-                              MeterReading(
-                                readingDetailItem: detailItem,
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 10),
-                                child: Align(
-                                    alignment: AlignmentDirectional.bottomStart,
-                                    child: Text(
-                                        'Clase Anomalía${bloc.requiredAnomaliaByMeterReading ?? false ? '*' : ''}',
-                                        style: theme.textTheme.bodyText2!
-                                            .copyWith(
-                                                fontWeight: FontWeight.bold,
-                                                color: theme.primaryColor))),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  DropDownAnomalias(),
-                                  Container(
-                                    margin: EdgeInsets.only(top: 10),
-                                    child: Text('Anomalía',
-                                        style: theme.textTheme.bodyText2!
-                                            .copyWith(
-                                                fontWeight: FontWeight.bold,
-                                                color: theme.primaryColor)),
-                                  ),
-                                  DropDownClaseAnomalia(),
-                                ],
-                              ),
-                              ...buildDependsWidgetMeter(context, bloc),
-                              SizedBox(
-                                height: screenHeight * .03,
-                              )
-                            ],
+    return Scaffold(
+        appBar: DefaultAppBar(),
+        bottomNavigationBar: _NavigationButtons(),
+        body: Consumer(
+          builder: (BuildContext context, watch, Widget? child) {
+            final bloc = watch(readingDetailBlocProvider);
+            return bloc.readingDetailState == ReadingDetailState.loading
+                ? Center(child: CircularProgressIndicator())
+                : Column(
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Padding(
+                            padding: EdgeInsets.all(screenWidth * .03),
+                            child: Column(
+                              children: [
+                                ReadingsCard(
+                                  item: bloc.readingDetailItem,
+                                ),
+                                _buildMeterReading(),
+                                Container(
+                                  margin: EdgeInsets.only(top: 10),
+                                  child: Align(
+                                      alignment:
+                                          AlignmentDirectional.bottomStart,
+                                      child: Text(
+                                          'Clase Anomalía${bloc.requiredAnomaliaByMeterReading ?? false ? '*' : ''}',
+                                          style: theme.textTheme.bodyText2!
+                                              .copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: theme.primaryColor))),
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    DropDownAnomalias(),
+                                    Container(
+                                      margin: EdgeInsets.only(top: 10),
+                                      child: Text('Anomalía',
+                                          style: theme.textTheme.bodyText2!
+                                              .copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: theme.primaryColor)),
+                                    ),
+                                    DropDownClaseAnomalia(),
+                                  ],
+                                ),
+                                ...buildDependsWidgetMeter(context, bloc),
+                                SizedBox(
+                                  height: screenHeight * .03,
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-        );
-      },
-    );
+                    ],
+                  );
+          },
+        ));
   }
+
+  MeterReading _buildMeterReading() => MeterReading();
 
   List<Widget> buildDependsWidgetMeter(
       BuildContext context, ReadingDetailBloc bloc) {
@@ -208,9 +200,9 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
                 ),
               ),
             TakePictures(
-              detailItem: detailItem,
+              detailItem: bloc.readingDetailItem,
               margin: EdgeInsets.only(top: 24),
-              readingId: widget.readingDetailItem.id.toString(),
+              readingId: bloc.readingDetailItem.id.toString(),
             ),
           ];
   }
@@ -230,10 +222,6 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
 }
 
 class _NavigationButtons extends ConsumerWidget {
-  final ReadingDetailItem detailItem;
-
-  _NavigationButtons(this.detailItem);
-
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final bloc = watch(readingDetailBlocProvider);
@@ -248,21 +236,20 @@ class _NavigationButtons extends ConsumerWidget {
         children: [
           InkWell(
               child: Icon(Icons.arrow_back_ios),
-              onTap: () {
+              onTap: () async {
                 final index = bloc.readings.indexWhere(
                     (element) => bloc.readingDetailItem.id == element.id);
                 if (index == -1 || index == 0) return;
-                bloc
-                  ..verifiedReading = false
-                  ..formKey.currentState?.reset()
-                  ..readingIntegers.clear()
-                  ..readingDecimals.clear();
 
-                Navigator.pushReplacementNamed(
-                    context, AppRoutes.ReadingDetailScreen, arguments: {
-                  READING_DETAIL: bloc.readings[index - 1],
-                  READINGS: bloc.readings
-                });
+                bloc.readingDetailItem = bloc.readings[index - 1].copyWith();
+
+                await bloc.loadInitInfo();
+
+                bloc.initializeInputValues();
+
+                bloc.verifiedReading = false;
+                if (bloc.readingDetailItem.readingRequest.lectura != null)
+                  bloc.verifiedReading = true;
               }),
           SizedBox(width: 8),
           Flexible(
@@ -280,7 +267,7 @@ class _NavigationButtons extends ConsumerWidget {
             flex: 1,
             child: MainButton(
                 text: 'Guardar',
-                onTap: detailItem.readingRequest.alreadySync
+                onTap: bloc.readingDetailItem.readingRequest.alreadySync
                     ? null
                     : () async {
                         if (!bloc.formKey.currentState!.validate()) return;
@@ -294,9 +281,11 @@ class _NavigationButtons extends ConsumerWidget {
                         }
                         if (bloc.requiredPhotoByMeterReading != null &&
                                 bloc.requiredPhotoByMeterReading! &&
-                                detailItem.readingRequest.fotos.isEmpty ||
+                                bloc.readingDetailItem.readingRequest.fotos
+                                    .isEmpty ||
                             bloc.claseAnomalia.fotografia &&
-                                detailItem.readingRequest.fotos.isEmpty) {
+                                bloc.readingDetailItem.readingRequest.fotos
+                                    .isEmpty) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text('Al menos una foto es requerida')));
                           return;
@@ -312,9 +301,10 @@ class _NavigationButtons extends ConsumerWidget {
                         try {
                           final position =
                               await Geolocator.getCurrentPosition();
-                          detailItem.anomSec = bloc.claseAnomalia.anomSec;
+                          bloc.readingDetailItem.anomSec =
+                              bloc.claseAnomalia.anomSec;
 
-                          detailItem.readingRequest
+                          bloc.readingDetailItem.readingRequest
                             ..anomaliaSec = bloc.anomaliaSec
                             ..latLecturaTomada = position.latitude.toString()
                             ..longLecturaTomada = position.longitude.toString()
@@ -332,7 +322,7 @@ class _NavigationButtons extends ConsumerWidget {
                                     .observacionSec
                                 : null;
 
-                          await bloc.updateReading(detailItem);
+                          await bloc.updateReading(bloc.readingDetailItem);
 
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text('Lectura guardada con éxito')));
@@ -345,8 +335,8 @@ class _NavigationButtons extends ConsumerWidget {
           SizedBox(width: 12),
           InkWell(
             child: Icon(Icons.arrow_forward_ios),
-            onTap: () {
-              _navigateToNext(bloc, context);
+            onTap: () async {
+              await _navigateToNext(bloc, context);
             },
           )
         ],
@@ -354,7 +344,8 @@ class _NavigationButtons extends ConsumerWidget {
     );
   }
 
-  void _navigateToNext(ReadingDetailBloc bloc, BuildContext context) {
+  Future<void> _navigateToNext(
+      ReadingDetailBloc bloc, BuildContext context) async {
     final index = bloc.readings
         .indexWhere((element) => bloc.readingDetailItem.id == element.id);
     if (index == -1 || index == bloc.readings.length - 1) {
@@ -364,17 +355,15 @@ class _NavigationButtons extends ConsumerWidget {
       return;
     }
 
-    bloc
-      ..verifiedReading = false
-      ..formKey.currentState?.reset()
-      ..readingIntegers.clear()
-      ..readingDecimals.clear();
+    bloc.readingDetailItem = bloc.readings[index + 1].copyWith();
 
-    Navigator.pushReplacementNamed(context, AppRoutes.ReadingDetailScreen,
-        arguments: {
-          READING_DETAIL: bloc.readings[index + 1],
-          READINGS: bloc.readings
-        });
+    await bloc.loadInitInfo();
+
+    bloc.initializeInputValues();
+
+    bloc.verifiedReading = false;
+    if (bloc.readingDetailItem.readingRequest.lectura != null)
+      bloc.verifiedReading = true;
   }
 
   double? getReadingValue(ReadingDetailBloc bloc) {

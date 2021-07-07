@@ -6,10 +6,8 @@ import 'package:artiko/shared/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:provider/provider.dart' as P;
 
 import 'dependency_injector.dart';
-import 'features/home/presentation/pages/activities_page/activities_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,20 +29,16 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return ProviderScope(
-        child: P.ChangeNotifierProvider(
-      create: (context) => sl<ActivitiesBloc>(),
-      builder: (_, __) => MaterialApp(
-        debugShowCheckedModeBanner: true,
-        theme: lightTheme,
-        title: 'Artiko',
-        initialRoute: '/',
-        onGenerateRoute: RouteGenerator.generateRoute,
-      ),
+        child: MaterialApp(
+      debugShowCheckedModeBanner: true,
+      theme: lightTheme,
+      title: 'Artiko',
+      initialRoute: '/',
+      onGenerateRoute: RouteGenerator.generateRoute,
     ));
   }
 }

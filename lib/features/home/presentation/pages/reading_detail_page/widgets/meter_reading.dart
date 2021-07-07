@@ -1,4 +1,3 @@
-import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
 import 'package:artiko/core/readings/domain/entities/reading_request.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/reading_detail_bloc.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/reading_detail_page.dart';
@@ -7,93 +6,99 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MeterReading extends StatefulWidget {
-  final ReadingDetailItem readingDetailItem;
-
-  MeterReading({required this.readingDetailItem});
-
   @override
   _MeterReadingState createState() => _MeterReadingState();
 }
 
 class _MeterReadingState extends State<MeterReading> {
-  late ReadingDetailItem detailItem;
-
-  @override
-  void initState() {
-    detailItem = widget.readingDetailItem;
-    super.initState();
-  }
+  bool isFirst = true;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final bloc = context.read(readingDetailBlocProvider);
-
     return Container(
       margin: EdgeInsets.only(top: 22),
-      child: Form(
-        key: bloc.formKey,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Flexible(
-              flex: 3,
-              child: Container(
-                decoration: BoxDecoration(boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 5,
-                    offset: const Offset(0, -1),
+      child: Consumer(
+        builder: (BuildContext context,
+            T Function<T>(ProviderBase<Object?, T>) watch, Widget? child) {
+          final bloc = watch(readingDetailBlocProvider);
+
+          return Form(
+            key: bloc.formKey,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Flexible(
+                  flex: 3,
+                  child: Container(
+                    decoration: BoxDecoration(boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 5,
+                        offset: const Offset(0, -1),
+                      ),
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ]),
+                    child: TextFormField(
+                      autocorrect: false,
+                      controller: bloc.readingIntegers,
+                      keyboardType: TextInputType.number,
+                      maxLength: bloc.readingDetailItem.nroEnteros,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      onChanged: (value) {
+                        setState(() {
+                          bloc.hideError = false;
+                          isFirst = false;
+                        });
+                      },
+                      textInputAction: bloc.readingDetailItem.nroDecimales == 0
+                          ? TextInputAction.done
+                          : TextInputAction.next,
+                      validator: (value) {
+                        if (!bloc.claseAnomalia.lectura ||
+                            bloc.readingDetailItem.detalleLecturaRutaSec ==
+                                null) return null;
+                        if (value == null || value.isEmpty)
+                          return 'Campo requerido';
+                      },
+                      style: TextStyle(
+                          fontSize: 36,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 8),
+                      decoration: InputDecoration(
+                          filled: true,
+                          counterText: '',
+                          border: InputBorder.none,
+                          errorStyle: bloc.hideError
+                              ? TextStyle(color: Colors.transparent, height: 0)
+                              : null),
+                    ),
                   ),
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
-                  ),
-                ]),
-                child: TextFormField(
-                  autocorrect: false,
-                  controller: bloc.readingIntegers,
-                  keyboardType: TextInputType.number,
-                  maxLength: bloc.readingDetailItem.nroEnteros,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  textInputAction: bloc.readingDetailItem.nroDecimales == 0
-                      ? TextInputAction.done
-                      : TextInputAction.next,
-                  validator: (value) {
-                    if (!bloc.claseAnomalia.lectura ||
-                        bloc.readingDetailItem.detalleLecturaRutaSec == null)
-                      return null;
-                    if (value == null || value.isEmpty)
-                      return 'Campo requerido';
-                  },
-                  style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 8),
-                  decoration: InputDecoration(
-                      filled: true, counterText: '', border: InputBorder.none),
                 ),
-              ),
+                if (bloc.readingDetailItem.nroDecimales > 0)
+                  ...decimalPart(context),
+                Center(
+                  child: IconButton(
+                      icon: Icon(
+                        Icons.check_circle,
+                        color: bloc.verifiedReading
+                            ? theme.secondaryHeaderColor
+                            : theme.primaryColor,
+                        size: 36,
+                      ),
+                      onPressed: () {
+                        _validateReading(context);
+                      }),
+                )
+              ],
             ),
-            if (bloc.readingDetailItem.nroDecimales > 0)
-              ...decimalPart(context),
-            Center(
-              child: IconButton(
-                  icon: Icon(
-                    Icons.check_circle,
-                    color: bloc.verifiedReading
-                        ? theme.secondaryHeaderColor
-                        : theme.primaryColor,
-                    size: 36,
-                  ),
-                  onPressed: () {
-                    _validateReading(context);
-                  }),
-            )
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -157,29 +162,33 @@ class _MeterReadingState extends State<MeterReading> {
   void _validateReading(BuildContext context) {
     final bloc = context.read(readingDetailBlocProvider);
     if (!bloc.formKey.currentState!.validate()) return;
-    final request = detailItem.readingRequest;
+    final request = bloc.readingDetailItem.readingRequest;
 
     request.lectura = getReadingValue(bloc);
 
-    if (_esAnomalidaErrada(request)) {
+    if (_esAnomalidaErrada(request, bloc)) {
       _lecturaPosibleAnomaliaErrada(request, bloc, context);
     } else if (request.lecturaIntento1 != null &&
-        request.lecturaIntento1! <= double.parse(detailItem.lecturaAnterior) &&
+        request.lecturaIntento1! <=
+            double.parse(bloc.readingDetailItem.lecturaAnterior) &&
         request.lecturaIntento2 != null &&
-        request.lecturaIntento2! <= double.parse(detailItem.lecturaAnterior) &&
+        request.lecturaIntento2! <=
+            double.parse(bloc.readingDetailItem.lecturaAnterior) &&
         request.lectura != null) {
-      if (request.lectura! > double.parse(detailItem.lecturaAnterior)) {
+      if (request.lectura! >
+          double.parse(bloc.readingDetailItem.lecturaAnterior)) {
         bloc.verifiedReading = true;
-      } else if (request.lectura! <= double.parse(detailItem.lecturaAnterior)) {
+      } else if (request.lectura! <=
+          double.parse(bloc.readingDetailItem.lecturaAnterior)) {
         bloc.requiredAnomaliaByMeterReading = true;
         bloc.requiredPhotoByMeterReading = true;
         bloc.verifiedReading = true;
       }
-    } else if (_esLecturaNormal(request)) {
+    } else if (_esLecturaNormal(request, bloc)) {
       _lecturaNormal(bloc);
-    } else if (_esBandaConAnomaliaObligatoria(request)) {
+    } else if (_esBandaConAnomaliaObligatoria(request, bloc)) {
       _lecturaBandaAnomaliaObligatoria(request, context, bloc);
-    } else if (request.lectura! > detailItem.falsaMaxima) {
+    } else if (request.lectura! > bloc.readingDetailItem.falsaMaxima) {
       _lecturaBandaConsumoExcedida(request, bloc, context);
     } else {
       bloc.verifiedReading = true;
@@ -246,9 +255,9 @@ class _MeterReadingState extends State<MeterReading> {
     bloc.verifiedReading = true;
   }
 
-  bool _esLecturaNormal(ReadingRequest request) {
-    return request.lectura! >= detailItem.lecturaMinima &&
-        request.lectura! <= detailItem.lecturaMaxima;
+  bool _esLecturaNormal(ReadingRequest request, ReadingDetailBloc bloc) {
+    return request.lectura! >= bloc.readingDetailItem.lecturaMinima &&
+        request.lectura! <= bloc.readingDetailItem.lecturaMaxima;
   }
 
   void _lecturaBandaAnomaliaObligatoriaIntento2(
@@ -273,16 +282,18 @@ class _MeterReadingState extends State<MeterReading> {
     bloc.verifiedReading = true;
   }
 
-  bool _esBandaConAnomaliaObligatoria(ReadingRequest request) {
-    return request.lectura! > detailItem.lecturaMaxima &&
-            request.lectura! <= detailItem.falsaMaxima ||
-        request.lectura! < detailItem.lecturaMaxima ||
-        request.lectura! > detailItem.falsaMinima;
+  bool _esBandaConAnomaliaObligatoria(
+      ReadingRequest request, ReadingDetailBloc bloc) {
+    return request.lectura! > bloc.readingDetailItem.lecturaMaxima &&
+            request.lectura! <= bloc.readingDetailItem.falsaMaxima ||
+        request.lectura! < bloc.readingDetailItem.lecturaMaxima ||
+        request.lectura! > bloc.readingDetailItem.falsaMinima;
   }
 
-  bool _esAnomalidaErrada(ReadingRequest request) {
+  bool _esAnomalidaErrada(ReadingRequest request, ReadingDetailBloc bloc) {
     return request.lectura != null &&
-        request.lectura! <= double.parse(detailItem.lecturaAnterior) &&
+        request.lectura! <=
+            double.parse(bloc.readingDetailItem.lecturaAnterior) &&
         request.lecturaIntento2 == null;
   }
 

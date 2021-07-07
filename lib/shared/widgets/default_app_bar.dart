@@ -5,12 +5,13 @@ import 'package:artiko/core/cache/keys/cache_keys.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
 import 'package:artiko/core/readings/domain/use_case/close_terminal_use_case.dart';
 import 'package:artiko/dependency_injector.dart';
-import 'package:artiko/features/home/presentation/pages/activities_page/activities_bloc.dart';
+import 'package:artiko/features/home/presentation/pages/providers/home_provider.dart';
 import 'package:artiko/features/login/domain/entities/response/login_response.dart';
 import 'package:artiko/features/profile/presentation/manager/profile_bloc.dart';
 import 'package:artiko/shared/routes/app_routes.dart';
 import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum PopUpMenuItemOption { PROFILE, CLOSE_TERMINAL, LOGOUT }
 
@@ -141,7 +142,7 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
   }
 
   void _logout() async {
-    sl<ActivitiesBloc>().needRefreshList = true;
+    context.read(activitiesBlocProvider).needRefreshList = true;
     Navigator.pushNamedAndRemoveUntil(
         context, AppRoutes.LoginScreen, (route) => false);
   }

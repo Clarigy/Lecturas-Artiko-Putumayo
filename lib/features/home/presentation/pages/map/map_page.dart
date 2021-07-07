@@ -1,13 +1,12 @@
-import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
-import 'package:artiko/features/home/presentation/pages/activities_page/activities_bloc.dart';
 import 'package:artiko/features/home/presentation/pages/activities_page/widgets/readings_card.dart';
+import 'package:artiko/features/home/presentation/pages/providers/home_provider.dart';
 import 'package:artiko/shared/routes/app_routes.dart';
 import 'package:artiko/shared/routes/route_args_keys.dart';
 import 'package:custom_info_window/custom_info_window.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:provider/provider.dart';
 
 class MapPage extends StatefulWidget {
   @override
@@ -40,7 +39,6 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.watch<ActivitiesBloc>();
     if (marker == null) return Center(child: CircularProgressIndicator());
     final size = MediaQuery.of(context).size;
 
@@ -67,7 +65,7 @@ class _MapPageState extends State<MapPage> {
                       _customInfoWindowController.hideInfoWindow!();
                     },
                     myLocationButtonEnabled: true,
-                    markers: _buildMarkers(bloc.readings),
+                    markers: _buildMarkers(),
                     initialCameraPosition: CameraPosition(
                       target: LatLng(
                           snapshot.data!.latitude, snapshot.data!.longitude),
@@ -102,7 +100,9 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  Set<Marker> _buildMarkers(List<ReadingDetailItem>? readings) {
+  Set<Marker> _buildMarkers() {
+    final readings = context.read(activitiesBlocProvider).readings;
+
     if (readings == null) return Set.of(List.empty());
 
     return readings
@@ -110,7 +110,7 @@ class _MapPageState extends State<MapPage> {
             element.latPuntoMedicion != null &&
             element.longPuntoMedicion != null)
         .map((e) => Marker(
-        markerId: MarkerId(e.numeroMedidor),
+            markerId: MarkerId(e.numeroMedidor),
             icon: e.readingRequest.lectura != null ? markerDone! : marker!,
             onTap: () {
               _customInfoWindowController.addInfoWindow!(

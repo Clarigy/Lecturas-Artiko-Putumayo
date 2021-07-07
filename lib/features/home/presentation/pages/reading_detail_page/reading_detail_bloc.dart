@@ -60,7 +60,15 @@ class ReadingDetailBloc extends ChangeNotifier {
   bool? requiredAnomaliaByMeterReading;
   bool? requiredPhotoByMeterReading;
 
-  //Drops
+  bool _hideError = false;
+
+  bool get hideError => _hideError;
+
+  set hideError(bool value) {
+    _hideError = value;
+    notifyListeners();
+  } //Drops
+
   List<Anomalia> anomalias = [];
   late int _anomaliaSec;
 
@@ -106,9 +114,9 @@ class ReadingDetailBloc extends ChangeNotifier {
 
   late List<ObservacionItem> observaciones;
 
-  Future<bool> loadInitInfo(ReadingDetailItem detailItem) async {
+  Future<bool> loadInitInfo() async {
     try {
-      await Future.wait([_loadAnomalias(detailItem), _loadObservaciones()],
+      await Future.wait([_loadAnomalias(), _loadObservaciones()],
           eagerError: true);
       return true;
     } on Exception {
@@ -119,7 +127,7 @@ class ReadingDetailBloc extends ChangeNotifier {
     }
   }
 
-  Future<void> _loadAnomalias(ReadingDetailItem detailItem) async {
+  Future<void> _loadAnomalias() async {
     anomalias = await _getAnomaliesUseCase(null);
 
     if (readingDetailItem.readingRequest.anomaliaSec != null) {
@@ -197,14 +205,29 @@ class ReadingDetailBloc extends ChangeNotifier {
     }
   }
 
-  void initializeInputValues(ReadingDetailItem readingDetailItem) {
-    readingIntegers.text =
+  void initializeInputValues() {
+    final String readingIntegersValue =
         readingDetailItem.readingRequest.lectura?.toInt().toString() ?? '';
-    readingDecimals.text =
+    final String readingDecimalsValue =
         readingDetailItem.readingRequest.lectura?.toString().split('.')[1] ??
             '';
+
+    if (readingIntegersValue.isNotEmpty) {
+      readingIntegers.text = readingIntegersValue;
+    } else {
+      readingIntegers.clear();
+    }
+
+    if (readingDecimalsValue.isNotEmpty) {
+      readingDecimals.text = readingDecimalsValue;
+    } else {
+      readingDecimals.clear();
+    }
+
     observacionTextController.text =
         readingDetailItem.readingRequest.observacionLectura ?? '';
+
+    hideError = true;
   }
 
   Future<void> _loadObservaciones() async {
@@ -217,4 +240,6 @@ class ReadingDetailBloc extends ChangeNotifier {
     requiredAnomaliaByMeterReading = null;
     requiredPhotoByMeterReading = null;
   }
+
+  void refresh() => notifyListeners();
 }

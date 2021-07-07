@@ -2,7 +2,7 @@ import 'package:artiko/core/readings/data/data_sources/routes_dao.dart';
 import 'package:artiko/dependency_injector.dart';
 import 'package:artiko/features/create_measurer/presentation/manager/create_measure_bloc.dart';
 import 'package:artiko/features/create_measurer/presentation/pages/validators/create_measure_validators.dart';
-import 'package:artiko/features/home/presentation/pages/activities_page/activities_bloc.dart';
+import 'package:artiko/features/home/presentation/pages/providers/home_provider.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/reading_detail_bloc.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/widgets/drop_down_input.dart';
 import 'package:artiko/shared/routes/app_routes.dart';
@@ -11,7 +11,8 @@ import 'package:artiko/shared/widgets/input_with_label.dart';
 import 'package:artiko/shared/widgets/main_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart' as P show Provider;
 
 class CreateMeasureForm extends StatefulWidget {
   @override
@@ -28,7 +29,8 @@ class _CreateMeasureFormState extends State<CreateMeasureForm> {
 
   void afterLayout() async {
     try {
-      await context.read<CreateMeasureBloc>().loadInitialData();
+      await P.Provider.of<CreateMeasureBloc>(context, listen: false)
+          .loadInitialData();
     } on Exception catch (_) {
       showSnackbar(
           context, 'No pudimos cargar la ubicación, intente más tarde');
@@ -42,7 +44,7 @@ class _CreateMeasureFormState extends State<CreateMeasureForm> {
 
     final theme = Theme.of(context);
 
-    final bloc = Provider.of<CreateMeasureBloc>(context);
+    final bloc = P.Provider.of<CreateMeasureBloc>(context);
 
     return bloc.isLoading
         ? Padding(
@@ -179,10 +181,11 @@ class _CreateMeasureFormState extends State<CreateMeasureForm> {
     bloc.formKey.currentState!.save();
 
     try {
-      final data =
-          await bloc.buildReadingDetailItem(sl<ActivitiesBloc>().readings!);
+      final activitiesBloc = context.read(activitiesBlocProvider);
+      final data = await bloc.buildReadingDetailItem(activitiesBloc.readings!);
       final ids = await bloc.createMeasures(data);
-      final activitiesBloc = sl<ActivitiesBloc>()..needRefreshList = true;
+
+      activitiesBloc.needRefreshList = true;
       final readings = await bloc.getReadings(activitiesBloc.filterType);
 
       final r = data[0].copyWith(id: ids[0]);
@@ -194,7 +197,6 @@ class _CreateMeasureFormState extends State<CreateMeasureForm> {
       sl<ReadingDetailBloc>().reset();
       Navigator.pop(context);
       Navigator.pushReplacementNamed(context, AppRoutes.ReadingDetailScreen,
-          // (route) => route.settings.name == AppRoutes.MainScreen,
           arguments: {READING_DETAIL: r, READINGS: readings});
     } on Exception catch (_) {
       showSnackbar(context, 'No pudimos guardar la lectura, intenta de nuevo');

@@ -13,11 +13,10 @@ import 'package:artiko/features/home/domain/use_cases/insert_reading_images.dart
 import 'package:artiko/features/home/domain/use_cases/update_reading_images.dart';
 import 'package:artiko/features/home/presentation/pages/activities_page/activities_bloc.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/reading_detail_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Future<void> setUpHomeProviders() async {
   sl.registerLazySingleton(() => GetReadingsUseCase(sl<ReadingRepository>()));
-
-  sl.registerLazySingleton(() => ActivitiesBloc(sl<GetReadingsUseCase>()));
 
   sl.registerLazySingleton(() => ReadingsImageRepository(
       sl<ReadingImagesDao>(), sl<CacheStorageInterface>()));
@@ -38,7 +37,7 @@ Future<void> setUpHomeProviders() async {
       () => DeleteReadingImages(sl<ReadingsImageRepository>()));
 
   sl.registerLazySingleton(() => ReadingDetailBloc(
-    sl<GetReadingImagesByReadingIdUseCase>(),
+        sl<GetReadingImagesByReadingIdUseCase>(),
         sl<InsertReadingImages>(),
         sl<UpdateReadingImages>(),
         sl<DeleteReadingImages>(),
@@ -46,3 +45,6 @@ Future<void> setUpHomeProviders() async {
         sl<UpdateReadingUseCase>(),
       ));
 }
+
+final activitiesBlocProvider = ChangeNotifierProvider.autoDispose(
+    (_) => ActivitiesBloc(sl<GetReadingsUseCase>()));
