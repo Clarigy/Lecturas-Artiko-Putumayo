@@ -27,6 +27,20 @@ class ActivitiesCounter extends ChangeNotifier {
   }
 }
 
+final activitiesFilterProvider =
+    ChangeNotifierProvider((_) => ActivitiesFilter());
+
+class ActivitiesFilter extends ChangeNotifier {
+  bool _isLoading = true;
+
+  bool get isLoading => _isLoading;
+
+  set isLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+}
+
 class ActivitiesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -50,6 +64,13 @@ class ActivitiesPage extends StatelessWidget {
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return Center(child: Text(snapshot.error.toString()));
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting ||
+                    bloc.isLoading) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
                 }
 
                 if (snapshot.hasData) {
@@ -78,7 +99,12 @@ class ActivitiesPage extends StatelessWidget {
                       ),
                     );
                   }
-                  bloc.readings = snapshot.data;
+
+                  if (bloc.readings == null ||
+                      bloc.readings!.isEmpty ||
+                      bloc.needRefreshList) {
+                    bloc.readings = [...snapshot.data!];
+                  }
 
                   return Expanded(
                     child: ListView.builder(

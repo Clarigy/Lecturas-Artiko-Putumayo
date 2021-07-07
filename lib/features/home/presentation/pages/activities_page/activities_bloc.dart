@@ -9,8 +9,11 @@ class ActivitiesBloc extends ChangeNotifier {
 
   final GetReadingsUseCase _getReadingsUseCase;
   bool needRefreshList = false;
+  bool isLoading = false;
 
   List<ReadingDetailItem>? readings;
+
+  // List<ReadingDetailItem>? readings;
 
   final TextEditingController filterTextController = TextEditingController();
 
@@ -30,6 +33,7 @@ class ActivitiesBloc extends ChangeNotifier {
 
   set activitiesCount(int value) {
     _activitiesCount = value;
+    isLoading = true;
     notifyListeners();
   }
 
@@ -42,19 +46,23 @@ class ActivitiesBloc extends ChangeNotifier {
 
       return readings != null && filterTextController.text.isNotEmpty
           ? getFilterReadings(filterTextController.text)
-          : getAllMemoryReadings();
+          : _getReadingsUseCase(_filterType);
     } catch (error) {
       rethrow;
     }
   }
 
   Stream<List<ReadingDetailItem>?> getFilterReadings(String filter) async* {
-    yield readings!
-        .where((value) =>
-            value.numeroMedidor.toLowerCase().contains(filter.toLowerCase()) ||
-            value.nombre.toLowerCase().contains(filter.toLowerCase()) ||
-            value.direccion.toLowerCase().contains(filter.toLowerCase()))
-        .toList();
+    final List<ReadingDetailItem> tempList = [];
+    for (final value in readings!) {
+      if (value.numeroMedidor.toLowerCase().contains(filter.toLowerCase()) ||
+          value.nombre.toLowerCase().contains(filter.toLowerCase()) ||
+          value.direccion.toLowerCase().contains(filter.toLowerCase())) {
+        tempList.add(value);
+      }
+    }
+
+    yield tempList;
   }
 
   Stream<List<ReadingDetailItem>?> getAllMemoryReadings() async* {

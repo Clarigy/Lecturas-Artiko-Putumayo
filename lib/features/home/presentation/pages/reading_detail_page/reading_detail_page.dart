@@ -59,11 +59,6 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
   void initState() {
     WidgetsBinding.instance!.addPostFrameCallback((_) => afterLayout());
     final bloc = context.read<ReadingDetailBloc>(readingDetailBlocProvider);
-    bloc
-      ..verifiedReading = false
-      ..formKey.currentState?.reset()
-      ..readingIntegers.clear()
-      ..readingDecimals.clear();
 
     print('falsaMaxima  ${widget.readingDetailItem.falsaMaxima}');
     print('falsaMinima  ${widget.readingDetailItem.falsaMinima}');
@@ -92,6 +87,13 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
   void afterLayout() async {
     try {
       final bloc = context.read<ReadingDetailBloc>(readingDetailBlocProvider);
+
+      bloc
+        ..verifiedReading = false
+        ..formKey.currentState?.reset()
+        ..readingIntegers.clear()
+        ..readingDecimals.clear();
+
       await bloc.loadInitInfo(detailItem);
 
       if (detailItem.readingRequest.lectura != null)
