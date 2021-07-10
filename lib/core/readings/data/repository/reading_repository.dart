@@ -94,7 +94,9 @@ class ReadingRepository implements ReadingRepositoryContract {
               if (element.readingRequest.anomaliaSec == null) return false;
 
               final current = clasesAnomalia.firstWhere((clase) =>
-                  clase.nombre == element.readingRequest.claseAnomalia);
+                  clase.nombre == element.readingRequest.claseAnomalia ||
+                  element.readingRequest.claseAnomalia ==
+                      ClaseAnomalia.ninguna().nombre);
 
               return !current.fallida;
           }

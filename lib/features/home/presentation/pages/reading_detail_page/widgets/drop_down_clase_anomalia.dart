@@ -87,15 +87,19 @@ class _DropDownClaseAnomaliaState extends State<DropDownClaseAnomalia> {
 
   List<DropdownMenuItem<ClaseAnomalia>> _buildAnomaliaItems(
       ReadingDetailBloc bloc) {
-    List<DropdownMenuItem<ClaseAnomalia>> items = [];
+    List<DropdownMenuItem<ClaseAnomalia>> items = [
+      new DropdownMenuItem(
+          value: ClaseAnomalia.ninguna(),
+          child: new Text(ClaseAnomalia.ninguna().nombre))
+    ];
 
     if (bloc.anomalias.isEmpty) return [];
 
     bloc.anomalias
         .firstWhere((element) => element.anomaliaSec == bloc.anomaliaSec)
         .claseAnomalia
-        .forEach((claseAnomalia) => items.add(new DropdownMenuItem(
-            value: claseAnomalia, child: new Text(claseAnomalia.nombre))));
+        .forEach((claseAnomalia) => items.add(DropdownMenuItem(
+            value: claseAnomalia, child: Text(claseAnomalia.nombre))));
 
     return items;
   }

@@ -21,8 +21,6 @@ class ActivitiesBloc extends ChangeNotifier {
 
   List<ReadingDetailItem>? readings;
 
-  // List<ReadingDetailItem>? readings;
-
   final TextEditingController filterTextController = TextEditingController();
 
   FilterType _filterType = FilterType.PENDING;

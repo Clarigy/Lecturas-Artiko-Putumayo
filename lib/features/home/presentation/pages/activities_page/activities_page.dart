@@ -71,6 +71,7 @@ class ActivitiesPage extends StatelessWidget {
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
                       log(snapshot.error.toString());
+                      activitiesFilter.isLoading = false;
                       return Center(child: Text(snapshot.error.toString()));
                     }
 

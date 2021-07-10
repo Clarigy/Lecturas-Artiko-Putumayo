@@ -133,16 +133,23 @@ class ReadingDetailBloc extends ChangeNotifier {
 
     if (readingDetailItem.readingRequest.anomaliaSec != null) {
       _anomaliaSec = readingDetailItem.readingRequest.anomaliaSec!;
-      for (final element in anomalias) {
-        for (final clase in element.claseAnomalia) {
-          if (clase.nombre == readingDetailItem.readingRequest.claseAnomalia) {
-            _claseAnomalia = clase;
+
+      if (readingDetailItem.readingRequest.claseAnomalia ==
+          ClaseAnomalia.ninguna().nombre) {
+        _claseAnomalia = ClaseAnomalia.ninguna();
+      } else {
+        for (final element in anomalias) {
+          for (final clase in element.claseAnomalia) {
+            if (clase.nombre ==
+                readingDetailItem.readingRequest.claseAnomalia) {
+              _claseAnomalia = clase;
+            }
           }
         }
       }
     } else {
       _anomaliaSec = anomalias[0].anomaliaSec;
-      _claseAnomalia = anomalias[0].claseAnomalia[0];
+      _claseAnomalia = ClaseAnomalia.ninguna();
     }
 
     if (readingDetailItem.readingRequest.observacionSec != null) {
