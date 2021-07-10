@@ -84,8 +84,9 @@ class InputWithLabel extends StatelessWidget {
                         style: theme.textTheme.bodyText2!.copyWith(
                             fontWeight: FontWeight.bold,
                             color: labelColor ?? theme.primaryColor)))),
-            Container(
+            DecoratedBox(
               decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black12,

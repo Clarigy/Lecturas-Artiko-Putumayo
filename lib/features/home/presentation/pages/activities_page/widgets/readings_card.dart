@@ -14,6 +14,7 @@ class ReadingsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 8,
+      clipBehavior: Clip.antiAliasWithSaveLayer,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

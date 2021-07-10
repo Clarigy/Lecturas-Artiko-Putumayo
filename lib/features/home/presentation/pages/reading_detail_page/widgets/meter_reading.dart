@@ -31,19 +31,21 @@ class _MeterReadingState extends State<MeterReading> {
               children: [
                 Flexible(
                   flex: 3,
-                  child: Container(
-                    decoration: BoxDecoration(boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 5,
-                        offset: const Offset(0, -1),
-                      ),
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 10,
-                        offset: const Offset(0, 5),
-                      ),
-                    ]),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 5,
+                            offset: const Offset(0, -1),
+                          ),
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 10,
+                            offset: const Offset(0, 5),
+                          ),
+                        ]),
                     child: TextFormField(
                       autocorrect: false,
                       controller: bloc.readingIntegers,
@@ -124,19 +126,21 @@ class _MeterReadingState extends State<MeterReading> {
       ),
       Flexible(
         flex: 2,
-        child: Container(
-          decoration: BoxDecoration(boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 5,
-              offset: const Offset(0, -1),
-            ),
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
-          ]),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 5,
+                  offset: const Offset(0, -1),
+                ),
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  offset: const Offset(0, 5),
+                ),
+              ]),
           child: TextFormField(
             autocorrect: false,
             maxLength: bloc.readingDetailItem.nroDecimales,
