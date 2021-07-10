@@ -60,6 +60,8 @@ class CreateMeasureBloc extends ChangeNotifier {
     notifyListeners();
   }
 
+  late bool isFromMap;
+
   Future<void> loadInitialData() async {
     final location = await Geolocator.getCurrentPosition();
     latLng = LatLng(location.latitude, location.longitude);
@@ -75,11 +77,9 @@ class CreateMeasureBloc extends ChangeNotifier {
 
   Future<List<int>> createMeasures(List<ReadingDetailItem> newMeasures) async {
     try {
-      isLoading = true;
       return await _saveReadingsUseCase(newMeasures);
     } catch (_) {
       isLoading = false;
-
       rethrow;
     }
   }

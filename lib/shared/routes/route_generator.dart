@@ -33,7 +33,7 @@ class RouteGenerator {
         page = AccessGpsPage();
         break;
       case AppRoutes.CreateMeasure:
-        page = CreateMeasurePage.init();
+        page = CreateMeasurePage.init(args![IS_FROM_MAP]);
         break;
       case AppRoutes.ProfileScreen:
         page = ProfilePage.init();

@@ -1,4 +1,5 @@
 import 'package:artiko/core/readings/data/data_sources/routes_dao.dart';
+import 'package:artiko/core/readings/data/repository/reading_repository.dart';
 import 'package:artiko/dependency_injector.dart';
 import 'package:artiko/features/create_measurer/presentation/manager/create_measure_bloc.dart';
 import 'package:artiko/features/create_measurer/presentation/pages/validators/create_measure_validators.dart';
@@ -181,9 +182,13 @@ class _CreateMeasureFormState extends State<CreateMeasureForm> {
     bloc.formKey.currentState!.save();
 
     try {
-      final activitiesBloc = context.read(activitiesBlocProvider);
-      final data = await bloc.buildReadingDetailItem(activitiesBloc.readings!);
+      bloc.isLoading = true;
+
+      final allReadings =
+          await sl<ReadingRepository>().getAllReadingsFuture(null);
+      final data = await bloc.buildReadingDetailItem(allReadings);
       final ids = await bloc.createMeasures(data);
+      final activitiesBloc = context.read(activitiesBlocProvider);
 
       activitiesBloc.needRefreshList = true;
       final readings = await bloc.getReadings(activitiesBloc.filterType);
@@ -196,8 +201,13 @@ class _CreateMeasureFormState extends State<CreateMeasureForm> {
 
       sl<ReadingDetailBloc>().reset();
       Navigator.pop(context);
-      Navigator.pushReplacementNamed(context, AppRoutes.ReadingDetailScreen,
-          arguments: {READING_DETAIL: r, READINGS: readings});
+      if (bloc.isFromMap) {
+        Navigator.pushNamed(context, AppRoutes.ReadingDetailScreen,
+            arguments: {READING_DETAIL: r, READINGS: readings});
+      } else {
+        Navigator.pushReplacementNamed(context, AppRoutes.ReadingDetailScreen,
+            arguments: {READING_DETAIL: r, READINGS: readings});
+      }
     } on Exception catch (_) {
       showSnackbar(context, 'No pudimos guardar la lectura, intenta de nuevo');
     }

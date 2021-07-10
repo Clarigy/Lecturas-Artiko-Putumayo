@@ -6,12 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CreateMeasurePage extends StatefulWidget {
-  CreateMeasurePage._();
+  CreateMeasurePage._(this.isFromMap);
 
-  static Widget init() {
+  final bool isFromMap;
+
+  static Widget init(bool isFromMap) {
     return ChangeNotifierProvider(
       create: (context) => sl<CreateMeasureBloc>(),
-      builder: (_, __) => CreateMeasurePage._(),
+      builder: (_, __) => CreateMeasurePage._(isFromMap),
     );
   }
 
@@ -22,6 +24,7 @@ class CreateMeasurePage extends StatefulWidget {
 class _CreateMeasurePageState extends State<CreateMeasurePage> {
   @override
   Widget build(BuildContext context) {
+    context.read<CreateMeasureBloc>().isFromMap = widget.isFromMap;
     return Scaffold(
       appBar: DefaultAppBar(),
       body: SingleChildScrollView(

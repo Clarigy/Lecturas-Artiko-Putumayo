@@ -16,6 +16,7 @@ import 'package:artiko/features/home/presentation/pages/reading_detail_page/widg
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/widgets/meter_reading.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/widgets/take_pictures.dart';
 import 'package:artiko/shared/routes/app_routes.dart';
+import 'package:artiko/shared/routes/route_args_keys.dart';
 import 'package:artiko/shared/widgets/default_app_bar.dart';
 import 'package:artiko/shared/widgets/input_with_label.dart';
 import 'package:artiko/shared/widgets/main_button.dart';
@@ -261,7 +262,8 @@ class _NavigationButtons extends ConsumerWidget {
             child: MainButton(
                 text: 'Nuevo medidor',
                 onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.CreateMeasure);
+                  Navigator.pushNamed(context, AppRoutes.CreateMeasure,
+                      arguments: {IS_FROM_MAP: false});
                 }),
           ),
           SizedBox(

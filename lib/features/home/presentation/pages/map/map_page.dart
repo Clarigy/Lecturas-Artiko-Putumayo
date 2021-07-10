@@ -92,7 +92,8 @@ class _MapPageState extends State<MapPage> {
               padding: const EdgeInsets.all(16),
               child: FloatingActionButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, AppRoutes.CreateMeasure);
+                    Navigator.pushNamed(context, AppRoutes.CreateMeasure,
+                        arguments: {IS_FROM_MAP: true});
                   },
                   child: Icon(Icons.add)),
             ))

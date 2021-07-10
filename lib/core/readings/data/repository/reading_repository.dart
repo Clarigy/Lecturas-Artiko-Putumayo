@@ -110,7 +110,7 @@ class ReadingRepository implements ReadingRepositoryContract {
 
   @override
   Future<List<ReadingDetailItem>> getAllReadingsFuture(
-      FilterType filterType) async {
+      FilterType? filterType) async {
     try {
       final readings = await _readingsDao.getFutureReadings();
 
@@ -137,6 +137,8 @@ class ReadingRepository implements ReadingRepositoryContract {
       }
 
       final anomalias = await sl<GetAnomaliesUseCase>()(null);
+
+      if (filterType == null) return tempReadings;
 
       final x = tempReadings.where((element) {
         switch (filterType) {
