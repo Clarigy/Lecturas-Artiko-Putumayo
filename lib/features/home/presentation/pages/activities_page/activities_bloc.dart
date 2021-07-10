@@ -9,7 +9,15 @@ class ActivitiesBloc extends ChangeNotifier {
 
   final GetReadingsUseCase _getReadingsUseCase;
   bool needRefreshList = false;
-  bool isLoading = false;
+  bool _isLoading = false;
+
+
+  bool get isLoading => _isLoading;
+
+  set isLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
 
   List<ReadingDetailItem>? readings;
 

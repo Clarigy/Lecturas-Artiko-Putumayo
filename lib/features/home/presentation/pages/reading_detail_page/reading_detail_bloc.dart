@@ -12,6 +12,7 @@ import 'package:artiko/features/home/domain/use_cases/delete_reading_images.dart
 import 'package:artiko/features/home/domain/use_cases/get_reading_images_by_reading_id.dart';
 import 'package:artiko/features/home/domain/use_cases/insert_reading_images.dart';
 import 'package:artiko/features/home/domain/use_cases/update_reading_images.dart';
+import 'package:artiko/features/home/presentation/pages/activities_page/activities_bloc.dart';
 import 'package:flutter/material.dart';
 
 enum ReadingDetailState {
@@ -189,10 +190,12 @@ class ReadingDetailBloc extends ChangeNotifier {
     }
   }
 
-  Future<void> updateReading(ReadingDetailItem readingDetailItem) async {
+  Future<void> updateReading(ReadingDetailItem readingDetailItem,
+      ActivitiesBloc activitiesBloc) async {
     readingDetailState = ReadingDetailState.loading;
     notifyListeners();
     try {
+      activitiesBloc.isLoading = true;
       this.readingDetailItem = await _updateReadingUseCase(readingDetailItem);
       await sl<CacheStorageInterface>().save(
           key: CacheKeys.PREVIOUS_ORDER,
@@ -201,6 +204,7 @@ class ReadingDetailBloc extends ChangeNotifier {
       rethrow;
     } finally {
       readingDetailState = ReadingDetailState.initial;
+      activitiesBloc.isLoading = false;
       notifyListeners();
     }
   }
@@ -242,4 +246,6 @@ class ReadingDetailBloc extends ChangeNotifier {
   }
 
   void refresh() => notifyListeners();
+
+  bool allowEdit() => readingDetailItem.idRequest == null;
 }

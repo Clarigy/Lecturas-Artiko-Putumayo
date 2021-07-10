@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
 import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
 import 'package:artiko/features/home/presentation/pages/activities_page/activities_bloc.dart';
@@ -14,7 +16,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../../../../dependency_injector.dart';
 
 final activitiesCounterProvider =
-    ChangeNotifierProvider((_) => ActivitiesCounter());
+ChangeNotifierProvider((_) => ActivitiesCounter());
 
 class ActivitiesCounter extends ChangeNotifier {
   int _activitiesCount = 0;
@@ -28,7 +30,7 @@ class ActivitiesCounter extends ChangeNotifier {
 }
 
 final activitiesFilterProvider =
-    ChangeNotifierProvider((_) => ActivitiesFilter());
+ChangeNotifierProvider((_) => ActivitiesFilter());
 
 class ActivitiesFilter extends ChangeNotifier {
   bool _isLoading = true;
@@ -62,22 +64,28 @@ class ActivitiesPage extends StatelessWidget {
             builder: (BuildContext context,
                 T Function<T>(ProviderBase<Object?, T>) watch, Widget? child) {
               final bloc = watch(activitiesBlocProvider);
+              final activitiesFilter = context.read(activitiesFilterProvider);
 
               return StreamBuilder<List<ReadingDetailItem>?>(
                   stream: bloc.getReadings(),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
+                      log(snapshot.error.toString());
                       return Center(child: Text(snapshot.error.toString()));
                     }
 
                     if (snapshot.connectionState == ConnectionState.waiting ||
                         bloc.isLoading) {
+                      if (!activitiesFilter.isLoading) {
+                        activitiesFilter.isLoading = true;
+                      }
                       return Center(
                         child: CircularProgressIndicator(),
                       );
                     }
 
                     if (snapshot.hasData) {
+                      context.read(activitiesFilterProvider).isLoading = false;
                       if (snapshot.data!.isEmpty) {
                         return Expanded(
                           child: Column(
@@ -93,7 +101,7 @@ class ActivitiesPage extends StatelessWidget {
                               ),
                               SizedBox(
                                 height:
-                                    MediaQuery.of(context).size.height * .05,
+                                MediaQuery.of(context).size.height * .05,
                               ),
                               Text(
                                 'Wow, todas tus actividades están completas, no tienes actividades por hacer.',
@@ -115,19 +123,19 @@ class ActivitiesPage extends StatelessWidget {
                         child: ListView.builder(
                             itemCount: snapshot.data?.length ?? 0,
                             itemBuilder: (_, i) => InkWell(
-                                  child: Column(
-                                    children: [
-                                      if (i == 0) _Counter(),
-                                      ReadingsCard(item: snapshot.data![i]),
-                                    ],
-                                  ),
-                                  onTap: () => Navigator.pushNamed(
-                                      context, AppRoutes.ReadingDetailScreen,
-                                      arguments: {
-                                        READING_DETAIL: snapshot.data![i],
-                                        READINGS: snapshot.data
-                                      }),
-                                )),
+                              child: Column(
+                                children: [
+                                  if (i == 0) _Counter(),
+                                  ReadingsCard(item: snapshot.data![i]),
+                                ],
+                              ),
+                              onTap: () => Navigator.pushNamed(
+                                  context, AppRoutes.ReadingDetailScreen,
+                                  arguments: {
+                                    READING_DETAIL: snapshot.data![i],
+                                    READINGS: snapshot.data
+                                  }),
+                            )),
                       );
                     }
 
@@ -185,8 +193,7 @@ class __CounterState extends State<_Counter> {
         ));
   }
 
-  void _setDoneReadings(
-      ActivitiesBloc bloc, List<ReadingDetailItem>? allReadings) {
+  void _setDoneReadings(ActivitiesBloc bloc, List<ReadingDetailItem>? allReadings) {
     allReadings?.forEach((element) {
       switch (bloc.filterType) {
         case FilterType.PENDING:

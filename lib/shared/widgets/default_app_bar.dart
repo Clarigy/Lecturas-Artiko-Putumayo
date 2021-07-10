@@ -37,6 +37,8 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
   @override
   void initState() {
     loadCurrentUserData();
+    WidgetsBinding.instance
+        ?.addPostFrameCallback((_) async => await loadCurrentUserData());
     super.initState();
   }
 
@@ -50,7 +52,8 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
     photo = await sl<CacheStorageInterface>().fetch(CacheKeys.USER_PHOTO);
 
     isLoading = false;
-    setState(() => _currentUser = profileBloc.currentUser);
+    _currentUser = profileBloc.currentUser;
+    setState(() {});
   }
 
   @override
@@ -132,13 +135,40 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
     Navigator.pushNamed(context, AppRoutes.ProfileScreen);
   }
 
-  void _clearData() {
-    sl<FloorDatabase>().database.delete('anomalies');
-    sl<FloorDatabase>().database.delete('routes');
-    sl<FloorDatabase>().database.delete('readings');
-    sl<FloorDatabase>().database.delete('reading_images');
+  Future<void> _clearData() async {
+    final db = sl<FloorDatabase>();
+    await db.database.delete('anomalies');
+    await db.database.delete('routes');
+    await db.database.delete('readings');
+    await db.database.delete('reading_images');
 
-    sl<CacheStorageInterface>().clear();
+    await sl<CacheStorageInterface>().clear();
+  }
+
+  void showWaitDialog() {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) {
+          return WillPopScope(
+            onWillPop: () => Future.value(false),
+            child: AlertDialog(
+              title: Text(
+                  'No cierres la aplicación hasta que el proceso finalice'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(bottom: 12),
+                    child: Text(
+                        'Se redireccionará a la pantalla del login una vez finalizada la operación exitosamente.'),
+                  ),
+                  Center(child: CircularProgressIndicator()),
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   void _logout() async {
@@ -160,11 +190,9 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
                   TextButton(
                       onPressed: () async {
                         Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text(
-                                'No cierres la aplicación hasta que el proceso finalice')));
+                        showWaitDialog();
                         await sl<CloseTerminalUseCase>()(readings);
-                        _clearData();
+                        await _clearData();
                         _logout();
                       },
                       child: Text('Sí, continuar')),
@@ -175,14 +203,14 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
               );
             });
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
-                'No cierres la aplicación hasta que el proceso finalice')));
+        showWaitDialog();
         await sl<CloseTerminalUseCase>()(readings);
-        _clearData();
+        await _clearData();
         _logout();
       }
     } catch (e) {
+      //Close dialog
+      Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('No pudimos cerrar la terminal, inténtalo más tarde')));
     }

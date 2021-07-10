@@ -1,3 +1,4 @@
+import 'package:artiko/features/home/presentation/pages/activities_page/activities_page.dart';
 import 'package:artiko/features/home/presentation/pages/activities_page/exports/activities_page_labels.dart';
 import 'package:artiko/features/home/presentation/pages/providers/home_provider.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ class FilterButtons extends StatelessWidget {
       child: Consumer(
         builder: (BuildContext context, watch, Widget? child) {
           final bloc = watch(activitiesBlocProvider);
+          final activitiesFilter = context.read(activitiesFilterProvider);
 
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -31,7 +33,9 @@ class FilterButtons extends StatelessWidget {
                             ? Colors.white
                             : Colors.black),
                   ),
-                  onPressed: () => bloc.filterType = FilterType.PENDING),
+                  onPressed: () => activitiesFilter.isLoading
+                      ? null
+                      : bloc.filterType = FilterType.PENDING),
               ElevatedButton(
                 child: Text(
                   BTN_EXECUTED,
@@ -40,7 +44,9 @@ class FilterButtons extends StatelessWidget {
                           ? Colors.white
                           : Colors.black),
                 ),
-                onPressed: () => bloc.filterType = FilterType.EXCECUTED,
+                onPressed: () => activitiesFilter.isLoading
+                    ? null
+                    : bloc.filterType = FilterType.EXCECUTED,
                 style: ElevatedButton.styleFrom(
                     primary: bloc.filterType == FilterType.EXCECUTED
                         ? theme.primaryColor
@@ -54,7 +60,9 @@ class FilterButtons extends StatelessWidget {
                           ? Colors.white
                           : Colors.black),
                 ),
-                onPressed: () => bloc.filterType = FilterType.FAILED,
+                onPressed: () => activitiesFilter.isLoading
+                    ? null
+                    : bloc.filterType = FilterType.FAILED,
                 style: ElevatedButton.styleFrom(
                     primary: bloc.filterType == FilterType.FAILED
                         ? theme.primaryColor

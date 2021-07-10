@@ -50,6 +50,7 @@ class _MeterReadingState extends State<MeterReading> {
                       keyboardType: TextInputType.number,
                       maxLength: bloc.readingDetailItem.nroEnteros,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
+                      readOnly: !bloc.allowEdit(),
                       onChanged: (value) {
                         setState(() {
                           bloc.hideError = false;
@@ -69,6 +70,9 @@ class _MeterReadingState extends State<MeterReading> {
                       style: TextStyle(
                           fontSize: 36,
                           fontWeight: FontWeight.w600,
+                          color: bloc.allowEdit()
+                              ? Colors.black
+                              : theme.disabledColor,
                           letterSpacing: 8),
                       decoration: InputDecoration(
                           filled: true,
@@ -83,17 +87,19 @@ class _MeterReadingState extends State<MeterReading> {
                 if (bloc.readingDetailItem.nroDecimales > 0)
                   ...decimalPart(context),
                 Center(
-                  child: IconButton(
-                      icon: Icon(
-                        Icons.check_circle,
-                        color: bloc.verifiedReading
-                            ? theme.secondaryHeaderColor
-                            : theme.primaryColor,
-                        size: 36,
-                      ),
-                      onPressed: () {
-                        _validateReading(context);
-                      }),
+                  child: !bloc.allowEdit()
+                      ? Offstage()
+                      : IconButton(
+                          icon: Icon(
+                            Icons.check_circle,
+                            color: bloc.verifiedReading
+                                ? theme.secondaryHeaderColor
+                                : theme.primaryColor,
+                            size: 36,
+                          ),
+                          onPressed: () {
+                            _validateReading(context);
+                          }),
                 )
               ],
             ),
@@ -135,6 +141,7 @@ class _MeterReadingState extends State<MeterReading> {
             autocorrect: false,
             maxLength: bloc.readingDetailItem.nroDecimales,
             controller: bloc.readingDecimals,
+            readOnly: !bloc.allowEdit(),
             keyboardType: TextInputType.number,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (value) {
@@ -147,7 +154,11 @@ class _MeterReadingState extends State<MeterReading> {
               }
             },
             style: TextStyle(
-                fontSize: 36, fontWeight: FontWeight.w600, letterSpacing: 8),
+              fontSize: 36,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 8,
+              color: bloc.allowEdit() ? Colors.black : theme.disabledColor,
+            ),
             decoration: InputDecoration(
               filled: true,
               counterText: '',

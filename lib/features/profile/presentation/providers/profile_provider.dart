@@ -11,5 +11,5 @@ Future<void> setUpProfileProviders() async {
   sl.registerLazySingleton(
       () => GetCurrentUserUseCase(sl<ProfileRepository>()));
 
-  sl.registerLazySingleton(() => ProfileBloc(sl<GetCurrentUserUseCase>()));
+  sl.registerFactory(() => ProfileBloc(sl<GetCurrentUserUseCase>()));
 }

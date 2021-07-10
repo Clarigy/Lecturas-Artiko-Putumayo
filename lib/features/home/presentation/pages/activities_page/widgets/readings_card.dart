@@ -95,6 +95,11 @@ class _CardHeader extends StatelessWidget {
                 child: Text(_getSubHeader()),
               ),
               Expanded(child: Offstage()),
+              if (item.readingRequest.alreadySync)
+                Icon(
+                  Icons.sync,
+                  color: AppColors.redColor,
+                ),
               if (item.indicadorSuspension) SvgPicture.asset(IMAGE_CUT),
               if (item.detalleLecturaRutaSec == null)
                 Padding(
@@ -131,8 +136,6 @@ class _ReadingInformation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Container(
       margin: EdgeInsets.only(left: 12),
       child: Row(
@@ -143,7 +146,9 @@ class _ReadingInformation extends StatelessWidget {
             width: 6,
             height: MediaQuery.of(context).size.height * .05,
             decoration: BoxDecoration(
-                color: theme.primaryColor,
+                color: item.tipoMedidor == 'EM-ELECTROMECANICO'
+                    ? AppColors.primary
+                    : AppColors.secondary,
                 borderRadius: BorderRadius.circular(30)),
           ),
           Column(
@@ -177,7 +182,9 @@ class _ReadingInformation extends StatelessWidget {
                     },
                     child: Icon(
                       Icons.info,
-                      color: theme.primaryColor,
+                      color: item.tipoMedidor == 'EM-ELECTROMECANICO'
+                          ? AppColors.primary
+                          : AppColors.secondary,
                       size: 20,
                     ),
                   )

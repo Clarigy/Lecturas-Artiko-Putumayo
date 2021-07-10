@@ -21,7 +21,7 @@ class ReadingRequest {
   String? observacionLectura;
   String? latLecturaTomada;
   String? longLecturaTomada;
-
+  String fechaLectura;
   @ignore
   List<String> fotos = [];
 
@@ -43,6 +43,7 @@ class ReadingRequest {
       required this.latLecturaTomada,
       required this.longLecturaTomada,
       required this.alreadySync,
+      required this.fechaLectura,
       required this.idFotos});
 
   ReadingRequest.all(
@@ -60,19 +61,20 @@ class ReadingRequest {
       this.latLecturaTomada,
       this.longLecturaTomada,
       required this.alreadySync,
+      required this.fechaLectura,
       required this.fotos,
       required this.idFotos});
 
   ReadingRequest.empty(
-      {required this.detalleLecturaRutaSec,
-      required this.alreadySync,
-      this.id});
+      {required this.detalleLecturaRutaSec, required this.alreadySync, this.id})
+      : fechaLectura = DateTime.now().toIso8601String();
 
-  ReadingRequest.failed({
-    this.id = -1,
-    this.anomaliaSec = 26,
-    this.claseAnomalia = 'AL13',
-    this.alreadySync = true});
+  ReadingRequest.failed(
+      {this.id = -1,
+      this.anomaliaSec = 26,
+      this.claseAnomalia = 'AL13',
+      this.alreadySync = true})
+      : fechaLectura = DateTime.now().toIso8601String();
 
   ReadingRequest copyWith({
     int? id,
@@ -90,6 +92,7 @@ class ReadingRequest {
     String? longLecturaTomada,
     List<String>? fotos,
     String? idFotos,
+    String? fechaLectura,
   }) =>
       ReadingRequest.all(
         detalleLecturaRutaSec:
@@ -109,6 +112,7 @@ class ReadingRequest {
         idFotos: idFotos ?? this.idFotos,
         alreadySync: alreadySync,
         detailId: detailId ?? this.detailId,
+        fechaLectura: fechaLectura ?? this.fechaLectura,
       );
 
   Map<String, dynamic> toJson(String tipo) => {
@@ -124,11 +128,11 @@ class ReadingRequest {
         "lat_lectura_tomada": latLecturaTomada,
         "long_lectura_tomada": longLecturaTomada,
         "tipo": tipo,
-        "fotos": {},
-        // "fotos": List<dynamic>.from(fotos.map((image) => {
-        //       'image': image,
-        //       'filename': '$detalleLecturaRutaSec-${fotos.indexOf(image)}',
-        //       'mimetype': 'png'
-        //     })),
+        "fecha_lectura": fechaLectura,
+        "fotos": List<dynamic>.from(fotos.map((image) => {
+              'image': image,
+              'filename': '$detalleLecturaRutaSec-${fotos.indexOf(image)}',
+              'mimetype': 'png'
+            })),
       };
 }

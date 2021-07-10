@@ -8,6 +8,7 @@ import 'package:artiko/features/home/domain/use_cases/get_reading_images_by_read
 import 'package:artiko/features/home/domain/use_cases/insert_reading_images.dart';
 import 'package:artiko/features/home/domain/use_cases/update_reading_images.dart';
 import 'package:artiko/features/home/presentation/pages/activities_page/widgets/readings_card.dart';
+import 'package:artiko/features/home/presentation/pages/providers/home_provider.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/reading_detail_bloc.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/widgets/drop_down_anomalias.dart';
 import 'package:artiko/features/home/presentation/pages/reading_detail_page/widgets/drop_down_clase_anomalia.dart';
@@ -184,9 +185,11 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
                           color: theme.primaryColor))),
             ),
             DropDownInput(
-              onChanged: (value) {
-                bloc.observacion = value;
-              },
+              onChanged: !bloc.allowEdit()
+                  ? null
+                  : (value) {
+                      bloc.observacion = value;
+                    },
               value: bloc.observacion,
               items: _buildObservacionesItems(bloc).toSet(),
             ),
@@ -195,6 +198,7 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
                 margin: EdgeInsets.only(top: 10),
                 child: InputWithLabel(
                   width: double.infinity,
+                  readOnly: !bloc.allowEdit(),
                   label: '¿Cuál?',
                   textEditingController: bloc.observacionTextController,
                 ),
@@ -267,7 +271,8 @@ class _NavigationButtons extends ConsumerWidget {
             flex: 1,
             child: MainButton(
                 text: 'Guardar',
-                onTap: bloc.readingDetailItem.readingRequest.alreadySync
+                onTap: bloc.readingDetailItem.readingRequest.alreadySync ||
+                        !bloc.allowEdit()
                     ? null
                     : () async {
                         if (!bloc.formKey.currentState!.validate()) return;
@@ -310,6 +315,7 @@ class _NavigationButtons extends ConsumerWidget {
                             ..longLecturaTomada = position.longitude.toString()
                             ..claseAnomalia = bloc.claseAnomalia.nombre
                             ..observacionAnomalia = bloc.observacion
+                            ..fechaLectura = DateTime.now().toIso8601String()
                             ..observacionLectura = bloc.observacion == 'Otro'
                                 ? bloc.observacionTextController.text
                                 : null
@@ -322,7 +328,8 @@ class _NavigationButtons extends ConsumerWidget {
                                     .observacionSec
                                 : null;
 
-                          await bloc.updateReading(bloc.readingDetailItem);
+                          await bloc.updateReading(bloc.readingDetailItem,
+                              context.read(activitiesBlocProvider));
 
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text('Lectura guardada con éxito')));

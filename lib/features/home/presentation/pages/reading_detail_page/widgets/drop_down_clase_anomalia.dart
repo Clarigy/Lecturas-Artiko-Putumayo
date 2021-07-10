@@ -68,12 +68,14 @@ class _DropDownClaseAnomaliaState extends State<DropDownClaseAnomalia> {
                           isExpanded: true,
                           value: bloc.claseAnomalia,
                           items: _buildAnomaliaItems(bloc),
-                          onChanged: (dynamic selectedItem) {
-                            setState(() {
-                              isSetState = true;
-                              bloc.claseAnomalia = selectedItem;
-                            });
-                          }),
+                          onChanged: !bloc.allowEdit()
+                              ? null
+                              : (dynamic selectedItem) {
+                                  setState(() {
+                                    isSetState = true;
+                                    bloc.claseAnomalia = selectedItem;
+                                  });
+                                }),
                     ),
                   ]))
             ],

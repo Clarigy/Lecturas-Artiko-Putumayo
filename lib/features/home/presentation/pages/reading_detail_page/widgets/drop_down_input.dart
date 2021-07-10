@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class DropDownInput extends StatefulWidget {
   final Set<DropdownMenuItem> items;
-  final void Function(dynamic value) onChanged;
+  final void Function(dynamic value)? onChanged;
   final dynamic value;
 
   DropDownInput(
@@ -13,7 +13,6 @@ class DropDownInput extends StatefulWidget {
 }
 
 class _DropDownInputState extends State<DropDownInput> {
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -44,9 +43,11 @@ class _DropDownInputState extends State<DropDownInput> {
                       isExpanded: true,
                       value: widget.value,
                       items: widget.items.toList(),
-                      onChanged: (dynamic selectedItem) {
-                        widget.onChanged(selectedItem);
-                      }),
+                      onChanged: widget.onChanged != null
+                          ? (dynamic selectedItem) {
+                              widget.onChanged!(selectedItem);
+                            }
+                          : null),
                 ),
               ]))
         ],

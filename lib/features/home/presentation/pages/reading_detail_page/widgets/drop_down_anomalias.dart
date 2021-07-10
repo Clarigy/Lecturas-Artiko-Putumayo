@@ -12,14 +12,16 @@ class DropDownAnomalias extends ConsumerWidget {
 
     return DropDownInput(
       items: _buildClaseAnomaliaItems(bloc.anomalias).toSet(),
-      onChanged: (value) {
-        bloc.setAnomaliaSec(
-            value,
-            bloc.anomalias
-                .firstWhere((element) => element.anomaliaSec == value)
-                .claseAnomalia
-                .first);
-      },
+      onChanged: !bloc.allowEdit()
+          ? null
+          : (value) {
+              bloc.setAnomaliaSec(
+                  value,
+                  bloc.anomalias
+                      .firstWhere((element) => element.anomaliaSec == value)
+                      .claseAnomalia
+                      .first);
+            },
       value: bloc.anomaliaSec,
     );
   }

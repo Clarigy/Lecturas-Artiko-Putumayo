@@ -96,13 +96,20 @@ class _TakePicturesState extends State<TakePictures> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final theme = _getTheme();
+    final bloc = context.read(readingDetailBlocProvider);
+
     countImages = 0;
 
     if (snapshot.hasData) {
       countImages = snapshot.data?.length ?? 0;
     }
-    return countImages == 3 || detailItem.readingRequest.alreadySync
-        ? Offstage()
+    return countImages == 3 ||
+            detailItem.readingRequest.alreadySync ||
+            !bloc.allowEdit()
+        ? detailItem.readingRequest.alreadySync ||
+                !bloc.allowEdit() && countImages == 0
+            ? Text('Sin fotografías')
+            : Offstage()
         : Container(
             width: screenWidth * .26,
             height:
@@ -185,7 +192,7 @@ class _TakePicturesState extends State<TakePictures> {
     return Stack(
       children: [
         InkWell(
-          onTap: detailItem.readingRequest.alreadySync
+          onTap: detailItem.readingRequest.alreadySync || !bloc.allowEdit()
               ? null
               : () async => await _onTapImageView(readingImagesModel, bloc),
           child: Container(
@@ -203,7 +210,7 @@ class _TakePicturesState extends State<TakePictures> {
         Positioned(
           right: 5,
           top: -10,
-          child: detailItem.readingRequest.alreadySync
+          child: detailItem.readingRequest.alreadySync || !bloc.allowEdit()
               ? Offstage()
               : IconButton(
                   icon: Icon(

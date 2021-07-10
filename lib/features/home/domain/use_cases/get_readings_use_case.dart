@@ -14,7 +14,14 @@ class GetReadingsUseCase
   @override
   Stream<List<ReadingDetailItem>?> call(FilterType filterType) {
     try {
-      return _repository.getAllReadings(filterType);
+      return _repository.getAllReadings(filterType).asyncMap((event) {
+        if (event == null || filterType == FilterType.PENDING) return event;
+
+        event.sort((a, b) => DateTime.parse(b.readingRequest.fechaLectura)
+            .compareTo(DateTime.parse(a.readingRequest.fechaLectura)));
+
+        return event;
+      });
     } on ServerException catch (e) {
       throw Failure(e.message);
     }
