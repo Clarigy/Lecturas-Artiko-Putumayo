@@ -176,7 +176,7 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
     final items = _buildObservacionesItems(bloc).toSet();
 
     if (!items.contains(bloc.observacion)) {
-      bloc.observacion = 'Otro';
+      bloc.setObservacionSinRefresh('Otro');
     }
 
     return !bloc.verifiedReading && bloc.claseAnomalia.lectura
@@ -348,6 +348,8 @@ class _NavigationButtons extends ConsumerWidget {
                         } catch (_) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text('No pudimos guardar la lectura')));
+                        } finally {
+                          bloc.readingDetailState = ReadingDetailState.initial;
                         }
                       }),
           ),

@@ -44,7 +44,7 @@ class _DropDownClaseAnomaliaState extends State<DropDownClaseAnomalia> {
         isSetState = false;
 
         if (!items.contains(bloc.claseAnomalia)) {
-          bloc.claseAnomalia = ClaseAnomalia.ninguna();
+          bloc.setClaseAnomaliaSinRefresh(ClaseAnomalia.ninguna());
         }
 
         return Container(

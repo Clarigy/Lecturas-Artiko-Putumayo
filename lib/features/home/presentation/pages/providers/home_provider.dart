@@ -46,5 +46,5 @@ Future<void> setUpHomeProviders() async {
       ));
 }
 
-final activitiesBlocProvider = ChangeNotifierProvider.autoDispose(
-    (_) => ActivitiesBloc(sl<GetReadingsUseCase>()));
+final activitiesBlocProvider =
+    ChangeNotifierProvider((ref) => ActivitiesBloc(sl<GetReadingsUseCase>()));

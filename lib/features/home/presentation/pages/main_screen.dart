@@ -2,6 +2,7 @@ import 'package:artiko/core/readings/data/repository/reading_repository.dart';
 import 'package:artiko/core/readings/domain/use_case/sincronizar_readings_use_case.dart';
 import 'package:artiko/dependency_injector.dart';
 import 'package:artiko/features/home/presentation/pages/activities_page/activities_page.dart';
+import 'package:artiko/features/home/presentation/pages/providers/home_provider.dart';
 import 'package:artiko/shared/theme/app_colors.dart';
 import 'package:artiko/shared/widgets/default_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -75,12 +76,14 @@ class _MainScreenState extends State<MainScreen> {
             icon: Consumer(
               builder: (BuildContext context, watch, Widget? child) {
                 final isLoading = watch(_mainScreenProvider);
+                final bloc = context.read(activitiesBlocProvider);
+                print(bloc.isLoading);
                 return isLoading
                     ? CircularProgressIndicator(strokeWidth: 2)
                     : Icon(
-                  Icons.sync,
-                  color: AppColors.redColor,
-                );
+                        Icons.sync,
+                        color: AppColors.redColor,
+                      );
               },
             ),
             label: LABEL_SYNCHRONIZE,

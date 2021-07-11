@@ -41,6 +41,7 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     if (marker == null) return Center(child: CircularProgressIndicator());
     final size = MediaQuery.of(context).size;
+    final activitiesBloc = context.read(activitiesBlocProvider);
 
     return Stack(
       children: [
