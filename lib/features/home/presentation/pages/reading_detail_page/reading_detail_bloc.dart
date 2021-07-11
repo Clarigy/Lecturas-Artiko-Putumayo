@@ -65,6 +65,15 @@ class ReadingDetailBloc extends ChangeNotifier {
 
   bool get hideError => _hideError;
 
+  bool _alreadyInsertReading = false;
+
+  bool get alreadyInsertReading => _alreadyInsertReading;
+
+  set alreadyInsertReading(bool value) {
+    _alreadyInsertReading = value;
+    notifyListeners();
+  }
+
   set hideError(bool value) {
     _hideError = value;
     notifyListeners();
@@ -78,6 +87,22 @@ class ReadingDetailBloc extends ChangeNotifier {
   setAnomaliaSec(int anomaliaSecValue, ClaseAnomalia claseAnomalia) {
     _anomaliaSec = anomaliaSecValue;
     _claseAnomalia = claseAnomalia;
+
+    final temp = anomalias
+        .firstWhere((element) => element.anomaliaSec == anomaliaSec)
+        .claseAnomalia
+        .map((e) {
+      if (!alreadyInsertReading) {
+        if (!e.lectura) return e;
+      } else {
+        return e;
+      }
+    });
+
+    if (!temp.contains(_claseAnomalia)) {
+      _claseAnomalia = ClaseAnomalia.ninguna();
+    }
+
     _observacion = claseAnomalia.observaciones.isEmpty
         ? 'Otro'
         : claseAnomalia.observaciones.first;

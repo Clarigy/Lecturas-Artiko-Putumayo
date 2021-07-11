@@ -31,6 +31,8 @@ class _DropDownClaseAnomaliaState extends State<DropDownClaseAnomalia> {
       builder: (BuildContext context,
           T Function<T>(ProviderBase<Object?, T>) watch, Widget? child) {
         final bloc = watch(readingDetailBlocProvider);
+        final items = _buildAnomaliaItems(bloc);
+
         if (!isSetState) {
           if (bloc.readingDetailItem.readingRequest.claseAnomalia == null &&
               times == 0) {
@@ -40,6 +42,11 @@ class _DropDownClaseAnomaliaState extends State<DropDownClaseAnomalia> {
           }
         }
         isSetState = false;
+
+        if (!items.contains(bloc.claseAnomalia)) {
+          bloc.claseAnomalia = ClaseAnomalia.ninguna();
+        }
+
         return Container(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -64,18 +71,20 @@ class _DropDownClaseAnomaliaState extends State<DropDownClaseAnomalia> {
                           ),
                         ],
                       ),
-                      child: DropdownButton(
-                          isExpanded: true,
-                          value: bloc.claseAnomalia,
-                          items: _buildAnomaliaItems(bloc),
-                          onChanged: !bloc.allowEdit()
-                              ? null
-                              : (dynamic selectedItem) {
-                                  setState(() {
-                                    isSetState = true;
-                                    bloc.claseAnomalia = selectedItem;
-                                  });
-                                }),
+                      child: items.isEmpty
+                          ? Offstage()
+                          : DropdownButton(
+                              isExpanded: true,
+                              value: bloc.claseAnomalia,
+                              items: items,
+                              onChanged: !bloc.allowEdit()
+                                  ? null
+                                  : (dynamic selectedItem) {
+                                      setState(() {
+                                        isSetState = true;
+                                        bloc.claseAnomalia = selectedItem;
+                                      });
+                                    }),
                     ),
                   ]))
             ],
@@ -93,13 +102,23 @@ class _DropDownClaseAnomaliaState extends State<DropDownClaseAnomalia> {
           child: new Text(ClaseAnomalia.ninguna().nombre))
     ];
 
-    if (bloc.anomalias.isEmpty) return [];
+    if (bloc.anomalias.isEmpty) return items;
 
     bloc.anomalias
         .firstWhere((element) => element.anomaliaSec == bloc.anomaliaSec)
         .claseAnomalia
-        .forEach((claseAnomalia) => items.add(DropdownMenuItem(
-            value: claseAnomalia, child: Text(claseAnomalia.nombre))));
+        .map((e) {
+      if (!bloc.alreadyInsertReading) {
+        if (!e.lectura) return e;
+      } else {
+        return e;
+      }
+    }).forEach((claseAnomalia) {
+      if (claseAnomalia != null) {
+        items.add(DropdownMenuItem(
+            value: claseAnomalia, child: Text(claseAnomalia.nombre)));
+      }
+    });
 
     return items;
   }

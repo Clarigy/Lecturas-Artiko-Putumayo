@@ -173,27 +173,37 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
   List<Widget> buildDependsWidgetMeter(
       BuildContext context, ReadingDetailBloc bloc) {
     final theme = Theme.of(context);
+    final items = _buildObservacionesItems(bloc).toSet();
+
+    if (!items.contains(bloc.observacion)) {
+      bloc.observacion = 'Otro';
+    }
+
     return !bloc.verifiedReading && bloc.claseAnomalia.lectura
         ? []
         : [
-            Container(
-              margin: EdgeInsets.only(top: 10),
-              child: Align(
-                  alignment: AlignmentDirectional.bottomStart,
-                  child: Text('Observaciones',
-                      style: theme.textTheme.bodyText2!.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: theme.primaryColor))),
-            ),
-            DropDownInput(
-              onChanged: !bloc.allowEdit()
-                  ? null
-                  : (value) {
-                      bloc.observacion = value;
-                    },
-              value: bloc.observacion,
-              items: _buildObservacionesItems(bloc).toSet(),
-            ),
+            items.isEmpty
+                ? Offstage()
+                : Container(
+                    margin: EdgeInsets.only(top: 10),
+                    child: Align(
+                        alignment: AlignmentDirectional.bottomStart,
+                        child: Text('Observaciones',
+                            style: theme.textTheme.bodyText2!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: theme.primaryColor))),
+                  ),
+            items.isEmpty
+                ? Offstage()
+                : DropDownInput(
+                    onChanged: !bloc.allowEdit()
+                        ? null
+                        : (value) {
+                            bloc.observacion = value;
+                          },
+                    value: bloc.observacion,
+                    items: _buildObservacionesItems(bloc).toSet(),
+                  ),
             if (bloc.observacion == 'Otro')
               Container(
                 margin: EdgeInsets.only(top: 10),

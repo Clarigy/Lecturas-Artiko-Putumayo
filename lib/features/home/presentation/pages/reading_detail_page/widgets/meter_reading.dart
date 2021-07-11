@@ -54,6 +54,7 @@ class _MeterReadingState extends State<MeterReading> {
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       readOnly: !bloc.allowEdit(),
                       onChanged: (value) {
+                        bloc.alreadyInsertReading = value.isNotEmpty;
                         setState(() {
                           bloc.hideError = false;
                           isFirst = false;

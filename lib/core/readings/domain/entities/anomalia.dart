@@ -35,7 +35,7 @@ class ClaseAnomalia {
   ClaseAnomalia.ninguna()
       : this.nombre = 'Ninguna',
         this.observaciones = [],
-        this.lectura = true,
+        this.lectura = false,
         this.anomSec = -1,
         this.fallida = false,
         this.fotografia = false;
