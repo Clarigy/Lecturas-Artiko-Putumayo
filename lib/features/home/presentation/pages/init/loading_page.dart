@@ -48,6 +48,12 @@ class _LoadingPageState extends State<LoadingPage> with WidgetsBindingObserver {
                 );
               }
 
+              if (snapshot.data == false) {
+                return Center(
+                  child: Text('Ocurrió un error inesperado'),
+                );
+              }
+
               return snapshot.hasData && snapshot.data == true
                   ? FutureBuilder(
                       future: checkGpsAndLocation(context),
@@ -110,7 +116,8 @@ class _LoadingPageState extends State<LoadingPage> with WidgetsBindingObserver {
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return false;
     } catch (e) {
-      print(e);
+      final snackBar = SnackBar(content: Text('Error inesperado'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return false;
     }
   }

@@ -1,5 +1,6 @@
 import 'package:artiko/core/error/exception.dart';
 import 'package:artiko/core/http/domain/repositories/http_proxy_repository.dart';
+import 'package:artiko/core/readings/domain/entities/actualizar_estado_request.dart';
 import 'package:artiko/core/readings/domain/entities/new_meter_request.dart';
 import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
 import 'package:artiko/core/readings/domain/entities/reading_request.dart';
@@ -9,9 +10,12 @@ class ReadingsRemoteDataSource {
   final HttpProxyInterface _httpImpl;
   final String routesService;
   final String readingDetailService;
+  final String actualizarEstadoService;
 
   ReadingsRemoteDataSource(this._httpImpl,
-      {required this.routesService, required this.readingDetailService});
+      {required this.routesService,
+      required this.readingDetailService,
+      required this.actualizarEstadoService});
 
   Future<RoutesResponse> getRoutes(int lectorSec) async {
     final _http = _httpImpl.instance();
@@ -63,5 +67,17 @@ class ReadingsRemoteDataSource {
 
   Future<void> closeTerminal(List<ReadingRequest> readings) async {
     await sincronizarReadings(readings, tipo: 'C');
+  }
+
+  Future<void> actualizarEstado(
+      ActualizarEstadoRequest actualizarEstadoRequest) async {
+    try {
+      final _http = _httpImpl.instance();
+
+      await _http.post(actualizarEstadoService,
+          data: actualizarEstadoRequestToJson(actualizarEstadoRequest));
+    } catch (e) {
+      throw ServerException();
+    }
   }
 }

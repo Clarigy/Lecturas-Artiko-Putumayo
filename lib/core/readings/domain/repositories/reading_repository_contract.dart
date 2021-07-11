@@ -1,3 +1,4 @@
+import 'package:artiko/core/readings/domain/entities/actualizar_estado_request.dart';
 import 'package:artiko/core/readings/domain/entities/new_meter_request.dart';
 import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
 import 'package:artiko/core/readings/domain/entities/reading_request.dart';
@@ -26,4 +27,7 @@ abstract class ReadingRepositoryContract {
   Future<void> closeTerminal(List<ReadingRequest> readings);
 
   Future<ReadingDetailItem> updateReadings(ReadingDetailItem reading);
+
+  Future<void> actualizarEstado(
+      ActualizarEstadoRequest actualizarEstadoRequest);
 }

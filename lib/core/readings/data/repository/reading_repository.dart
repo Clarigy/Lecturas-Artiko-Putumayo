@@ -3,6 +3,7 @@ import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_remote_data_source.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_request_dao.dart';
 import 'package:artiko/core/readings/data/data_sources/routes_dao.dart';
+import 'package:artiko/core/readings/domain/entities/actualizar_estado_request.dart';
 import 'package:artiko/core/readings/domain/entities/anomalia.dart';
 import 'package:artiko/core/readings/domain/entities/new_meter_request.dart';
 import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
@@ -237,6 +238,15 @@ class ReadingRepository implements ReadingRepositoryContract {
       reading.idRequest = id;
       await _readingsDao.update(reading);
       return reading;
+    } catch (_) {
+      throw ServerException();
+    }
+  }
+
+  Future<void> actualizarEstado(
+      ActualizarEstadoRequest actualizarEstadoRequest) async {
+    try {
+      await _remoteDataSource.actualizarEstado(actualizarEstadoRequest);
     } catch (_) {
       throw ServerException();
     }

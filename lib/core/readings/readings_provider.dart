@@ -45,13 +45,14 @@ Future<void> setUpReadingsProviders() async {
   sl.registerLazySingleton<ReadingsRemoteDataSource>(() =>
       ReadingsRemoteDataSource(sl<HttpProxyImpl>(),
           readingDetailService: '/leer_detalle_lecturas',
-          routesService: '/leer_rutas'));
+          routesService: '/leer_rutas',
+          actualizarEstadoService: '/actualizar_estado'));
 
   sl.registerLazySingleton<ReadingRepository>(() => ReadingRepository(
       sl<ReadingsRemoteDataSource>(),
       sl<ReadingsDao>(),
       sl<RoutesDao>(),
-          sl<ReadingsRequestDao>()));
+      sl<ReadingsRequestDao>()));
 
   sl.registerLazySingleton<LoadAndSaveAllDataUseCase>(() =>
       LoadAndSaveAllDataUseCase(sl<ReadingRepository>(),
