@@ -76,24 +76,24 @@ class ReadingRequest {
       this.alreadySync = true})
       : fechaLectura = DateTime.now().toIso8601String();
 
-  ReadingRequest copyWith({
-    int? id,
-    int? detalleLecturaRutaSec,
-    int? detailId,
-    double? lectura,
-    double? lecturaIntento1,
-    double? lecturaIntento2,
-    int? anomaliaSec,
-    String? claseAnomalia,
-    int? observacionSec,
-    String? observacionAnomalia,
-    String? observacionLectura,
-    String? latLecturaTomada,
-    String? longLecturaTomada,
-    List<String>? fotos,
-    String? idFotos,
-    String? fechaLectura,
-  }) =>
+  ReadingRequest copyWith(
+          {int? id,
+          int? detalleLecturaRutaSec,
+          int? detailId,
+          double? lectura,
+          double? lecturaIntento1,
+          double? lecturaIntento2,
+          int? anomaliaSec,
+          String? claseAnomalia,
+          int? observacionSec,
+          String? observacionAnomalia,
+          String? observacionLectura,
+          String? latLecturaTomada,
+          String? longLecturaTomada,
+          List<String>? fotos,
+          String? idFotos,
+          String? fechaLectura,
+          bool? alreadySync}) =>
       ReadingRequest.all(
         detalleLecturaRutaSec:
             detalleLecturaRutaSec ?? this.detalleLecturaRutaSec,
@@ -110,7 +110,7 @@ class ReadingRequest {
         fotos: fotos ?? this.fotos,
         id: id ?? this.id,
         idFotos: idFotos ?? this.idFotos,
-        alreadySync: alreadySync,
+        alreadySync: alreadySync ?? this.alreadySync,
         detailId: detailId ?? this.detailId,
         fechaLectura: fechaLectura ?? this.fechaLectura,
       );

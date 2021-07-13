@@ -26,7 +26,7 @@ class CloseTerminalUseCase
       final List<ReadingDetailItem> otherReadings = [];
 
       for (final reading in readings) {
-        ReadingRequest readingWithFotos = reading.readingRequest.fotos.isEmpty
+         ReadingRequest readingWithFotos = reading.readingRequest.fotos.isEmpty
             ? reading.readingRequest
             : reading.readingRequest
           ..fotos = (await _getReadingImagesByReadingIdUseCaseFuture(
@@ -35,7 +35,8 @@ class CloseTerminalUseCase
               .toList();
 
         if (reading.anomSec == null) {
-          readingWithFotos = ReadingRequest.failed();
+          readingWithFotos = readingWithFotos.copyWith(
+              anomaliaSec: 26, claseAnomalia: 'AL13', alreadySync: true);
         }
 
         otherReadings.add(reading..readingRequest = readingWithFotos);
