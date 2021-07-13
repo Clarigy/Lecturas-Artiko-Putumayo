@@ -41,7 +41,7 @@ class __FormState extends State<LoginForm> {
                 InputWithLabel(
                   label: LABEL_PASSWORD,
                   labelColor: Colors.white,
-                  hintText: 'al menos  8 caracteres',
+                  hintText: 'al menos 8 caracteres',
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: validatePassword,
                   textEditingController: bloc.userPasswordTextController,

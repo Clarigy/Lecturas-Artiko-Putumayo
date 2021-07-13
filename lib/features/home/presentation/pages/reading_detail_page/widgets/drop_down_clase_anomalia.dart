@@ -36,10 +36,11 @@ class _DropDownClaseAnomaliaState extends State<DropDownClaseAnomalia> {
         if (!isSetState) {
           if (bloc.readingDetailItem.readingRequest.claseAnomalia == null &&
               times == 0) {
-            bloc.setClaseAnomaliaSinRefresh(
-                _buildAnomaliaItems(bloc)[0].value!);
             if (!items.contains(bloc.claseAnomalia)) {
               bloc.setClaseAnomaliaSinRefresh(ClaseAnomalia.ninguna());
+            } else {
+              bloc.setClaseAnomaliaSinRefresh(
+                  _buildAnomaliaItems(bloc)[0].value!);
             }
             times++;
           }
@@ -118,6 +119,11 @@ class _DropDownClaseAnomaliaState extends State<DropDownClaseAnomalia> {
             value: claseAnomalia, child: Text(claseAnomalia.nombre)));
       }
     });
+
+    if (items.length == 1 &&
+        items[0].value?.nombre == ClaseAnomalia.ninguna().nombre) {
+      bloc.setClaseAnomaliaSinRefresh(ClaseAnomalia.ninguna());
+    }
 
     return items;
   }
