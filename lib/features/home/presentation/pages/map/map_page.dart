@@ -2,6 +2,7 @@ import 'package:artiko/features/home/presentation/pages/activities_page/widgets/
 import 'package:artiko/features/home/presentation/pages/providers/home_provider.dart';
 import 'package:artiko/shared/routes/app_routes.dart';
 import 'package:artiko/shared/routes/route_args_keys.dart';
+import 'package:artiko/shared/widgets/close_terminal_status.dart';
 import 'package:custom_info_window/custom_info_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -91,12 +92,24 @@ class _MapPageState extends State<MapPage> {
             right: 0,
             child: Padding(
               padding: const EdgeInsets.all(16),
-              child: FloatingActionButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, AppRoutes.CreateMeasure,
-                        arguments: {IS_FROM_MAP: true});
-                  },
-                  child: Icon(Icons.add)),
+              child: Consumer(
+                builder: (BuildContext context,
+                    T Function<T>(ProviderBase<Object?, T>) watch,
+                    Widget? child) {
+                  final closedTerminalStatus =
+                      watch(closedTerminalStatusProvider);
+
+                  return closedTerminalStatus
+                      ? Offstage()
+                      : FloatingActionButton(
+                          onPressed: () {
+                            Navigator.pushNamed(
+                                context, AppRoutes.CreateMeasure,
+                                arguments: {IS_FROM_MAP: true});
+                          },
+                          child: Icon(Icons.add));
+                },
+              ),
             ))
       ],
     );

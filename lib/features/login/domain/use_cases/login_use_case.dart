@@ -1,5 +1,7 @@
 import 'package:artiko/core/cache/domain/repositories/cache_storage_repository.dart';
 import 'package:artiko/core/cache/keys/cache_keys.dart';
+import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
+import 'package:artiko/dependency_injector.dart';
 import 'package:artiko/features/login/domain/entities/request/login_request.dart';
 import 'package:artiko/features/login/domain/entities/response/login_response.dart';
 import 'package:artiko/features/login/domain/repositories/login_repository_contract.dart';
@@ -17,10 +19,12 @@ class LoginUseCase extends UseCase<LoginRequest, Future<LoginResponse>> {
   Future<LoginResponse> call(request) async {
     try {
       final String? currentUser = await _storage.fetch(CacheKeys.USER);
-
+      final readings = await sl<ReadingsDao>().getFutureReadings();
       if (currentUser != null) {
         final loginResponse = loginResponseFromJson(currentUser);
-        if (loginResponse.correoLector != request.email)
+        if (loginResponse.correoLector != request.email &&
+            readings != null &&
+            readings.isNotEmpty)
           throw Failure(
               'No puedes iniciar sesión con otro usuario porque el anterior tiene una ruta asignada. Para iniciar sesión con otro usuario presiona Cerrar terminal');
       }

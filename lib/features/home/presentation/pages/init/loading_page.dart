@@ -1,3 +1,5 @@
+import 'package:artiko/core/cache/domain/repositories/cache_storage_repository.dart';
+import 'package:artiko/core/cache/keys/cache_keys.dart';
 import 'package:artiko/core/error/exception.dart';
 import 'package:artiko/core/permissions_handler/gps_permission.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
@@ -94,9 +96,11 @@ class _LoadingPageState extends State<LoadingPage> with WidgetsBindingObserver {
   Future<bool> _loadAndSaveAllData() async {
     final bloc = sl<LoadingBloc>();
 
+    final String? userId =
+        await sl<CacheStorageInterface>().fetch(CacheKeys.ID_USER);
     final currentUser = await bloc.getCurrentUserFromDb();
 
-    if (currentUser == null) {
+    if (userId == null || userId.isEmpty || currentUser == null) {
       Navigator.pushReplacementNamed(context, AppRoutes.LoginScreen);
       return false;
     }

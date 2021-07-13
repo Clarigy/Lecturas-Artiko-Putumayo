@@ -2,8 +2,8 @@ import 'package:artiko/core/readings/data/repository/reading_repository.dart';
 import 'package:artiko/core/readings/domain/use_case/sincronizar_readings_use_case.dart';
 import 'package:artiko/dependency_injector.dart';
 import 'package:artiko/features/home/presentation/pages/activities_page/activities_page.dart';
-import 'package:artiko/features/home/presentation/pages/providers/home_provider.dart';
 import 'package:artiko/shared/theme/app_colors.dart';
+import 'package:artiko/shared/widgets/close_terminal_status.dart';
 import 'package:artiko/shared/widgets/default_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'
@@ -48,6 +48,13 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<void> _sincronizarReadings() async {
+    final closedTerminalStatus = context.read(closedTerminalStatusProvider);
+    if (closedTerminalStatus) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('La terminal ya ha sido cerrada')));
+      return;
+    }
+
     final mainScreenProvider = context.read(_mainScreenProvider.notifier);
 
     try {
@@ -76,13 +83,16 @@ class _MainScreenState extends State<MainScreen> {
             icon: Consumer(
               builder: (BuildContext context, watch, Widget? child) {
                 final isLoading = watch(_mainScreenProvider);
-                final bloc = context.read(activitiesBlocProvider);
-                print(bloc.isLoading);
+                final closedTerminalStatus =
+                    watch(closedTerminalStatusProvider);
+
                 return isLoading
                     ? CircularProgressIndicator(strokeWidth: 2)
                     : Icon(
                         Icons.sync,
-                        color: AppColors.redColor,
+                        color: closedTerminalStatus
+                            ? AppColors.primary
+                            : AppColors.redColor,
                       );
               },
             ),

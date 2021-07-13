@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:artiko/core/cache/domain/repositories/cache_storage_repository.dart';
 import 'package:artiko/core/cache/keys/cache_keys.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
+import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
 import 'package:artiko/core/readings/domain/use_case/close_terminal_use_case.dart';
 import 'package:artiko/dependency_injector.dart';
 import 'package:artiko/features/home/presentation/pages/providers/home_provider.dart';
@@ -12,6 +13,8 @@ import 'package:artiko/shared/routes/app_routes.dart';
 import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'close_terminal_status.dart';
 
 enum PopUpMenuItemOption { PROFILE, CLOSE_TERMINAL, LOGOUT }
 
@@ -142,7 +145,7 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
     await db.database.delete('readings');
     await db.database.delete('reading_images');
 
-    await sl<CacheStorageInterface>().clear();
+    await sl<CacheStorageInterface>().delete(CacheKeys.ID_USER);
   }
 
   void showWaitDialog() {
@@ -158,11 +161,6 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    margin: EdgeInsets.only(bottom: 12),
-                    child: Text(
-                        'Se redireccionará a la pantalla del login una vez finalizada la operación exitosamente.'),
-                  ),
                   Center(child: CircularProgressIndicator()),
                 ],
               ),
@@ -178,6 +176,13 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
   }
 
   Future<void> _closeTerminal() async {
+    final closedTerminalStatus = context.read(closedTerminalStatusProvider);
+    if (closedTerminalStatus) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('La terminal ya ha sido cerrada')));
+      return;
+    }
+
     try {
       final readings = await sl<ReadingsDao>().getFutureReadings();
       if (readings!.any((element) => element.anomSec == null)) {
@@ -185,15 +190,13 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
             context: context,
             builder: (_) {
               return AlertDialog(
-                title: Text('Tienes lecturas por hacer, ¿deseas continuar?'),
+                title: Text('¿Estás seguro que deseas cerrar la terminal?'),
+                content: Text('Las lecturas faltantes quedarán como fallidas'),
                 actions: [
                   TextButton(
                       onPressed: () async {
                         Navigator.pop(context);
-                        showWaitDialog();
-                        await sl<CloseTerminalUseCase>()(readings);
-                        await _clearData();
-                        _logout();
+                        await doCloseTerminal(readings);
                       },
                       child: Text('Sí, continuar')),
                   TextButton(
@@ -203,10 +206,7 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
               );
             });
       } else {
-        showWaitDialog();
-        await sl<CloseTerminalUseCase>()(readings);
-        await _clearData();
-        _logout();
+        await doCloseTerminal(readings);
       }
     } catch (e) {
       //Close dialog
@@ -214,5 +214,17 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('No pudimos cerrar la terminal, inténtalo más tarde')));
     }
+  }
+
+  Future<void> doCloseTerminal(List<ReadingDetailItem> readings) async {
+    showWaitDialog();
+    await sl<CloseTerminalUseCase>()(readings);
+    await _clearData();
+    context.read(activitiesBlocProvider)
+      ..needRefreshList = true
+      ..doFilter();
+
+    context.read(closedTerminalStatusProvider.notifier)..changeIsClosed(true);
+    Navigator.pop(context);
   }
 }
