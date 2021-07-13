@@ -38,14 +38,13 @@ class _DropDownClaseAnomaliaState extends State<DropDownClaseAnomalia> {
               times == 0) {
             bloc.setClaseAnomaliaSinRefresh(
                 _buildAnomaliaItems(bloc)[0].value!);
+            if (!items.contains(bloc.claseAnomalia)) {
+              bloc.setClaseAnomaliaSinRefresh(ClaseAnomalia.ninguna());
+            }
             times++;
           }
         }
         isSetState = false;
-
-        if (!items.contains(bloc.claseAnomalia)) {
-          bloc.setClaseAnomaliaSinRefresh(ClaseAnomalia.ninguna());
-        }
 
         return Container(
           child: Column(
