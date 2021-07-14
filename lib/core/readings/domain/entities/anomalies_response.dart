@@ -42,6 +42,7 @@ class AnomalyItem {
     required this.revisionCritica,
     required this.fallida,
     required this.solucionCritica,
+    required this.cierre,
   });
 
   @PrimaryKey()
@@ -60,6 +61,7 @@ class AnomalyItem {
   final bool imprimeFactura;
   final bool revisionCritica;
   final bool fallida;
+  final bool cierre;
   final String? solucionCritica;
 
   factory AnomalyItem.fromJson(Map<String, dynamic> json) => AnomalyItem(
@@ -78,6 +80,7 @@ class AnomalyItem {
         imprimeFactura: json["imprime_factura"] == 'S',
         revisionCritica: json["revision_critica"] == 'S',
         fallida: json["fallida"] == 'S',
+        cierre: json["cierre"] == 'S',
         solucionCritica: json["solucion_critica"],
       );
 

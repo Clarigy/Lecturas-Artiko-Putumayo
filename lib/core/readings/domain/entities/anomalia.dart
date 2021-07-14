@@ -30,6 +30,7 @@ class ClaseAnomalia {
     required this.anomSec,
     required this.fallida,
     required this.fotografia,
+    required this.cierre,
   }) : this.observaciones = [];
 
   ClaseAnomalia.ninguna()
@@ -38,12 +39,14 @@ class ClaseAnomalia {
         this.lectura = false,
         this.anomSec = -1,
         this.fallida = false,
+        this.cierre = false,
         this.fotografia = false;
 
   final String nombre;
   final bool lectura;
   final bool fotografia;
   final bool fallida;
+  final bool cierre;
   final int anomSec;
   final List<String> observaciones;
 

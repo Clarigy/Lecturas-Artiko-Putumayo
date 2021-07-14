@@ -67,6 +67,7 @@ class AnomaliesRepository implements AnomaliesRepositoryContract {
           fotografia: tmp.fotografia,
           anomSec: tmp.anomaliaSec,
           fallida: tmp.fallida,
+          cierre: tmp.cierre,
         );
 
         final tempObservaciones = observaciones

@@ -1,21 +1,21 @@
+import 'package:artiko/core/readings/data/data_sources/anomalies_dao.dart';
 import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
 import 'package:artiko/core/readings/domain/entities/reading_request.dart';
 import 'package:artiko/core/readings/domain/repositories/reading_repository_contract.dart';
 import 'package:artiko/core/readings/domain/use_case/update_new_meter_use_case.dart';
+import 'package:artiko/dependency_injector.dart';
 import 'package:artiko/features/home/domain/use_cases/get_reading_images_by_reading_id_future.dart';
 
 import '../../../../../core/error/exception.dart';
 import '../../../../../core/use_case.dart';
 
-class CloseTerminalUseCase
-    extends UseCase<List<ReadingDetailItem>, Future<void>> {
+class CloseTerminalUseCase extends UseCase<List<ReadingDetailItem>, Future<void>> {
   final ReadingRepositoryContract _repository;
   final GetReadingImagesByReadingIdUseCaseFuture
-      _getReadingImagesByReadingIdUseCaseFuture;
+  _getReadingImagesByReadingIdUseCaseFuture;
   final UpdateNewMeterUseCase _updateNewMeterUseCase;
 
-  CloseTerminalUseCase(
-      this._repository,
+  CloseTerminalUseCase(this._repository,
       this._getReadingImagesByReadingIdUseCaseFuture,
       this._updateNewMeterUseCase);
 
@@ -25,8 +25,11 @@ class CloseTerminalUseCase
       final List<ReadingRequest> tempList = [];
       final List<ReadingDetailItem> otherReadings = [];
 
+      final anomalias = await sl<AnomaliesDao>().getAnomalies();
+      final anomaliaCierre = anomalias!.firstWhere((element) => element.cierre);
+
       for (final reading in readings) {
-         ReadingRequest readingWithFotos = reading.readingRequest.fotos.isEmpty
+        ReadingRequest readingWithFotos = reading.readingRequest.fotos.isEmpty
             ? reading.readingRequest
             : reading.readingRequest
           ..fotos = (await _getReadingImagesByReadingIdUseCaseFuture(
@@ -36,7 +39,9 @@ class CloseTerminalUseCase
 
         if (reading.anomSec == null) {
           readingWithFotos = readingWithFotos.copyWith(
-              anomaliaSec: 26, claseAnomalia: 'AL13', alreadySync: true);
+              anomaliaSec: anomaliaCierre.anomaliaSec,
+              claseAnomalia: anomaliaCierre.clase,
+              alreadySync: true);
         }
 
         otherReadings.add(reading..readingRequest = readingWithFotos);
