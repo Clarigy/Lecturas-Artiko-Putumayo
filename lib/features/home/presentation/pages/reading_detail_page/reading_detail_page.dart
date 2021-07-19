@@ -175,7 +175,7 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
     final theme = Theme.of(context);
     final items = _buildObservacionesItems(bloc).toSet();
 
-    if (!items.contains(bloc.observacion)) {
+    if (!items.contains(bloc.observacion) && items.length == 1) {
       bloc.setObservacionSinRefresh('Otro');
     }
 
