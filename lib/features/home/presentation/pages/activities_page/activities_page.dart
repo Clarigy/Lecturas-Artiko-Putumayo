@@ -1,6 +1,8 @@
 import 'dart:developer';
 
+import 'package:artiko/core/readings/data/data_sources/anomalies_dao.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
+import 'package:artiko/core/readings/domain/entities/anomalies_response.dart';
 import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
 import 'package:artiko/features/home/presentation/pages/activities_page/activities_bloc.dart';
 import 'package:artiko/features/home/presentation/pages/activities_page/widgets/filter_buttons.dart';
@@ -16,7 +18,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../../../../dependency_injector.dart';
 
 final activitiesCounterProvider =
-ChangeNotifierProvider((_) => ActivitiesCounter());
+    ChangeNotifierProvider((_) => ActivitiesCounter());
 
 class ActivitiesCounter extends ChangeNotifier {
   int _activitiesCount = 0;
@@ -30,7 +32,7 @@ class ActivitiesCounter extends ChangeNotifier {
 }
 
 final activitiesFilterProvider =
-ChangeNotifierProvider((_) => ActivitiesFilter());
+    ChangeNotifierProvider((_) => ActivitiesFilter());
 
 class ActivitiesFilter extends ChangeNotifier {
   bool _isLoading = true;
@@ -102,7 +104,7 @@ class ActivitiesPage extends StatelessWidget {
                               ),
                               SizedBox(
                                 height:
-                                MediaQuery.of(context).size.height * .05,
+                                    MediaQuery.of(context).size.height * .05,
                               ),
                               Text(
                                 'Wow, todas tus actividades están completas, no tienes actividades por hacer.',
@@ -124,19 +126,19 @@ class ActivitiesPage extends StatelessWidget {
                         child: ListView.builder(
                             itemCount: snapshot.data?.length ?? 0,
                             itemBuilder: (_, i) => InkWell(
-                              child: Column(
-                                children: [
-                                  if (i == 0) _Counter(),
-                                  ReadingsCard(item: snapshot.data![i]),
-                                ],
-                              ),
-                              onTap: () => Navigator.pushNamed(
-                                  context, AppRoutes.ReadingDetailScreen,
-                                  arguments: {
-                                    READING_DETAIL: snapshot.data![i],
-                                    READINGS: snapshot.data
-                                  }),
-                            )),
+                                  child: Column(
+                                    children: [
+                                      if (i == 0) _Counter(),
+                                      ReadingsCard(item: snapshot.data![i]),
+                                    ],
+                                  ),
+                                  onTap: () => Navigator.pushNamed(
+                                      context, AppRoutes.ReadingDetailScreen,
+                                      arguments: {
+                                        READING_DETAIL: snapshot.data![i],
+                                        READINGS: snapshot.data
+                                      }),
+                                )),
                       );
                     }
 
@@ -162,6 +164,7 @@ class _Counter extends StatefulWidget {
 class __CounterState extends State<_Counter> {
   int doneReadings = 0;
   late String activitiesType;
+  late List<AnomalyItem?> anomalias;
 
   @override
   Widget build(BuildContext context) {
@@ -172,29 +175,43 @@ class __CounterState extends State<_Counter> {
               T Function<T>(ProviderBase<Object?, T>) watch, Widget? child) {
             final bloc = watch(activitiesBlocProvider);
 
-            return StreamBuilder<List<ReadingDetailItem>?>(
-                stream: sl<ReadingsDao>().getReadings(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData || snapshot.hasError) return Offstage();
+            return FutureBuilder(
+                future: sl<AnomaliesDao>().getAnomalies(),
+                builder:
+                    (BuildContext context, AsyncSnapshot anomaliesSnapshot) {
+                  if (anomaliesSnapshot.hasData) {
+                    anomalias = anomaliesSnapshot.data;
+                    return StreamBuilder<List<ReadingDetailItem>?>(
+                        stream: sl<ReadingsDao>().getReadings(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData || snapshot.hasError)
+                            return Offstage();
 
-                  if (snapshot.hasData) {
-                    doneReadings = 0;
+                          if (snapshot.hasData) {
+                            doneReadings = 0;
 
-                    _setDoneReadings(bloc, snapshot.data);
+                            _setDoneReadings(bloc, snapshot.data);
 
-                    return Container(
-                      margin: EdgeInsets.only(bottom: 10),
-                      child: Text(
-                          '$doneReadings/${snapshot.data?.length ?? '0'} actividades $activitiesType'),
-                    );
+                            return Container(
+                              margin: EdgeInsets.only(bottom: 10),
+                              child: Text(
+                                  '$doneReadings/${snapshot.data?.length ?? '0'} actividades $activitiesType'),
+                            );
+                          }
+                          return Offstage();
+                        });
+                  } else if (anomaliesSnapshot.hasError) {
+                    return Icon(Icons.error_outline);
+                  } else {
+                    return CircularProgressIndicator();
                   }
-                  return Offstage();
                 });
           },
         ));
   }
 
-  void _setDoneReadings(ActivitiesBloc bloc, List<ReadingDetailItem>? allReadings) {
+  void _setDoneReadings(
+      ActivitiesBloc bloc, List<ReadingDetailItem>? allReadings) {
     allReadings?.forEach((element) {
       switch (bloc.filterType) {
         case FilterType.PENDING:
@@ -207,7 +224,9 @@ class __CounterState extends State<_Counter> {
           break;
         case FilterType.FAILED:
           if (element.idRequest != null &&
-              element.readingRequest.anomaliaSec == 26) doneReadings++;
+              anomalias
+                  .any((e) => element.anomSec == e!.anomaliaSec && e.fallida))
+            doneReadings++;
           activitiesType = 'fallidas';
           break;
       }

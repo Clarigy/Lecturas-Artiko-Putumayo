@@ -61,6 +61,9 @@ class AnomaliesRepository implements AnomaliesRepositoryContract {
       );
 
       temp.forEach((tmp) {
+        if (tmp.anomaliaSec == 25) {
+          print('tiin');
+        }
         final clase = ClaseAnomalia(
           nombre: tmp.nombre,
           lectura: tmp.lectura,
@@ -90,6 +93,9 @@ class AnomaliesRepository implements AnomaliesRepositoryContract {
   Future<void> saveAnomalies(List<AnomalyItem> anomalies) async {
     try {
       await _anomaliesDao.insertAll(anomalies);
+
+      final x = await _anomaliesDao.getAnomalies();
+      print(x);
     } catch (_) {
       throw ServerException();
     }
