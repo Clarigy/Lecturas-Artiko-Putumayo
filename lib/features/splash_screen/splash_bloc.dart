@@ -17,7 +17,7 @@ class SplashBloc extends ChangeNotifier {
       final String? userId =
           await sl<CacheStorageInterface>().fetch(CacheKeys.ID_USER);
 
-      return userId != null && userId.isNotEmpty && currentUser == null;
+      return userId != null && userId.isNotEmpty && currentUser != null;
     } on Exception {
       rethrow;
     }
