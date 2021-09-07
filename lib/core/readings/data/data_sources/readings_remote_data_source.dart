@@ -1,4 +1,3 @@
-import 'package:artiko/core/error/exception.dart';
 import 'package:artiko/core/http/domain/repositories/http_proxy_repository.dart';
 import 'package:artiko/core/readings/domain/entities/actualizar_estado_request.dart';
 import 'package:artiko/core/readings/domain/entities/new_meter_request.dart';
@@ -28,41 +27,28 @@ class ReadingsRemoteDataSource {
   }
 
   Future<ReadingDetailResponse> getReadingDetails(int lecturaRutaSec) async {
-    try {
-      final _http = _httpImpl.instance();
+    final _http = _httpImpl.instance();
 
-      final _response = await _http.get(
-        '$readingDetailService?lectura_ruta_sec=$lecturaRutaSec',
-      );
+    final _response = await _http.get(
+      '$readingDetailService?lectura_ruta_sec=$lecturaRutaSec',
+    );
 
-      return ReadingDetailResponse.fromJson(_response.data, lecturaRutaSec);
-    } catch (e) {
-      print(e);
-      return ReadingDetailResponse(items: []);
-    }
+    return ReadingDetailResponse.fromJson(_response.data, lecturaRutaSec);
   }
 
   Future<void> sincronizarReadings(List<ReadingRequest> readings,
       {String tipo: 'S'}) async {
-    try {
-      final _http = _httpImpl.instance();
+    final _http = _httpImpl.instance();
 
-      await _http.post('/actualizar_ruta',
-          data: readingRequestToJson(readings, tipo));
-    } catch (e) {
-      throw ServerException();
-    }
+    await _http.post('/actualizar_ruta',
+        data: readingRequestToJson(readings, tipo));
   }
 
   Future<void> updateNewMeter(List<NewMeterRequestItem> readings) async {
-    try {
-      final _http = _httpImpl.instance();
+    final _http = _httpImpl.instance();
 
-      await _http.post('/medidor_encontrado',
-          data: newMeterRequestToJson(readings));
-    } catch (e) {
-      throw ServerException();
-    }
+    await _http.post('/medidor_encontrado',
+        data: newMeterRequestToJson(readings));
   }
 
   Future<void> closeTerminal(List<ReadingRequest> readings) async {
@@ -71,13 +57,9 @@ class ReadingsRemoteDataSource {
 
   Future<void> actualizarEstado(
       ActualizarEstadoRequest actualizarEstadoRequest) async {
-    try {
-      final _http = _httpImpl.instance();
+    final _http = _httpImpl.instance();
 
-      await _http.post(actualizarEstadoService,
-          data: actualizarEstadoRequestToJson(actualizarEstadoRequest));
-    } catch (e) {
-      throw ServerException();
-    }
+    await _http.post(actualizarEstadoService,
+        data: actualizarEstadoRequestToJson(actualizarEstadoRequest));
   }
 }

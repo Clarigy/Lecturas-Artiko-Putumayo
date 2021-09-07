@@ -12,6 +12,7 @@ import 'package:artiko/core/readings/domain/entities/routes_response.dart';
 import 'package:artiko/core/readings/domain/repositories/reading_repository_contract.dart';
 import 'package:artiko/core/readings/domain/use_case/get_anomalies_use_case.dart';
 import 'package:artiko/features/home/presentation/pages/activities_page/activities_bloc.dart';
+import 'package:dio/dio.dart';
 
 import '../../../../dependency_injector.dart';
 
@@ -207,6 +208,8 @@ class ReadingRepository implements ReadingRepositoryContract {
   Future<void> sincronizarReadings(List<ReadingRequest> readings) async {
     try {
       await _remoteDataSource.sincronizarReadings(readings);
+    } on DioError catch (e) {
+      throw ServerException(e.message);
     } catch (_) {
       throw ServerException();
     }
@@ -216,6 +219,8 @@ class ReadingRepository implements ReadingRepositoryContract {
   Future<void> updateNewMeter(List<NewMeterRequestItem> readings) async {
     try {
       return await _remoteDataSource.updateNewMeter(readings);
+    } on DioError catch (e) {
+      throw ServerException(e.message);
     } catch (_) {
       throw ServerException();
     }
@@ -225,6 +230,8 @@ class ReadingRepository implements ReadingRepositoryContract {
   Future<void> closeTerminal(List<ReadingRequest> readings) async {
     try {
       return await _remoteDataSource.closeTerminal(readings);
+    } on DioError catch (e) {
+      throw ServerException(e.message);
     } catch (_) {
       throw ServerException();
     }
@@ -247,6 +254,8 @@ class ReadingRepository implements ReadingRepositoryContract {
       ActualizarEstadoRequest actualizarEstadoRequest) async {
     try {
       await _remoteDataSource.actualizarEstado(actualizarEstadoRequest);
+    } on DioError catch (e) {
+      throw ServerException(e.message);
     } catch (_) {
       throw ServerException();
     }

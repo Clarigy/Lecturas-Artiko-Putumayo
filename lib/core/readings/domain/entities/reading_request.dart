@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:floor/floor.dart';
+import 'package:intl/intl.dart';
 
 String readingRequestToJson(List<ReadingRequest> data, String tipo) =>
     json.encode({'items': List<dynamic>.from(data.map((x) => x.toJson(tipo)))});
@@ -67,14 +68,14 @@ class ReadingRequest {
 
   ReadingRequest.empty(
       {required this.detalleLecturaRutaSec, required this.alreadySync, this.id})
-      : fechaLectura = DateTime.now().toIso8601String();
+      : fechaLectura = DateTime.now().toString();
 
   ReadingRequest.failed(
       {this.id = -1,
       this.anomaliaSec = 26,
       this.claseAnomalia = 'AL13',
       this.alreadySync = true})
-      : fechaLectura = DateTime.now().toIso8601String();
+      : fechaLectura = DateTime.now().toString();
 
   ReadingRequest copyWith(
           {int? id,
@@ -115,24 +116,27 @@ class ReadingRequest {
         fechaLectura: fechaLectura ?? this.fechaLectura,
       );
 
-  Map<String, dynamic> toJson(String tipo) => {
-        "detalle_lectura_ruta_sec": detalleLecturaRutaSec,
-        "lectura": lectura,
-        "lectura_intento_1": lecturaIntento1,
-        "lectura_intento_2": lecturaIntento2,
-        "anomalia_sec": anomaliaSec,
-        "observacion_sec": observacionSec,
-        "observacion_anomalia": observacionAnomalia,
-        "observacion_lectura": observacionLectura,
-        "origen_lectura": 'Terreno',
-        "lat_lectura_tomada": latLecturaTomada,
-        "long_lectura_tomada": longLecturaTomada,
-        "tipo": tipo,
-        "fecha_lectura": fechaLectura,
-        "fotos": List<dynamic>.from(fotos.map((image) => {
-              'image': image,
-              'filename': '$detalleLecturaRutaSec-${fotos.indexOf(image)}',
-              'mimetype': 'png'
-            })),
-      };
+  Map<String, dynamic> toJson(String tipo) {
+    final formatter = DateFormat('dd-MMM-yyyy HH:MM:s');
+    return {
+      "detalle_lectura_ruta_sec": detalleLecturaRutaSec,
+      "lectura": lectura,
+      "lectura_intento_1": lecturaIntento1,
+      "lectura_intento_2": lecturaIntento2,
+      "anomalia_sec": anomaliaSec,
+      "observacion_sec": observacionSec,
+      "observacion_anomalia": observacionAnomalia,
+      "observacion_lectura": observacionLectura,
+      "origen_lectura": 'Terreno',
+      "lat_lectura_tomada": latLecturaTomada,
+      "long_lectura_tomada": longLecturaTomada,
+      "tipo_registro": tipo,
+      "fecha_tomada": formatter.format(DateTime.parse(fechaLectura)),
+      "fotos": List<dynamic>.from(fotos.map((image) => {
+            'image': image,
+            'filename': '$detalleLecturaRutaSec-${fotos.indexOf(image)}',
+            'mimetype': 'png'
+          })),
+    };
+  }
 }

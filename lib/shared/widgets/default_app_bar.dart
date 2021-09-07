@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:artiko/core/cache/domain/repositories/cache_storage_repository.dart';
 import 'package:artiko/core/cache/keys/cache_keys.dart';
+import 'package:artiko/core/error/exception.dart';
 import 'package:artiko/core/readings/data/data_sources/readings_dao.dart';
 import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
 import 'package:artiko/core/readings/domain/use_case/close_terminal_use_case.dart';
@@ -217,14 +218,24 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
   }
 
   Future<void> doCloseTerminal(List<ReadingDetailItem> readings) async {
-    showWaitDialog();
-    await sl<CloseTerminalUseCase>()(readings);
-    await _clearData();
-    context.read(activitiesBlocProvider)
-      ..needRefreshList = true
-      ..doFilter();
+    try {
+      showWaitDialog();
+      await sl<CloseTerminalUseCase>()(readings);
+      await _clearData();
+      context.read(activitiesBlocProvider)
+        ..needRefreshList = true
+        ..doFilter();
 
-    context.read(closedTerminalStatusProvider.notifier)..changeIsClosed(true);
-    Navigator.pop(context);
+      context.read(closedTerminalStatusProvider.notifier)..changeIsClosed(true);
+      Navigator.pop(context);
+    } on Failure catch (e) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.message!)));
+    } catch (e) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('No pudimos cerrar la terminal, inténtalo más tarde')));
+    }
   }
 }

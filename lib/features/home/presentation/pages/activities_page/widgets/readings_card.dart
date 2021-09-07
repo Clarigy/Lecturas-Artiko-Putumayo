@@ -12,6 +12,7 @@ class ReadingsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     return Card(
       elevation: 8,
       clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -37,7 +38,7 @@ class ReadingsCard extends StatelessWidget {
                         item: item,
                       ),
                     Expanded(child: Offstage()),
-                    if (item.detalleLecturaRutaSec != null)
+                    if (item.detalleLecturaRutaSec != null && width > 400)
                       _TypeOfConsumption(
                         tipoConsumo: item.tipoConsumo,
                       ),
@@ -46,6 +47,18 @@ class ReadingsCard extends StatelessWidget {
               ],
             ),
           ),
+          if (item.detalleLecturaRutaSec != null && width < 400)
+            Padding(
+              padding: EdgeInsets.only(right: 14, bottom: 8),
+              child: Row(
+                children: [
+                  Expanded(child: Offstage()),
+                  _TypeOfConsumption(
+                    tipoConsumo: item.tipoConsumo,
+                  ),
+                ],
+              ),
+            )
         ],
       ),
     );

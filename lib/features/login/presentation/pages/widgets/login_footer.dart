@@ -14,7 +14,8 @@ class LoginFooter extends StatelessWidget {
       child: Stack(
         children: [
           Container(
-              margin: EdgeInsets.only(top: size.width * .15),
+              margin: EdgeInsets.only(
+                  top: size.width * .15, bottom: size.width * .02),
               child: Center(child: Image.asset(IMAGE_ARTIKO))),
           Positioned(
             right: -size.width * .109,

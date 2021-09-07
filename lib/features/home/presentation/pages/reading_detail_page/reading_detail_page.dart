@@ -327,7 +327,7 @@ class _NavigationButtons extends ConsumerWidget {
                             ..longLecturaTomada = position.longitude.toString()
                             ..claseAnomalia = bloc.claseAnomalia.nombre
                             ..observacionAnomalia = bloc.observacion
-                            ..fechaLectura = DateTime.now().toIso8601String()
+                            ..fechaLectura = DateTime.now().toString()
                             ..observacionLectura = bloc.observacion == 'Otro'
                                 ? bloc.observacionTextController.text
                                 : null

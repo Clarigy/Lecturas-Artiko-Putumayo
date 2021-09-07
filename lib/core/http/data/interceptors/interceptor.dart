@@ -16,20 +16,19 @@ class AppInterceptors extends Interceptor {
   Future<void> onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
     final reqOptions = await customOnRequest(options, authentication);
-    handler.next(reqOptions);
+    return handler.next(reqOptions);
   }
 
   @override
-  Future<FutureOr> onError(
-      DioError dioError, ErrorInterceptorHandler handler) async {
+  Future onError(DioError dioError, ErrorInterceptorHandler handler) async {
     final customError = await customOnError(dioError);
-    handler.next(customError);
+    return handler.next(customError);
   }
 
   @override
   Future<dynamic> onResponse(
       Response response, ResponseInterceptorHandler handler) async {
     log(response.toString());
-    handler.next(response);
+    return handler.next(response);
   }
 }

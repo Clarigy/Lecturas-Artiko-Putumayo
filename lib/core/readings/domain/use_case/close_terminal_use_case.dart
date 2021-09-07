@@ -50,14 +50,16 @@ class CloseTerminalUseCase extends UseCase<List<ReadingDetailItem>, Future<void>
 
       if (otherReadings
           .any((element) => element.detalleLecturaRutaSec == null)) {
-        _updateNewMeterUseCase(otherReadings);
+        await _updateNewMeterUseCase(otherReadings);
       }
 
       return await _repository.closeTerminal(tempList
           .where((element) => element.detalleLecturaRutaSec != null)
           .toList());
     } on ServerException catch (e) {
-      throw Failure(e.message);
+      throw Failure(e.message ?? 'Error inesperado');
+    } catch (_) {
+      throw Failure('No se pudo cerrar la terminal');
     }
   }
 }

@@ -61,9 +61,6 @@ class AnomaliesRepository implements AnomaliesRepositoryContract {
       );
 
       temp.forEach((tmp) {
-        if (tmp.anomaliaSec == 25) {
-          print('tiin');
-        }
         final clase = ClaseAnomalia(
           nombre: tmp.nombre,
           lectura: tmp.lectura,

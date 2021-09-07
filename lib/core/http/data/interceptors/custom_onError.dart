@@ -13,9 +13,10 @@ Future<DioError> customOnError(DioError dioError) async {
     return _customReportError(dioError, 'Sin conexión a internet');
   }
 
-  if (dioError.response is Map) {
-    if (dioError.response?.data?.containsKey('mensaje') ?? false) {
-      return dioError.error = dioError.response?.data['mensaje'];
+  if (dioError.response?.data is Map) {
+    if (dioError.response?.data?.containsKey('T_MENSAJE') ?? false) {
+      dioError.error = dioError.response?.data['T_MENSAJE'];
+      return dioError;
     }
   }
 
