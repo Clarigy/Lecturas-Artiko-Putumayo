@@ -1,9 +1,9 @@
 abstract class ConfigRemoteApi {
   static String get baseUrl =>
-      'https://g90913c469f3c4a-bdartiko.adb.us-ashburn-1.oraclecloudapps.com/ords/ws_artiko/lecturas';
+      'https://g90913c469f3c4a-dbartiko.adb.us-ashburn-1.oraclecloudapps.com/ords/ws_artiko/lecturas';
 
   static String get tokenBaseUrl =>
-      'https://g90913c469f3c4a-bdartiko.adb.us-ashburn-1.oraclecloudapps.com/ords/ws_artiko/oauth/token';
+      'https://g90913c469f3c4a-dbartiko.adb.us-ashburn-1.oraclecloudapps.com/ords/ws_artiko/oauth/token';
 }
 
 abstract class ConfigParamsToken {
