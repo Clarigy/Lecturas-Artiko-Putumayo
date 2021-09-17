@@ -2,15 +2,11 @@
 
 Aplicación para tomar la lectura de medidores de energía
 
-## Getting Started
+## Flutter version
+Flutter 2.5.0 • channel stable • https://github.com/flutter/flutter.git
 
-This project is a starting point for a Flutter application.
+## Comando para generar la Base de Datos
+- `flutter packages pub run build_runner build` la construye una sola vez. Este comando es ideal para cuando no estamos trabajando en cambios a la base de datos, ya que solo la genera una vez.
+- `flutter packages pub run build_runner watch` contruye la Base de datos cada vez que hagamos cambios en la misma y guardemos con `ctr + s`
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
