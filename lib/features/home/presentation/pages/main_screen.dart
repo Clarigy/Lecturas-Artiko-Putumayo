@@ -1,3 +1,4 @@
+import 'package:artiko/core/readings/all_anomalies.dart';
 import 'package:artiko/core/readings/data/repository/reading_repository.dart';
 import 'package:artiko/core/readings/domain/use_case/sincronizar_readings_use_case.dart';
 import 'package:artiko/dependency_injector.dart';
@@ -31,6 +32,16 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 1;
 
+  @override
+  void initState() {
+    WidgetsFlutterBinding.ensureInitialized()
+        .addPostFrameCallback((timeStamp) async {
+      await AllAnomalies().initialize();
+    });
+
+    super.initState();
+  }
+
   static List<Widget> _widgetOptions = <Widget>[
     Offstage(),
     ActivitiesPage(),
@@ -60,9 +71,15 @@ class _MainScreenState extends State<MainScreen> {
     try {
       mainScreenProvider.changeIsLoading(true);
 
-      final readings = await sl<ReadingRepository>()
-          .getAllReadingsFuture(FilterType.EXCECUTED);
-      await sl<SincronizarReadingsUseCase>().call(readings);
+      final repository = sl<ReadingRepository>();
+      final executedReadings =
+          await repository.getAllReadingsFuture(FilterType.EXCECUTED);
+      final failedReadings =
+          await repository.getAllReadingsFuture(FilterType.FAILED);
+
+      final readingsToSync = executedReadings + failedReadings;
+
+      await sl<SincronizarReadingsUseCase>().call(readingsToSync);
     } catch (_) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('No pudimos sincronizar')));

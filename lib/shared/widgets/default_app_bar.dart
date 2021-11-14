@@ -136,6 +136,10 @@ class _DefaultAppBarState extends State<DefaultAppBar> {
   }
 
   void _goToProfilePage() {
+    if (ModalRoute.of(context)?.settings.name == AppRoutes.ProfileScreen) {
+      return;
+    }
+
     Navigator.pushNamed(context, AppRoutes.ProfileScreen);
   }
 

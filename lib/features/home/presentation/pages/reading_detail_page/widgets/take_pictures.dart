@@ -1,8 +1,8 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:artiko/core/readings/domain/entities/reading_detail_response.dart';
 import 'package:artiko/features/home/data/models/reading_images_model.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
@@ -16,10 +16,8 @@ import '../reading_detail_page.dart';
 class TakePictures extends StatefulWidget {
   final EdgeInsets? margin;
   final String readingId;
-  final ReadingDetailItem detailItem;
 
-  const TakePictures(
-      {this.margin, required this.readingId, required this.detailItem});
+  const TakePictures({this.margin, required this.readingId});
 
   @override
   _TakePicturesState createState() => _TakePicturesState();
@@ -27,18 +25,16 @@ class TakePictures extends StatefulWidget {
 
 class _TakePicturesState extends State<TakePictures> {
   int countImages = 0;
-  late ReadingDetailItem detailItem;
+  late ReadingDetailBloc bloc;
 
   @override
   void initState() {
-    detailItem = widget.detailItem;
+    bloc = context.read(readingDetailBlocProvider);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read(readingDetailBlocProvider);
-
     final theme = Theme.of(context);
 
     return Container(
@@ -65,7 +61,7 @@ class _TakePicturesState extends State<TakePictures> {
                 if (!snapshot.hasData || snapshot.data == null) {
                   return Offstage();
                 }
-                detailItem.readingRequest.fotos.clear();
+                bloc.readingDetailItem.readingRequest.fotos.clear();
 
                 return Align(
                   alignment: AlignmentDirectional.centerStart,
@@ -104,9 +100,9 @@ class _TakePicturesState extends State<TakePictures> {
       countImages = snapshot.data?.length ?? 0;
     }
     return countImages == 3 ||
-            detailItem.readingRequest.alreadySync ||
+            bloc.readingDetailItem.readingRequest.alreadySync ||
             !bloc.allowEdit()
-        ? detailItem.readingRequest.alreadySync ||
+        ? bloc.readingDetailItem.readingRequest.alreadySync ||
                 !bloc.allowEdit() && countImages == 0
             ? Text('Sin fotografías')
             : Offstage()
@@ -165,18 +161,23 @@ class _TakePicturesState extends State<TakePictures> {
         ReadingImagesModel(imageCount: countImages, readingId: widget.readingId)
           ..imageBase64 = Base64Encoder().convert(image);
 
-    detailItem.readingRequest.fotos.add(readingImageModel.getSpecialId());
+    bloc.readingDetailItem.readingRequest.fotos
+        .add(readingImageModel.getSpecialId());
 
     await bloc.insertReadingImage(readingImageModel);
   }
 
   Future<Uint8List?> _captureImageAndReadAsBytes() async {
-    final image = await ImagePicker()
-        .getImage(source: ImageSource.camera, imageQuality: 100);
+    try {
+      final image = await ImagePicker()
+          .pickImage(source: ImageSource.camera, imageQuality: 50);
 
-    if (image == null) return null;
+      if (image == null) return null;
 
-    return new File(image.path).readAsBytesSync();
+      return new File(image.path).readAsBytesSync();
+    } on Exception catch (e, stackTrace) {
+      log('Error al capturar imagen', error: e, stackTrace: stackTrace);
+    }
   }
 
   Widget _buildImageView(ReadingImagesModel readingImagesModel) {
@@ -187,12 +188,14 @@ class _TakePicturesState extends State<TakePictures> {
 
     final theme = _getTheme();
 
-    detailItem.readingRequest.fotos.add(readingImagesModel.getSpecialId());
+    bloc.readingDetailItem.readingRequest.fotos
+        .add(readingImagesModel.getSpecialId());
 
     return Stack(
       children: [
         InkWell(
-          onTap: detailItem.readingRequest.alreadySync || !bloc.allowEdit()
+          onTap: bloc.readingDetailItem.readingRequest.alreadySync ||
+                  !bloc.allowEdit()
               ? null
               : () async => await _onTapImageView(readingImagesModel, bloc),
           child: Container(
@@ -210,7 +213,8 @@ class _TakePicturesState extends State<TakePictures> {
         Positioned(
           right: 5,
           top: -10,
-          child: detailItem.readingRequest.alreadySync || !bloc.allowEdit()
+          child: bloc.readingDetailItem.readingRequest.alreadySync ||
+                  !bloc.allowEdit()
               ? Offstage()
               : IconButton(
                   icon: Icon(
@@ -219,7 +223,7 @@ class _TakePicturesState extends State<TakePictures> {
                   ),
                   onPressed: () async {
                     await bloc.deleteReadingImage(readingImagesModel);
-                    detailItem.readingRequest.fotos
+                    bloc.readingDetailItem.readingRequest.fotos
                         .remove(readingImagesModel.getSpecialId());
                   }),
         ),
@@ -239,7 +243,8 @@ class _TakePicturesState extends State<TakePictures> {
       ..imageCount = countImages
       ..imageBase64 = Base64Encoder().convert(image);
 
-    detailItem.readingRequest.fotos.add(readingImagesModel.getSpecialId());
+    bloc.readingDetailItem.readingRequest.fotos
+        .add(readingImagesModel.getSpecialId());
 
     await bloc.updateReadingImage(readingImagesModel);
   }

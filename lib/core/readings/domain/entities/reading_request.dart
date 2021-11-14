@@ -117,7 +117,7 @@ class ReadingRequest {
       );
 
   Map<String, dynamic> toJson(String tipo) {
-    final formatter = DateFormat('dd-MMM-yyyy HH:MM:s');
+    final formatter = DateFormat('dd-MM-yyyy HH:mm:s');
     return {
       "detalle_lectura_ruta_sec": detalleLecturaRutaSec,
       "lectura": lectura,

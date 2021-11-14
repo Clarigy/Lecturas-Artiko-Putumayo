@@ -215,7 +215,6 @@ class _ReadingDetailPageState extends State<ReadingDetailPage> {
                 ),
               ),
             TakePictures(
-              detailItem: bloc.readingDetailItem,
               margin: EdgeInsets.only(top: 24),
               readingId: bloc.readingDetailItem.id.toString(),
             ),
