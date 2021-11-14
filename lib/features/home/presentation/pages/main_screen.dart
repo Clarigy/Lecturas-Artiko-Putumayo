@@ -15,7 +15,7 @@ import 'exports/main_screen_labels.dart';
 import 'map/map_page.dart';
 
 final _mainScreenProvider =
-StateNotifierProvider.autoDispose<_MainStateNotifier, bool>(
+    StateNotifierProvider.autoDispose<_MainStateNotifier, bool>(
         (ref) => _MainStateNotifier());
 
 class _MainStateNotifier extends StateNotifier<bool> {
