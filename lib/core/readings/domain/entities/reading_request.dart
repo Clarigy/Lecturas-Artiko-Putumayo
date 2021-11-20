@@ -22,10 +22,10 @@ class ReadingRequest {
   String? observacionLectura;
   String? latLecturaTomada;
   String? longLecturaTomada;
+  String? indCritica;
   String fechaLectura;
   @ignore
   List<String> fotos = [];
-
   String idFotos = '';
   bool alreadySync;
 
@@ -45,6 +45,7 @@ class ReadingRequest {
       required this.longLecturaTomada,
       required this.alreadySync,
       required this.fechaLectura,
+      required this.indCritica,
       required this.idFotos});
 
   ReadingRequest.all(
@@ -61,6 +62,7 @@ class ReadingRequest {
       this.observacionLectura,
       this.latLecturaTomada,
       this.longLecturaTomada,
+      this.indCritica,
       required this.alreadySync,
       required this.fechaLectura,
       required this.fotos,
@@ -68,13 +70,6 @@ class ReadingRequest {
 
   ReadingRequest.empty(
       {required this.detalleLecturaRutaSec, required this.alreadySync, this.id})
-      : fechaLectura = DateTime.now().toString();
-
-  ReadingRequest.failed(
-      {this.id = -1,
-      this.anomaliaSec = 26,
-      this.claseAnomalia = 'AL13',
-      this.alreadySync = true})
       : fechaLectura = DateTime.now().toString();
 
   ReadingRequest copyWith(
@@ -94,6 +89,7 @@ class ReadingRequest {
           List<String>? fotos,
           String? idFotos,
           String? fechaLectura,
+          String? indCritica,
           bool? alreadySync}) =>
       ReadingRequest.all(
         detalleLecturaRutaSec:
@@ -114,6 +110,7 @@ class ReadingRequest {
         alreadySync: alreadySync ?? this.alreadySync,
         detailId: detailId ?? this.detailId,
         fechaLectura: fechaLectura ?? this.fechaLectura,
+        indCritica: indCritica ?? this.indCritica,
       );
 
   Map<String, dynamic> toJson(String tipo) {
@@ -132,6 +129,7 @@ class ReadingRequest {
       "long_lectura_tomada": longLecturaTomada,
       "tipo_registro": tipo,
       "fecha_tomada": formatter.format(DateTime.parse(fechaLectura)),
+      "ind_critica": indCritica,
       "fotos": List<dynamic>.from(fotos.map((image) => {
             'image': image,
             'filename': '$detalleLecturaRutaSec-${fotos.indexOf(image)}',

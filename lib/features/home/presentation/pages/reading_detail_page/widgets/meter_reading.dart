@@ -199,6 +199,7 @@ class _MeterReadingState extends State<MeterReading> {
         bloc.requiredAnomaliaByMeterReading = true;
         bloc.requiredPhotoByMeterReading = true;
         bloc.verifiedReading = true;
+        bloc.indCritica = 'LCD';
       }
     } else if (_esLecturaNormal(request, bloc)) {
       _lecturaNormal(bloc);
@@ -237,6 +238,7 @@ class _MeterReadingState extends State<MeterReading> {
             .first);
 
     bloc.verifiedReading = true;
+    bloc.indCritica = 'PLE';
   }
 
   void _lecturaBandaConsumoExcedidadSegundoIntento(
@@ -269,6 +271,7 @@ class _MeterReadingState extends State<MeterReading> {
   void _lecturaNormal(ReadingDetailBloc bloc) {
     bloc.requiredAnomaliaByMeterReading = false;
     bloc.verifiedReading = true;
+    bloc.indCritica = 'LCN';
   }
 
   bool _esLecturaNormal(ReadingRequest request, ReadingDetailBloc bloc) {
@@ -296,6 +299,7 @@ class _MeterReadingState extends State<MeterReading> {
             .first);
 
     bloc.verifiedReading = true;
+    bloc.indCritica = 'LDS';
   }
 
   bool _esBandaConAnomaliaObligatoria(

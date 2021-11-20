@@ -102,8 +102,7 @@ class _TakePicturesState extends State<TakePictures> {
     return countImages == 3 ||
             bloc.readingDetailItem.readingRequest.alreadySync ||
             !bloc.allowEdit()
-        ? bloc.readingDetailItem.readingRequest.alreadySync ||
-                !bloc.allowEdit() && countImages == 0
+        ? bloc.readingDetailItem.readingRequest.alreadySync && countImages == 0
             ? Text('Sin fotografías')
             : Offstage()
         : Container(

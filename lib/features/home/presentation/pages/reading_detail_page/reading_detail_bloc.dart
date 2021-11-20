@@ -79,6 +79,8 @@ class ReadingDetailBloc extends ChangeNotifier {
     notifyListeners();
   } //Drops
 
+  String indCritica = '';
+
   List<Anomalia> anomalias = [];
   late int _anomaliaSec;
 
@@ -279,5 +281,5 @@ class ReadingDetailBloc extends ChangeNotifier {
 
   void refresh() => notifyListeners();
 
-  bool allowEdit() => readingDetailItem.idRequest == null;
+  bool allowEdit() => !readingDetailItem.readingRequest.alreadySync;
 }
