@@ -11,7 +11,7 @@ import '../local_database.dart';
 
 Future<void> injectionDatabase() async {
   final db =
-  await $FloorAppDatabase.databaseBuilder('artiko_lectuasx2.db').build();
+      await $FloorAppDatabase.databaseBuilder('artiko_lectuasx2.db').build();
 
   sl.registerLazySingleton<FloorDatabase>(() => db);
 
