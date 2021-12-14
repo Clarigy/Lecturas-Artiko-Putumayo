@@ -107,13 +107,7 @@ class _DropDownClaseAnomaliaState extends State<DropDownClaseAnomalia> {
     bloc.anomalias
         .firstWhere((element) => element.anomaliaSec == bloc.anomaliaSec)
         .claseAnomalia
-        .map((e) {
-      if (!bloc.alreadyInsertReading) {
-        if (!e.lectura) return e;
-      } else {
-        return e;
-      }
-    }).forEach((claseAnomalia) {
+        .forEach((claseAnomalia) {
       if (claseAnomalia != null) {
         items.add(DropdownMenuItem(
             value: claseAnomalia, child: Text(claseAnomalia.nombre)));

@@ -20,6 +20,15 @@ class SincronizarReadingsUseCase
             element.readingRequest.detalleLecturaRutaSec != null &&
             !element.readingRequest.alreadySync) {
           element.readingRequest.alreadySync = true;
+
+          if (element.readingRequest.indCritica?.isEmpty ?? true) {
+            element.readingRequest.indCritica = 'SNL';
+          }
+
+          if (element.indRangoCritica?.isEmpty ?? true) {
+            element.indRangoCritica = 'SNL';
+          }
+
           temp.add(element);
         }
       }

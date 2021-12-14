@@ -255,6 +255,7 @@ class _NavigationButtons extends ConsumerWidget {
                     (element) => bloc.readingDetailItem.id == element.id);
                 if (index == -1 || index == 0) return;
 
+                bloc.reset();
                 bloc.readingDetailItem = bloc.readings[index - 1].copyWith();
 
                 await bloc.loadInitInfo();
@@ -320,6 +321,9 @@ class _NavigationButtons extends ConsumerWidget {
                           bloc.readingDetailItem.anomSec =
                               bloc.claseAnomalia.anomSec;
 
+                          bloc.readingDetailItem.indRangoCritica =
+                              bloc.indCritica;
+
                           bloc.readingDetailItem.readingRequest
                             ..anomaliaSec = bloc.anomaliaSec
                             ..latLecturaTomada = position.latitude.toString()
@@ -376,6 +380,7 @@ class _NavigationButtons extends ConsumerWidget {
       return;
     }
 
+    bloc.reset();
     bloc.readingDetailItem = bloc.readings[index + 1].copyWith();
 
     await bloc.loadInitInfo();

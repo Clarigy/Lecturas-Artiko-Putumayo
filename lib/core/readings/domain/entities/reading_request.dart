@@ -129,7 +129,7 @@ class ReadingRequest {
       "long_lectura_tomada": longLecturaTomada,
       "tipo_registro": tipo,
       "fecha_tomada": formatter.format(DateTime.parse(fechaLectura)),
-      "ind_critica": indCritica,
+      "ind_rango_critica": indCritica,
       "fotos": List<dynamic>.from(fotos.map((image) => {
             'image': image,
             'filename': '$detalleLecturaRutaSec-${fotos.indexOf(image)}',

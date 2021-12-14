@@ -144,6 +144,7 @@ class ReadingDetailBloc extends ChangeNotifier {
 
   Future<bool> loadInitInfo() async {
     try {
+      indCritica = readingDetailItem.indRangoCritica ?? '';
       await Future.wait([_loadAnomalias(), _loadObservaciones()],
           eagerError: true);
       return true;

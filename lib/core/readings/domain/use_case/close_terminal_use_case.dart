@@ -45,6 +45,14 @@ class CloseTerminalUseCase
               alreadySync: true);
         }
 
+        if (reading.indRangoCritica == null ||
+            reading.indRangoCritica!.isEmpty) {
+          readingWithFotos = readingWithFotos.copyWith(indCritica: 'SNL');
+        } else {
+          readingWithFotos =
+              readingWithFotos.copyWith(indCritica: reading.indRangoCritica);
+        }
+
         otherReadings.add(reading..readingRequest = readingWithFotos);
         tempList.add(readingWithFotos);
       }

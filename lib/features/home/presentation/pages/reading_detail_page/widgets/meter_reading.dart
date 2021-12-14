@@ -214,7 +214,7 @@ class _MeterReadingState extends State<MeterReading> {
 
   void _lecturaBandaConsumoExcedida(
       ReadingRequest request, ReadingDetailBloc bloc, BuildContext context) {
-    if (request.lecturaIntento1 != null) {
+    if (request.lecturaIntento1 != null && request.lecturaIntento2 == null) {
       _lecturaBandaConsumoExcedidadSegundoIntento(bloc, request, context);
     } else if (request.lecturaIntento2 != null) {
       _lecturaBandaConsumoExcedidadTercerIntento(bloc);
@@ -228,14 +228,15 @@ class _MeterReadingState extends State<MeterReading> {
     bloc.requiredPhotoByMeterReading = true;
 
     final anomaliaSec = bloc.anomalias
-        .firstWhere((element) => element.anomalia == 'AL5_2')
+        .firstWhere((element) => element.anomalia == 'AL5_1')
         .anomaliaSec;
+
     bloc.setAnomaliaSec(
         anomaliaSec,
         bloc.anomalias
             .firstWhere((element) => element.anomaliaSec == anomaliaSec)
             .claseAnomalia
-            .first);
+            .firstWhere((e) => e.anomSec == 80));
 
     bloc.verifiedReading = true;
     bloc.indCritica = 'PLE';
@@ -306,8 +307,8 @@ class _MeterReadingState extends State<MeterReading> {
       ReadingRequest request, ReadingDetailBloc bloc) {
     return request.lectura! > bloc.readingDetailItem.lecturaMaxima &&
             request.lectura! <= bloc.readingDetailItem.falsaMaxima ||
-        request.lectura! < bloc.readingDetailItem.lecturaMaxima ||
-        request.lectura! > bloc.readingDetailItem.falsaMinima;
+        request.lectura! <= bloc.readingDetailItem.lecturaMinima &&
+            request.lectura! > bloc.readingDetailItem.falsaMinima;
   }
 
   bool _esAnomalidaErrada(ReadingRequest request, ReadingDetailBloc bloc) {
